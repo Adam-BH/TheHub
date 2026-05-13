@@ -1,0 +1,36 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">The Hub logo</title>
+  <desc id="desc">A connected study hub above an open book.</desc>
+
+  <circle cx="256" cy="238" r="198" stroke="#C8BFA8" stroke-width="6" opacity="0.42"/>
+  <circle cx="256" cy="238" r="162" stroke="#E5DCC4" stroke-width="2" opacity="0.8"/>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <line x1="256" y1="180" x2="256" y2="84" stroke="#1F1A14" stroke-width="8"/>
+    <line x1="256" y1="180" x2="164" y2="126" stroke="#B8924A" stroke-width="8"/>
+    <line x1="256" y1="180" x2="348" y2="126" stroke="#2C5664" stroke-width="8"/>
+    <line x1="256" y1="180" x2="256" y2="310" stroke="#7B2D26" stroke-width="8"/>
+  </g>
+
+  <circle cx="256" cy="78" r="22" fill="#F4EFE4" stroke="#1F1A14" stroke-width="8"/>
+  <circle cx="156" cy="120" r="20" fill="#F4EFE4" stroke="#B8924A" stroke-width="8"/>
+  <circle cx="356" cy="120" r="20" fill="#F4EFE4" stroke="#2C5664" stroke-width="8"/>
+  <circle cx="256" cy="180" r="34" fill="#F4EFE4" stroke="#7B2D26" stroke-width="10"/>
+
+  <path d="M254 318C219 278 176 258 118 258V162C177 166 222 188 254 226V318Z" fill="#FBF8F0" stroke="#C8BFA8" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M258 318C293 278 336 258 394 258V162C335 166 290 188 258 226V318Z" fill="#FBF8F0" stroke="#C8BFA8" stroke-width="7" stroke-linejoin="round"/>
+
+  <path d="M110 176V292C166 292 215 306 254 344" stroke="#7B2D26" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M402 176V292C346 292 297 306 258 344" stroke="#2C5664" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 226V346" stroke="#1F1A14" stroke-width="6" stroke-linecap="round"/>
+  <path d="M258 338C294 305 335 292 386 292" stroke="#B8924A" stroke-width="8" stroke-linecap="round"/>
+
+  <g stroke="#C8BFA8" stroke-width="4" stroke-linecap="round">
+    <path d="M146 190C184 197 213 211 236 236"/>
+    <path d="M146 224C184 230 213 243 236 268"/>
+    <path d="M146 258C185 262 214 275 236 300"/>
+    <path d="M366 190C328 197 299 211 276 236"/>
+    <path d="M366 224C328 230 299 243 276 268"/>
+    <path d="M366 258C327 262 298 275 276 300"/>
+  </g>
+</svg>

@@ -148,6 +148,14 @@ button {
   background: var(--burgundy);
 }
 
+.brand-mark {
+  display: block;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 20px;
+  object-fit: contain;
+}
+
 .eyebrow {
   margin-bottom: 16px;
   color: var(--ink-soft);
