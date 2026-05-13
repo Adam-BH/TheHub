@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Design system du Hub d'Adam Bhouri." />
+  <title>Design System · The Hub</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/design-system.css" />
+</head>
+<body>
+  <a class="skip-link" href="#system">Aller au contenu</a>
+
+  <div class="page-shell">
+    <nav class="top-nav" aria-label="Navigation principale">
+      <a class="nav-link" href="index.html">Hub</a>
+      <a class="nav-link" aria-current="page" href="design-system.html">Design system</a>
+    </nav>
+
+    <header class="masthead">
+      <div class="eyebrow"><span class="tag">The Hub · UI language</span></div>
+      <h1 class="title">Design <span class="accent">System</span></h1>
+      <p class="subtitle">Une base typographique et composants réutilisables pour garder les fiches dans le même ton papier, académique et interactif.</p>
+      <p class="byline">made by Adam Bhouri</p>
+    </header>
+
+    <main id="system">
+      <section class="ds-section" aria-labelledby="foundations">
+        <span class="section-kicker">Fondations</span>
+        <h2 class="section-title" id="foundations">Couleurs</h2>
+        <p class="section-note">Papier chaud, encre sombre, accents bordeaux, bleu-vert et or.</p>
+
+        <div class="swatch-grid" style="margin-top:16px">
+          <article class="swatch">
+            <div class="swatch-color" style="background:#f4efe4"></div>
+            <div class="swatch-body"><span class="swatch-name">Paper</span><span class="swatch-value">#F4EFE4</span></div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background:#1f1a14"></div>
+            <div class="swatch-body"><span class="swatch-name">Ink</span><span class="swatch-value">#1F1A14</span></div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background:#7b2d26"></div>
+            <div class="swatch-body"><span class="swatch-name">Burgundy</span><span class="swatch-value">#7B2D26</span></div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background:#2c5664"></div>
+            <div class="swatch-body"><span class="swatch-name">Teal</span><span class="swatch-value">#2C5664</span></div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background:#b8924a"></div>
+            <div class="swatch-body"><span class="swatch-name">Gold</span><span class="swatch-value">#B8924A</span></div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background:#c8bfa8"></div>
+            <div class="swatch-body"><span class="swatch-name">Rule</span><span class="swatch-value">#C8BFA8</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="ds-section" aria-labelledby="type">
+        <span class="section-kicker">Typographie</span>
+        <h2 class="section-title" id="type">Échelle</h2>
+        <p class="display-sample">Analyse, algèbre et méthode.</p>
+        <p class="body-sample">Newsreader porte les paragraphes longs. Instrument Serif donne les titres calmes et expressifs. JetBrains Mono sert aux repères, chemins, numéros et métadonnées.</p>
+        <p class="meta-line">pages/gl2/sem2/algebre.html</p>
+      </section>
+
+      <section class="ds-section" aria-labelledby="components">
+        <span class="section-kicker">Composants</span>
+        <h2 class="section-title" id="components">Cartes et messages</h2>
+
+        <div class="component-grid" style="margin-top:16px">
+          <article class="subject-card">
+            <span class="card-path">pages/gl2/sem2/matiere.html</span>
+            <h3 class="card-title">Carte matière</h3>
+            <p class="card-summary">Résumé court, lisible et orienté révision pour comprendre ce que la fiche contient.</p>
+            <div class="topic-list">
+              <span class="topic">Définitions</span>
+              <span class="topic">Méthodes</span>
+              <span class="topic">Synthèse</span>
+            </div>
+            <div class="card-footer"><span>Ouvrir</span><span>HTML</span></div>
+          </article>
+
+          <article class="notice-card">
+            <span class="section-kicker">Note</span>
+            <h3 class="card-title">Bloc de contexte</h3>
+            <p class="card-summary">Pour une remarque, une intuition ou un lien entre chapitres sans casser le rythme de lecture.</p>
+          </article>
+
+          <article class="formula-card">
+            <span>Critère Hessien</span><br />
+            <strong>s² - rt</strong><br />
+            <span>Distinguer minimum, maximum ou point selle.</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="ds-section" aria-labelledby="forms">
+        <span class="section-kicker">Contrôles</span>
+        <h2 class="section-title" id="forms">Filtres</h2>
+        <div class="control-panel" style="position:relative;top:auto;margin-top:16px">
+          <div class="field">
+            <label for="sampleSearch">Recherche</label>
+            <input class="input" id="sampleSearch" type="search" placeholder="Sujet, chapitre, méthode..." />
+          </div>
+          <div class="field">
+            <label for="sampleLevel">Niveau</label>
+            <select class="select" id="sampleLevel">
+              <option>GL2</option>
+              <option>RT2</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sampleTerm">Semestre</label>
+            <select class="select" id="sampleTerm">
+              <option>Semestre 2</option>
+              <option>Semestre 1</option>
+            </select>
+          </div>
+          <button class="btn btn-secondary" type="button">Réinitialiser</button>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
