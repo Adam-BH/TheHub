@@ -1,0 +1,2432 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Analyse — Fiche de révision interactive · INSAT GL2</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+  integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+  crossorigin="anonymous" />
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+  integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8"
+  crossorigin="anonymous"></script>
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"
+  crossorigin="anonymous"></script>
+
+<style>
+:root{
+  --ink:#1F1A14;
+  --ink-soft:#3A322A;
+  --paper:#F4EFE4;
+  --paper-warm:#EFE7D5;
+  --paper-shade:#E5DCC4;
+  --burgundy:#7B2D26;
+  --burgundy-soft:#9B4239;
+  --teal:#2C5664;
+  --teal-soft:#3F6F80;
+  --gold:#B8924A;
+  --gold-soft:#D0AC6A;
+  --highlight:#F7E8B8;
+  --rule:#C8BFA8;
+  --rule-strong:#8E8366;
+  --shadow: 0 1px 0 rgba(31,26,20,.04), 0 8px 28px -18px rgba(31,26,20,.18);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Newsreader', Georgia, 'Times New Roman', serif;
+  font-weight:400;
+  font-size:17px;
+  line-height:1.55;
+  letter-spacing:.005em;
+  position:relative;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(184,146,74,.08), transparent 60%),
+    radial-gradient(1000px 500px at 100% 30%, rgba(44,86,100,.05), transparent 65%),
+    radial-gradient(800px 400px at 0% 100%, rgba(123,45,38,.06), transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+body::after{
+  content:"";
+  position:fixed; inset:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.12  0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0.22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+  background-size:160px 160px;
+  opacity:.35;
+  mix-blend-mode:multiply;
+  pointer-events:none;
+  z-index:0;
+}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  max-width:1180px;
+  margin:0 auto;
+  padding:48px 32px 96px;
+}
+
+/* ----- HEADER ----- */
+header.masthead{
+  text-align:center;
+  padding:48px 0 28px;
+  border-bottom:1px solid var(--rule);
+  margin-bottom:6px;
+  position:relative;
+}
+header.masthead::after{
+  content:"";
+  position:absolute; left:50%; bottom:-2px;
+  width:80px; height:3px;
+  transform:translateX(-50%);
+  background:var(--burgundy);
+}
+.eyebrow{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin-bottom:18px;
+}
+.eyebrow .tag{
+  display:inline-block;
+  padding:4px 10px;
+  border:1px solid var(--rule-strong);
+  color:var(--ink);
+  background:rgba(255,255,255,.25);
+}
+h1.title{
+  font-family:'Instrument Serif', 'Newsreader', serif;
+  font-weight:400;
+  font-style:italic;
+  font-size:clamp(48px, 7vw, 84px);
+  line-height:.95;
+  letter-spacing:-.01em;
+  margin:0 0 14px;
+  color:var(--ink);
+}
+h1.title .accent{
+  color:var(--burgundy);
+  font-style:italic;
+}
+.subtitle{
+  font-family:'Newsreader', serif;
+  font-style:italic;
+  font-size:19px;
+  color:var(--ink-soft);
+  margin-bottom:10px;
+}
+.byline{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--rule-strong);
+}
+
+/* ----- TABS ----- */
+nav.tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0;
+  border-bottom:2px solid var(--ink);
+  margin:30px 0 0;
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:var(--paper);
+}
+nav.tabs::before, nav.tabs::after{
+  content:"";
+  position:absolute;
+  left:-32px; right:-32px;
+  background:var(--paper);
+  z-index:-1;
+}
+nav.tabs::before{ top:-12px; bottom:0; }
+.tab-btn{
+  flex:1 1 0;
+  background:transparent;
+  border:none;
+  border-right:1px solid var(--rule);
+  padding:14px 14px 12px;
+  font-family:'Newsreader', serif;
+  font-size:17px;
+  color:var(--ink-soft);
+  cursor:pointer;
+  text-align:center;
+  transition:background .15s ease, color .15s ease;
+  position:relative;
+  letter-spacing:.005em;
+}
+.tab-btn:last-child{border-right:none}
+.tab-btn .num{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  font-weight:500;
+  color:var(--burgundy);
+  letter-spacing:.16em;
+  margin-right:7px;
+  text-transform:uppercase;
+}
+.tab-btn:hover{ background:var(--paper-warm); color:var(--ink); }
+.tab-btn.active{
+  background:var(--ink);
+  color:var(--paper);
+}
+.tab-btn.active .num{ color:var(--gold-soft); }
+
+/* ----- PANELS ----- */
+.panel{ display:none; padding:36px 4px 0; }
+.panel.active{ display:block; animation: fadeIn .25s ease; }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none} }
+
+.chapter-head{
+  display:flex;
+  align-items:baseline;
+  gap:18px;
+  margin-bottom:8px;
+  padding-bottom:2px;
+}
+.chapter-head .ch-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--burgundy);
+}
+.chapter-head h2{
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:clamp(36px, 5vw, 54px);
+  margin:0;
+  line-height:1.02;
+  color:var(--ink);
+}
+.chapter-sub{
+  font-family:'Newsreader', serif;
+  font-style:italic;
+  color:var(--ink-soft);
+  font-size:18px;
+  margin:6px 0 28px;
+  max-width:60ch;
+}
+
+section.ssec{
+  margin:30px 0 22px;
+}
+.ssec-head{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  margin-bottom:14px;
+  padding-bottom:6px;
+  border-bottom:1px dashed var(--rule);
+}
+.ssec-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  font-weight:500;
+  color:var(--gold);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.ssec h3{
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:26px;
+  margin:0;
+  color:var(--ink);
+}
+
+p{ margin:.5em 0 .9em; }
+em{ font-style:italic; }
+.mono{ font-family:'JetBrains Mono', monospace; font-size:.92em; }
+
+/* boxes */
+.box{
+  padding:14px 18px 14px 20px;
+  margin:14px 0;
+  border-left:4px solid var(--rule-strong);
+  background:rgba(255,255,255,.32);
+  border-radius:0 3px 3px 0;
+  box-shadow:var(--shadow);
+}
+.box .lbl{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.box .ttl{
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-size:19px;
+  margin-bottom:4px;
+  display:block;
+}
+
+.def{ border-left-color:var(--teal); }
+.def .lbl{ color:var(--teal); }
+.thm{ border-left-color:var(--burgundy); }
+.thm .lbl{ color:var(--burgundy); }
+.prop{ border-left-color:var(--gold); }
+.prop .lbl{ color:var(--gold); }
+.rem{ border-left-color:var(--rule-strong); }
+.rem .lbl{ color:var(--rule-strong); }
+.warn{
+  border-left-color:#8b4513;
+  background:linear-gradient(90deg, rgba(247,232,184,.55), rgba(247,232,184,.15) 60%, transparent);
+}
+.warn .lbl{ color:#8b4513; }
+.tip{
+  border-left-color:var(--gold);
+  background:linear-gradient(90deg, rgba(247,232,184,.5), rgba(247,232,184,.12) 70%, transparent);
+}
+.tip .lbl{ color:var(--gold); }
+
+/* dividers */
+.divider{
+  text-align:center;
+  margin:46px 0 30px;
+  color:var(--rule-strong);
+  font-size:13px;
+  letter-spacing:1em;
+  user-select:none;
+}
+
+/* lists */
+ul, ol{ padding-left:1.4em; margin:.4em 0 1em; }
+ul li, ol li{ margin:.2em 0; }
+ul.bullets{ list-style:none; padding-left:0; }
+ul.bullets > li{
+  position:relative;
+  padding-left:22px;
+  margin:.32em 0;
+}
+ul.bullets > li::before{
+  content:"◆";
+  position:absolute; left:0; top:.05em;
+  color:var(--gold);
+  font-size:.7em;
+}
+
+/* small caps mono inline */
+.kw{
+  font-family:'JetBrains Mono', monospace;
+  font-size:.88em;
+  background:rgba(184,146,74,.16);
+  padding:1px 6px;
+  border-radius:2px;
+  color:var(--ink);
+}
+
+/* two-col block */
+.two{
+  display:grid; grid-template-columns: 1fr 1fr; gap:18px;
+}
+@media (max-width:780px){ .two{ grid-template-columns:1fr; } }
+
+/* KaTeX display sizing */
+.katex-display{ margin:.7em 0 !important; }
+.katex{ font-size:1.02em; }
+
+/* ----- METHOD CARDS ----- */
+.method{
+  background:linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.18));
+  border-left:4px solid var(--burgundy);
+  border-radius:0 4px 4px 0;
+  padding:20px 24px 18px;
+  margin:18px 0;
+  box-shadow: 0 1px 0 rgba(31,26,20,.04), 0 14px 36px -22px rgba(31,26,20,.22);
+  position:relative;
+}
+.method::before{
+  content:"";
+  position:absolute; left:-4px; top:0; bottom:0; width:4px;
+  background:linear-gradient(180deg, var(--burgundy) 0%, var(--gold) 100%);
+}
+.method .q{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--burgundy);
+  display:inline-block;
+  margin-bottom:6px;
+}
+.method .question{
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-size:24px;
+  color:var(--ink);
+  line-height:1.2;
+  margin:0 0 14px;
+}
+.method ol.steps{
+  list-style:none; padding:0; margin:14px 0 14px;
+  counter-reset: step;
+}
+.method ol.steps > li{
+  counter-increment: step;
+  position:relative;
+  padding:6px 4px 8px 46px;
+  border-bottom:1px dotted var(--rule);
+  margin:0;
+}
+.method ol.steps > li:last-child{ border-bottom:none; }
+.method ol.steps > li::before{
+  content: counter(step, decimal-leading-zero) " ⋅";
+  position:absolute; left:0; top:7px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  font-weight:500;
+  color:var(--gold);
+  letter-spacing:.1em;
+}
+.astuce{
+  margin-top:12px;
+  padding:10px 14px;
+  background:linear-gradient(90deg, rgba(247,232,184,.7), rgba(247,232,184,.18) 80%);
+  border-left:3px solid var(--gold);
+  font-style:italic;
+}
+.astuce .lab{
+  font-family:'JetBrains Mono', monospace;
+  font-style:normal;
+  font-size:10px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-right:8px;
+}
+
+/* method grid */
+.method-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:16px;
+}
+
+/* ----- SYNTHÈSE ----- */
+.flow-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:16px;
+  margin:16px 0 32px;
+}
+@media (max-width:840px){ .flow-grid{ grid-template-columns:1fr; } }
+.chap-node{
+  background:rgba(255,255,255,.38);
+  border:1px solid var(--rule);
+  border-top:3px solid var(--teal);
+  padding:16px 18px 18px;
+  border-radius:2px;
+  box-shadow:var(--shadow);
+}
+.chap-node h4{
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:22px;
+  margin:0 0 4px;
+}
+.chap-node .roman{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.22em;
+  color:var(--burgundy);
+}
+.pills{ margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; }
+.pill{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  padding:3px 9px;
+  border:1px solid var(--rule);
+  border-radius:999px;
+  background:rgba(255,255,255,.4);
+  color:var(--ink-soft);
+}
+
+.bridges{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
+  margin:20px 0 36px;
+}
+@media (max-width:780px){ .bridges{ grid-template-columns:1fr; } }
+.bridge{
+  background:rgba(255,255,255,.32);
+  border-left:3px solid var(--gold);
+  padding:14px 18px;
+}
+.bridge .arc{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:6px;
+}
+.bridge .name{
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-size:19px;
+  display:block;
+  margin-bottom:6px;
+}
+
+.pattern-card{
+  background:rgba(255,255,255,.32);
+  border-left:3px solid var(--teal);
+  padding:14px 18px 16px;
+  margin:12px 0;
+}
+.pattern-card .ptag{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:4px;
+}
+.pattern-card .pname{
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-size:20px;
+}
+.chain{
+  display:flex; flex-wrap:wrap; align-items:center;
+  gap:6px; margin-top:8px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  color:var(--ink-soft);
+}
+.chain .step{
+  padding:2px 8px;
+  background:rgba(184,146,74,.14);
+  border-radius:2px;
+}
+.chain .arrow{ color:var(--burgundy); }
+
+.checklist{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:18px;
+  margin-top:22px;
+}
+@media (max-width:780px){ .checklist{ grid-template-columns:1fr; } }
+.cklist{
+  background:rgba(255,255,255,.36);
+  border:1px solid var(--rule);
+  padding:14px 18px;
+}
+.cklist h5{
+  margin:0 0 8px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--burgundy);
+}
+.cklist ul{ margin:0; padding-left:1.2em; }
+.cklist li{ margin:.18em 0; }
+
+/* ----- VISUALIZATIONS ----- */
+.viz{
+  margin:26px 0 14px;
+  border:1px solid var(--rule);
+  background:rgba(255,255,255,.34);
+  border-radius:3px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.viz header{
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding:12px 18px 10px;
+  border-bottom:1px solid var(--rule);
+  background:rgba(255,255,255,.28);
+}
+.viz header .vtag{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--burgundy);
+}
+.viz header h4{
+  margin:0;
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:22px;
+}
+.viz .body{
+  display:grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap:0;
+}
+@media (max-width:880px){ .viz .body{ grid-template-columns:1fr; } }
+.viz .stage{
+  background:#FBF7EC;
+  padding:14px 12px 4px;
+  border-right:1px solid var(--rule);
+  min-height:320px;
+  display:flex; align-items:center; justify-content:center;
+}
+@media (max-width:880px){ .viz .stage{ border-right:none; border-bottom:1px solid var(--rule); } }
+.viz .stage svg{ width:100%; height:auto; max-width:520px; display:block; }
+.viz .side{
+  padding:14px 16px 16px;
+  font-size:14.5px;
+}
+.controls{ display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+.ctrl{ display:flex; flex-direction:column; gap:3px; }
+.ctrl label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  display:flex; justify-content:space-between;
+}
+.ctrl label .val{ color:var(--burgundy); font-weight:600; }
+.ctrl input[type=range]{
+  width:100%;
+  accent-color: var(--burgundy);
+  height:3px;
+}
+.btn-row{ display:flex; gap:6px; flex-wrap:wrap; }
+.btn{
+  background:transparent;
+  border:1px solid var(--rule-strong);
+  padding:5px 11px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  color:var(--ink-soft);
+  cursor:pointer;
+  border-radius:2px;
+  transition:.12s ease;
+}
+.btn:hover{ background:var(--paper-warm); }
+.btn.on{
+  background:var(--ink); color:var(--paper); border-color:var(--ink);
+}
+.readout{
+  background:rgba(184,146,74,.12);
+  border:1px dashed var(--gold);
+  padding:9px 12px;
+  margin-top:8px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  line-height:1.5;
+  border-radius:2px;
+}
+.readout .k{ color:var(--ink-soft); }
+.readout .v{ color:var(--burgundy); font-weight:600; }
+.verdict{
+  margin-top:8px;
+  font-family:'Instrument Serif', serif;
+  font-style:italic;
+  font-size:20px;
+  padding:8px 12px;
+  border-left:3px solid var(--burgundy);
+  background:rgba(247,232,184,.4);
+}
+.legend{
+  margin-top:10px;
+  display:flex; flex-wrap:wrap; gap:10px 14px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  color:var(--ink-soft);
+}
+.legend .sw{
+  display:inline-block; width:10px; height:10px;
+  border-radius:50%;
+  margin-right:4px; vertical-align:middle;
+}
+
+/* concept map */
+.map-wrap{
+  margin:20px 0 12px;
+  background:rgba(255,255,255,.3);
+  border:1px solid var(--rule);
+  padding:12px;
+  border-radius:2px;
+}
+.map-wrap svg{ display:block; width:100%; height:auto; }
+
+/* footer */
+footer.foot{
+  margin-top:60px;
+  padding-top:22px;
+  border-top:1px solid var(--rule);
+  text-align:center;
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--rule-strong);
+}
+footer.foot .glyph{ color:var(--burgundy); margin:0 8px; }
+
+/* scrollbar slight tone */
+::selection{ background:var(--highlight); color:var(--ink); }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="masthead">
+  <div class="eyebrow"><span class="tag">INSAT · GL2 · Analyse à plusieurs variables</span></div>
+  <h1 class="title"><em>Analyse à</em> <span class="accent">plusieurs</span> <em>variables</em></h1>
+  <div class="subtitle"><em>fiche de révision interactive — chapitres, méthodes, synthèse</em></div>
+  <div class="byline">topologie · différentielles · taylor · extrema</div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="ch1"><span class="num">I</span>Topologie</button>
+  <button class="tab-btn" data-tab="ch2"><span class="num">II</span>Différentielles</button>
+  <button class="tab-btn" data-tab="ch3"><span class="num">III</span>Taylor & Extrema</button>
+  <button class="tab-btn" data-tab="meth"><span class="num">M</span>Méthodes</button>
+  <button class="tab-btn" data-tab="synt"><span class="num">S</span>Synthèse</button>
+</nav>
+
+<!-- ============================================================ -->
+<!-- CHAPITRE I -->
+<!-- ============================================================ -->
+<section class="panel active" id="ch1">
+
+  <div class="chapter-head">
+    <span class="ch-num">Chapitre I</span>
+    <h2><em>Espaces normés &amp; topologie de </em>$\mathbb{R}^m$</h2>
+  </div>
+  <p class="chapter-sub"><em>Le langage de base : normes, distances, boules, ouverts, fermés, compacts.
+  C'est l'alphabet sans lequel la différentiabilité du chapitre suivant n'aurait aucun sens.</em></p>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 1.1</span><h3>Norme sur un espace vectoriel</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Norme</span>
+      Soit $E$ un $\mathbb{R}$- ou $\mathbb{C}$-espace vectoriel. Une application
+      $N : E \to [0,+\infty[$, $x \mapsto \|x\|_E$ est une <em>norme</em> si :
+      <ul class="bullets">
+        <li>$\mathbf{P_1}$ &nbsp; $\forall x \in E,\ \|x\| \geq 0$ et $\|x\| = 0 \iff x = 0_E$ &nbsp;<em>(séparation)</em></li>
+        <li>$\mathbf{P_2}$ &nbsp; $\forall x \in E,\ \forall \lambda \in \mathbb{R},\ \|\lambda x\| = |\lambda|\,\|x\|$ &nbsp;<em>(homogénéité)</em></li>
+        <li>$\mathbf{P_3}$ &nbsp; $\forall x,y \in E,\ \|x+y\| \leq \|x\| + \|y\|$ &nbsp;<em>(inégalité triangulaire)</em></li>
+      </ul>
+      Le couple $(E, \|\cdot\|_E)$ est appelé <em>espace vectoriel normé</em>.
+    </div>
+
+    <div class="box prop">
+      <span class="lbl">Propriété</span>
+      <span class="ttl">Seconde inégalité triangulaire</span>
+      $\displaystyle \forall x,y \in E,\quad \bigl|\,\|x\| - \|y\|\,\bigr| \leq \|x - y\|$
+    </div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Normes usuelles sur $\mathbb{R}^m$</span>
+      Pour $x = (x_1, \dots, x_m) \in \mathbb{R}^m$ :
+      $$\|x\|_1 = \sum_{i=1}^{m} |x_i|, \qquad \|x\|_2 = \sqrt{\sum_{i=1}^{m} x_i^2}, \qquad \|x\|_\infty = \sup_{1 \le i \le m} |x_i|$$
+      $\|\cdot\|_2$ est appelée <em>norme euclidienne</em>.
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 1.2</span><h3>Distance &amp; normes équivalentes</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Distance associée</span>
+      $d : E \times E \to [0,+\infty[$, $\ (x,y) \mapsto \|x - y\|$ vérifie :
+      <ul class="bullets">
+        <li>$d(x,y) = d(y,x)$</li>
+        <li>$d(x,y) = 0 \iff x = y$</li>
+        <li>$d(x,z) \leq d(x,y) + d(y,z)$ &nbsp;<em>(inégalité triangulaire)</em></li>
+      </ul>
+      $E$ devient alors un <em>espace métrique</em>. La <em>distance d'un point à une partie</em>
+      $A \subset E$, $A \ne \varnothing$, est $d(x, A) = \inf\{\,\|x-y\| : y \in A\,\}$ ;
+      $x \in A \Rightarrow d(x,A) = 0$.
+    </div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Normes équivalentes</span>
+      $N_1$ et $N_2$ sur $E$ sont <em>équivalentes</em> s'il existe $\alpha, \beta \in \mathbb{R}_+^*$ tels que
+      $$\alpha\,\|x\|_2 \leq \|x\|_1 \leq \beta\,\|x\|_2 \quad \forall x \in E.$$
+    </div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Équivalence en dimension finie</span>
+      Dans $\mathbb{R}^m$, <strong>toutes les normes sont équivalentes</strong>.
+      <div style="margin-top:6px;font-size:14.5px;color:var(--ink-soft);">
+        <em>Conséquence cruciale&nbsp;:</em> la convergence, la continuité, l'ouverture/fermeture
+        et la différentiabilité ne dépendent pas de la norme choisie.
+      </div>
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 1.3</span><h3>Suites convergentes dans $\mathbb{R}^p$</h3></div>
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Convergence d'une suite</span>
+      Soit $(x_n)_n \subset \mathbb{R}^p$ avec $x_n = (x_n^1, \dots, x_n^p)$ et $\ell = (\ell^1, \dots, \ell^p)$.
+      $$\lim_{n\to+\infty} x_n = \ell \iff \forall \varepsilon > 0,\ \exists N > 0\, /\ \forall n \geq N,\ \|x_n - \ell\| < \varepsilon$$
+    </div>
+    <div class="box prop">
+      <span class="lbl">Proposition</span>
+      <span class="ttl">Convergence coordonnée par coordonnée</span>
+      En choisissant $\|\cdot\|_\infty$ :
+      $$\lim_{n\to+\infty} x_n = \ell \iff \forall i \in \{1,\dots,p\},\ \lim_{n\to+\infty} x_n^i = \ell^i$$
+      C'est une conséquence directe de l'équivalence des normes.
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 1.4</span><h3>Boules, ouverts, fermés</h3></div>
+
+    <div class="two">
+      <div class="box def">
+        <span class="lbl">Définition</span>
+        <span class="ttl">Boules &amp; sphère</span>
+        Pour $a \in \mathbb{R}^m$ et $r > 0$ :
+        <ul class="bullets">
+          <li>$B_o(a,r) = \{\,x \in \mathbb{R}^m : \|x - a\| < r\,\}$ &nbsp;<em>boule ouverte</em></li>
+          <li>$B_f(a,r) = \{\,x \in \mathbb{R}^m : \|x - a\| \leq r\,\}$ &nbsp;<em>boule fermée</em></li>
+          <li>$S(a,r) = \{\,x \in \mathbb{R}^m : \|x - a\| = r\,\}$ &nbsp;<em>sphère</em></li>
+        </ul>
+        $B_f(a,r) = B_o(a,r) \cup S(a,r)$.
+      </div>
+
+      <div class="box def">
+        <span class="lbl">Définition</span>
+        <span class="ttl">Ouvert de $\mathbb{R}^m$</span>
+        $U \subset \mathbb{R}^m$ est un <em>ouvert</em> si
+        $$\forall x \in U,\ \exists \varepsilon > 0\ /\ B_o(x, \varepsilon) \subset U.$$
+        $F \subset \mathbb{R}^m$ est un <em>fermé</em> si son complémentaire est ouvert.
+      </div>
+    </div>
+
+    <div class="viz" id="vizBalls">
+      <header>
+        <span class="vtag">Viz · §1.4 · interactif</span>
+        <h4><em>Boule ouverte, boule fermée, sphère</em></h4>
+      </header>
+      <div class="body">
+        <div class="stage">
+          <svg viewBox="0 0 420 320" id="ballSvg" aria-label="Topologie R²">
+            <defs>
+              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(31,26,20,0.06)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="420" height="320" fill="url(#grid)"/>
+            <line x1="10" y1="160" x2="410" y2="160" stroke="rgba(31,26,20,0.18)" stroke-width="1"/>
+            <line x1="210" y1="10" x2="210" y2="310" stroke="rgba(31,26,20,0.18)" stroke-width="1"/>
+            <text x="412" y="158" font-family="JetBrains Mono" font-size="10" fill="#3A322A" text-anchor="end">x₁</text>
+            <text x="214" y="14" font-family="JetBrains Mono" font-size="10" fill="#3A322A">x₂</text>
+
+            <circle id="ball" cx="210" cy="160" r="70"
+              fill="rgba(44,86,100,0.16)" stroke="#2C5664" stroke-width="2"
+              stroke-dasharray="0"/>
+            <circle id="sphereLine" cx="210" cy="160" r="70"
+              fill="none" stroke="#7B2D26" stroke-width="2.4" stroke-dasharray="6 4" style="display:none;"/>
+            <line id="radiusLine" x1="210" y1="160" x2="280" y2="160"
+              stroke="#B8924A" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text id="radiusLbl" x="245" y="155" font-family="JetBrains Mono" font-size="11" fill="#7B2D26">r</text>
+
+            <circle id="centerPt" cx="210" cy="160" r="5" fill="#1F1A14" stroke="#F4EFE4" stroke-width="1.5" style="cursor:grab;"/>
+            <text id="centerLbl" x="218" y="155" font-family="Instrument Serif" font-size="16" font-style="italic" fill="#1F1A14">a</text>
+
+            <circle id="testPt" cx="310" cy="120" r="5.5" fill="#B8924A" stroke="#F4EFE4" stroke-width="1.5" style="cursor:grab;"/>
+            <text id="testLbl" x="318" y="118" font-family="Instrument Serif" font-size="16" font-style="italic" fill="#7B2D26">x</text>
+          </svg>
+        </div>
+        <div class="side">
+          <div class="controls">
+            <div class="ctrl">
+              <label>Rayon&nbsp;r <span class="val" id="rVal">70</span></label>
+              <input type="range" id="rSlide" min="10" max="140" step="1" value="70" />
+            </div>
+            <div class="btn-row">
+              <button class="btn on" data-mode="open">$B_o(a,r)$</button>
+              <button class="btn" data-mode="closed">$B_f(a,r)$</button>
+              <button class="btn" data-mode="sphere">$S(a,r)$</button>
+            </div>
+          </div>
+          <div class="readout" id="ballRead">
+            <span class="k">‖x − a‖ =</span> <span class="v" id="distVal">—</span><br>
+            <span class="k">verdict :</span> <span class="v" id="ballVerdict">—</span>
+          </div>
+          <div class="legend">
+            <span><span class="sw" style="background:#1F1A14"></span>centre a (draggable)</span>
+            <span><span class="sw" style="background:#B8924A"></span>point x (draggable)</span>
+            <span><span class="sw" style="background:rgba(44,86,100,.4);border:1px solid #2C5664"></span>boule</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box prop">
+      <span class="lbl">Propriétés</span>
+      <span class="ttl">Stabilités des ouverts &amp; fermés</span>
+      <strong>Ouverts :</strong>
+      $\mathbf{P_1}$ &nbsp;$\varnothing$ et $\mathbb{R}^m$ sont ouverts.
+      $\mathbf{P_2}$ &nbsp;Union <em>quelconque</em> d'ouverts est ouverte.
+      $\mathbf{P_3}$ &nbsp;Intersection <em>finie</em> d'ouverts est ouverte.<br>
+      <strong>Fermés :</strong>
+      $\mathbf{P_1}$ &nbsp;$\varnothing$ et $\mathbb{R}^m$ sont fermés.
+      $\mathbf{P_2}$ &nbsp;Union <em>finie</em> de fermés est fermée.
+      $\mathbf{P_3}$ &nbsp;Intersection <em>quelconque</em> de fermés est fermée.
+    </div>
+
+    <div class="box warn">
+      <span class="lbl">⚠ Piège</span>
+      L'intersection <em>infinie</em> d'ouverts n'est pas toujours ouverte
+      ($\bigcap_n\, ]-1/n, 1/n[ = \{0\}$, fermé). De même, $[a,b[$ n'est <em>ni</em> ouvert <em>ni</em> fermé dans $\mathbb{R}$.
+      Tout singleton est fermé, toute sphère est fermée.
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 1.5</span><h3>Continuité des fonctions à plusieurs variables</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Continuité</span>
+      $f : D \subset \mathbb{R}^p \to \mathbb{R}^n$, $x \mapsto (f_1(x), \dots, f_n(x))$,
+      est continue en $x_0 \in D$ et $\lim_{x \to x_0} f(x) = f(x_0)$ si
+      $$\forall \varepsilon > 0,\ \exists \eta > 0\ /\ f(B_{\mathbb{R}^p}(x_0, \eta)) \subset B_{\mathbb{R}^n}(f(x_0), \varepsilon).$$
+      Définition indépendante des normes choisies.
+    </div>
+
+    <div class="box prop">
+      <span class="lbl">Caractérisations</span>
+      <span class="ttl">Outils pratiques</span>
+      <ul class="bullets">
+        <li>$f$ continue en $x_0 \iff \forall (x_n) \to x_0,\ f(x_n) \to f(x_0)$ &nbsp; (utile pour montrer la <em>non</em>-continuité).</li>
+        <li>$f : \mathbb{R}^p \to \mathbb{R}^n$ <em>linéaire</em> $\Rightarrow f$ continue sur $\mathbb{R}^p$.</li>
+        <li>Composée de continues est continue ; somme, produit, quotient (si non nul) de continues sont continus.</li>
+        <li>Toute fonction <em>polynômiale</em> à plusieurs variables est continue.</li>
+        <li>$f$ continue $\iff$ $f^{-1}(U)$ ouvert pour tout $U$ ouvert $\iff$ $f^{-1}(F)$ fermé pour tout $F$ fermé.</li>
+      </ul>
+    </div>
+
+    <div class="box tip">
+      <span class="lbl">✦ Astuce</span>
+      Pour montrer qu'une partie est <em>ouverte/fermée</em>, l'exprimer comme image réciproque d'un ouvert / fermé par une fonction continue.
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 1.6</span><h3>Bornés &amp; compacts</h3></div>
+
+    <div class="two">
+      <div class="box def">
+        <span class="lbl">Définition</span>
+        <span class="ttl">Borné</span>
+        $E \subset \mathbb{R}^m$ est <em>borné</em> si $\exists M > 0\ /\ \forall x \in E,\ \|x\| \leq M$,
+        soit $\exists M > 0\ /\ E \subset B_f(0_{\mathbb{R}^m}, M)$.
+      </div>
+      <div class="box def">
+        <span class="lbl">Définition</span>
+        <span class="ttl">Compact</span>
+        $K \subset \mathbb{R}^m$ est <em>compact</em> si $K$ est <strong>fermé borné</strong>
+        (équivalence valable seulement en dimension finie). Une réunion <em>finie</em> de compacts est compacte.
+      </div>
+    </div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Image continue d'un compact &amp; bornes atteintes</span>
+      <ul class="bullets">
+        <li>$f : D \subset \mathbb{R}^p \to \mathbb{R}^n$ continue, $K$ compact $\Rightarrow f(K)$ compact.</li>
+        <li>$f : A \subset \mathbb{R}^p \to \mathbb{R}$ continue, $A$ compact $\Rightarrow f$ <em>bornée</em> et <em>atteint ses bornes</em>.</li>
+      </ul>
+      <em>C'est ce théorème qui garantit l'existence d'extrema globaux sur un compact ; au chapitre&nbsp;III, on cherchera des extrema <em>locaux</em> sur un ouvert.</em>
+    </div>
+  </section>
+
+  <div class="divider">◆ &nbsp; ◆ &nbsp; ◆</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHAPITRE II -->
+<!-- ============================================================ -->
+<section class="panel" id="ch2">
+
+  <div class="chapter-head">
+    <span class="ch-num">Chapitre II</span>
+    <h2><em>Dérivées partielles &amp; </em><em style="color:var(--burgundy)">différentielle</em></h2>
+  </div>
+  <p class="chapter-sub"><em>Du calcul des dérivées coordonnée par coordonnée à la notion globale de différentielle —
+  l'objet linéaire qui approxime $f$ près de $a$.</em></p>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 2.1</span><h3>Dérivée partielle</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Dérivée partielle d'une fonction numérique</span>
+      $f : \Omega \subset \mathbb{R}^p \to \mathbb{R}$, $a = (a_1, \dots, a_p) \in \Omega$.
+      On fixe toutes les variables sauf la $i$-ème : $f_{a,i}(t) = f(a_1, \dots, a_{i-1}, t, a_{i+1}, \dots, a_p)$.
+      Si $f_{a,i}$ est dérivable en $a_i$ :
+      $$\frac{\partial f}{\partial x_i}(a) = \lim_{h \to 0} \frac{f(a + h\,e_i) - f(a)}{h}$$
+    </div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Fonction à valeurs vectorielles</span>
+      $f : \Omega \subset \mathbb{R}^p \to \mathbb{R}^n$, $f = (f_1, \dots, f_n)$. $f$ admet une dérivée partielle en $a$ par rapport à $x_i$ ssi chaque $f_j$ en admet une, et
+      $$\frac{\partial f}{\partial x_i}(a) = \left(\frac{\partial f_1}{\partial x_i}(a),\ \dots,\ \frac{\partial f_n}{\partial x_i}(a)\right).$$
+    </div>
+
+    <div class="box warn">
+      <span class="lbl">⚠ Piège majeur</span>
+      <strong>L'existence de toutes les dérivées partielles en un point n'entraîne pas la continuité de $f$ en ce point</strong>,
+      ni a fortiori sa différentiabilité. Apparu dans <span class="kw">TD2 ex. 4</span> et
+      <span class="kw">TD2 ex. 5</span>&nbsp;: contre-exemples classiques.
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 2.2</span><h3>Fonctions de classe $\mathcal{C}^1$, $\mathcal{C}^k$</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Classe $\mathcal{C}^1$ et $\mathcal{C}^k$</span>
+      $f$ est de classe $\mathcal{C}^1$ sur $\Omega$ (ou <em>continûment différentiable</em>) si toutes ses dérivées partielles
+      $\partial f / \partial x_i$ sont <em>définies et continues</em> sur $\Omega$. $f$ est de classe $\mathcal{C}^k$ si toutes ses
+      dérivées partielles d'ordre $k$ existent et sont continues. $\mathcal{C}^\infty$ si $\mathcal{C}^k\ \forall k$.
+    </div>
+
+    <div class="box prop">
+      <span class="lbl">Propriétés</span>
+      <span class="ttl">Sur $\mathcal{C}^1$</span>
+      <ul class="bullets">
+        <li>$f \in \mathcal{C}^1$ sur $\Omega$ $\iff$ $f_1, \dots, f_n \in \mathcal{C}^1$ sur $\Omega$.</li>
+        <li>$f \in \mathcal{C}^1 \Rightarrow f$ continue.</li>
+        <li>Si $f, g \in \mathcal{C}^1$ : $\lambda f + \beta g$, $f \times g$, $f \circ g$, $f/g$ (si $g \ne 0$) sont $\mathcal{C}^1$ sur leur domaine.</li>
+        <li><strong>$f \in \mathcal{C}^1$ sur $\Omega \Rightarrow f$ différentiable sur $\Omega$.</strong> &nbsp;<em>(implication clé)</em></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 2.3</span><h3>Dérivées partielles d'ordre supérieur — Théorème de Schwarz</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Dérivée partielle d'ordre $k$</span>
+      Une dérivée partielle peut elle-même admettre des dérivées partielles, d'où la notation
+      $$\frac{\partial^2 f}{\partial x_i\, \partial x_j} = \frac{\partial}{\partial x_j}\!\left(\frac{\partial f}{\partial x_i}\right),\qquad
+      \frac{\partial^k f}{\partial x_{i_1}\, \partial x_{i_2} \cdots \partial x_{i_k}}.$$
+      Une fonction à $p$ variables admet $p^k$ dérivées partielles d'ordre $k$.
+    </div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Schwarz</span>
+      Si $f : \Omega \subset \mathbb{R}^2 \to \mathbb{R}$ admet des dérivées secondes croisées
+      $\partial^2 f / \partial x \partial y$ et $\partial^2 f / \partial y \partial x$
+      <strong>continues</strong> en $a$, alors
+      $$\frac{\partial^2 f}{\partial x\, \partial y}(a) = \frac{\partial^2 f}{\partial y\, \partial x}(a).$$
+      <em>Conséquence</em>&nbsp;: $f \in \mathcal{C}^2 \Rightarrow $ toutes les dérivées secondes croisées coïncident.
+    </div>
+
+    <div class="box thm">
+      <span class="lbl">Contraposée (clé pour TD)</span>
+      <span class="ttl">Schwarz à l'envers</span>
+      Si pour un $a$, $\dfrac{\partial^2 f}{\partial x\, \partial y}(a) \neq \dfrac{\partial^2 f}{\partial y\, \partial x}(a)$,
+      <strong>alors l'une au moins de ces dérivées secondes n'est pas continue en $a$</strong>, donc $f$ n'est pas $\mathcal{C}^2$.
+      <div style="margin-top:6px;font-size:13.5px;color:var(--ink-soft);">
+        Stratégie reine de <span class="kw">TD2 ex.3</span> question 3.
+      </div>
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 2.4</span><h3>Différentielle</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Différentiabilité en un point</span>
+      $\Omega$ ouvert de $\mathbb{R}^p$, $a \in \Omega$, $f : \Omega \to \mathbb{R}^n$.
+      $f$ est <em>différentiable en $a$</em> s'il existe une application linéaire continue <em>unique</em>
+      $\mathrm{d}_a f : \mathbb{R}^p \to \mathbb{R}^n$ telle que
+      $$\lim_{h \to 0_{\mathbb{R}^p}} \frac{f(a+h) - f(a) - \mathrm{d}_a f(h)}{\|h\|} = 0$$
+      ou de façon équivalente $f(a+h) = f(a) + \mathrm{d}_a f(h) + \|h\|\,\varepsilon(h)$ avec $\varepsilon(h) \xrightarrow[h \to 0]{} 0$.
+    </div>
+
+    <div class="box prop">
+      <span class="lbl">Propriétés</span>
+      <span class="ttl">Conséquences immédiates</span>
+      <ul class="bullets">
+        <li>$\mathrm{d}_a f$ est <em>unique</em> et linéaire continue ; définition <em>indépendante</em> de la norme choisie.</li>
+        <li>$f$ différentiable en $a$ $\Rightarrow$ $f$ continue en $a$.</li>
+        <li>$f$ différentiable en $a$ $\Rightarrow$ toutes les dérivées partielles existent en $a$ et
+          $$\mathrm{d}_a f(h) = \sum_{i=1}^{p} h_i \frac{\partial f}{\partial x_i}(a).$$
+          <em>(condition nécessaire mais non suffisante)</em>
+        </li>
+        <li><strong>$f \in \mathcal{C}^1$ sur $\Omega \Rightarrow f$ différentiable sur $\Omega$.</strong> &nbsp;<em>(implication clé)</em></li>
+        <li>Pour $f$ numérique : $\mathrm{d} f = \dfrac{\partial f}{\partial x}\,\mathrm{d}x + \dfrac{\partial f}{\partial y}\,\mathrm{d}y$.</li>
+      </ul>
+    </div>
+
+    <div class="box rem">
+      <span class="lbl">Remarque</span>
+      <span class="ttl">Approximation linéaire — plan tangent</span>
+      Pour $f : \mathbb{R}^2 \to \mathbb{R}$ de classe $\mathcal{C}^1$, près de $a = (a_1, a_2)$ :
+      $$z = f(x,y) \approx f(a_1, a_2) + \frac{\partial f}{\partial x}(a)(x - a_1) + \frac{\partial f}{\partial y}(a)(y - a_2)$$
+      est l'<em>équation du plan tangent</em> à la surface $\{(x,y,z) : z = f(x,y)\}$ au point $(a_1, a_2, f(a_1, a_2))$.
+    </div>
+
+    <div class="box warn">
+      <span class="lbl">⚠ Hiérarchie</span>
+      $\mathcal{C}^1 \Rightarrow $ différentiable $\Rightarrow$ continue, et différentiable $\Rightarrow$ dérivées partielles existent.
+      <strong>Aucune des réciproques n'est vraie en général.</strong>
+      $f$ peut être différentiable sans être $\mathcal{C}^1$ (cf. <span class="kw">TD2 ex.4</span>).
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 2.5</span><h3>Matrice jacobienne &amp; gradient</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Matrice jacobienne</span>
+      Si $f : \Omega \subset \mathbb{R}^p \to \mathbb{R}^n$ différentiable en $a$, sa différentielle s'écrit matriciellement
+      $\mathrm{d}_a f(h) = J_f(a) \cdot h$ avec
+      $$J_f(a) = \begin{pmatrix}
+      \dfrac{\partial f_1}{\partial x_1}(a) & \cdots & \dfrac{\partial f_1}{\partial x_p}(a) \\[6pt]
+      \vdots & & \vdots \\[2pt]
+      \dfrac{\partial f_n}{\partial x_1}(a) & \cdots & \dfrac{\partial f_n}{\partial x_p}(a)
+      \end{pmatrix} \in \mathcal{M}_{n,p}(\mathbb{R}).$$
+      Cas particuliers :
+      <ul class="bullets">
+        <li>$n = p$&nbsp;: $\det J_f(a)$ est le <em>jacobien</em>.</li>
+        <li>$n = 1$ (fonction numérique)&nbsp;: $J_f(a) = (\partial f / \partial x_1, \dots, \partial f / \partial x_p)$, et
+          $^t J_f(a) = \nabla_a f$ (gradient).</li>
+        <li>$n = p = 1$&nbsp;: $J_f(a) = (f'(a))$.</li>
+        <li>$\mathrm{d}_a f(h) = \langle \nabla_a f,\, h \rangle$ pour $f$ numérique.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 2.6</span><h3>Opérations sur les différentielles</h3></div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Règles de calcul</span>
+      Si $f, g$ sont différentiables en $a$ :
+      <ul class="bullets">
+        <li><em>Linéarité</em>&nbsp;: $\mathrm{d}_a(\lambda f + \beta g) = \lambda\, \mathrm{d}_a f + \beta\, \mathrm{d}_a g$, &nbsp; $J_{\lambda f + \beta g}(a) = \lambda J_f(a) + \beta J_g(a)$.</li>
+        <li><em>Produit</em>&nbsp;: $\mathrm{d}_a(fg) = f(a)\,\mathrm{d}_a g + g(a)\,\mathrm{d}_a f$.</li>
+        <li><em>Inverse</em>&nbsp;: $\mathrm{d}_a(1/g) = -\dfrac{1}{g(a)^2}\,\mathrm{d}_a g$ (si $g(a) \ne 0$).</li>
+        <li><em>Composition</em>&nbsp;:
+          $\mathrm{d}_a (f \circ g) = \mathrm{d}_{g(a)} f \circ \mathrm{d}_a g$,
+          d'où la <strong>règle de chaîne matricielle</strong>&nbsp;:
+          $$J_{f \circ g}(a) = J_f(g(a)) \times J_g(a).$$
+        </li>
+      </ul>
+    </div>
+
+    <div class="box tip">
+      <span class="lbl">✦ Astuce TD</span>
+      Dans <span class="kw">TD3 ex.3</span>, on calcule $J_{g \circ f}(a)$ de deux manières&nbsp;:
+      <em>(i)</em> en explicitant $g \circ f$ puis en dérivant, <em>(ii)</em> en multipliant les jacobiennes.
+      Les deux méthodes <strong>doivent donner exactement la même matrice</strong> — c'est un excellent contrôle.
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 2.7</span><h3>Difféomorphismes</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">$\mathcal{C}^1$-difféomorphisme</span>
+      $U, V$ ouverts de $\mathbb{R}^n$. $f : U \to V$ est un $\mathcal{C}^1$-difféomorphisme si&nbsp;:
+      <ol>
+        <li>$f$ réalise une bijection $U \to V$.</li>
+        <li>$f$ est $\mathcal{C}^1$ sur $U$.</li>
+        <li>$f^{-1}$ est $\mathcal{C}^1$ sur $V$.</li>
+      </ol>
+    </div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Caractérisation jacobienne</span>
+      Si $f$ est un $\mathcal{C}^1$-difféomorphisme, alors $\mathrm{d}_a f$ est bijective et
+      $$\left(\mathrm{d}_a f\right)^{-1} = \mathrm{d}_{f(a)} f^{-1},\qquad \left(J_f(a)\right)^{-1} = J_{f^{-1}}(f(a)).$$
+      <strong>Réciproquement</strong>&nbsp;: si $U$ ouvert de $\mathbb{R}^n$ et $f : U \to \mathbb{R}^n$ injective et $\mathcal{C}^1$, alors
+      $$\text{$f$ est un $\mathcal{C}^1$-difféomorphisme de $U$ sur $f(U)$} \iff \det J_f(a) \ne 0\ \forall a \in U.$$
+    </div>
+
+    <div class="box rem">
+      <span class="lbl">Remarque · TD3 ex.5</span>
+      C'est <em>via</em> un changement de variables (qui est un $\mathcal{C}^1$-difféomorphisme) que l'on transforme une EDP en une équation plus simple, parfois triviale ($\partial F/\partial u = 0$ ⇒ $F$ ne dépend que de $v$).
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 2.8</span><h3>Laplacien &amp; fonctions harmoniques</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Laplacien</span>
+      Pour $f : \Omega \subset \mathbb{R}^2 \to \mathbb{R}$ de classe $\mathcal{C}^2$&nbsp;:
+      $$\Delta f(x,y) = \frac{\partial^2 f}{\partial x^2}(x,y) + \frac{\partial^2 f}{\partial y^2}(x,y).$$
+      $f$ est <em>harmonique</em> si $\Delta f \equiv 0$. Une fonction harmonique sur un domaine compact atteint son min et son max <strong>sur le bord</strong> du domaine.
+    </div>
+  </section>
+
+  <div class="divider">◆ &nbsp; ◆ &nbsp; ◆</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHAPITRE III -->
+<!-- ============================================================ -->
+<section class="panel" id="ch3">
+
+  <div class="chapter-head">
+    <span class="ch-num">Chapitre III</span>
+    <h2><em>Taylor &amp; </em><em style="color:var(--burgundy)">extrema</em></h2>
+  </div>
+  <p class="chapter-sub"><em>Approximation polynomiale d'ordre 2 et classification des points critiques.
+  Le quadratique $Q_a f$ contient toute l'information : positif → minimum, négatif → maximum, indéfini → col.</em></p>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 3.1</span><h3>Formules de Taylor</h3></div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Taylor–Young à l'ordre 1</span>
+      $\Omega$ ouvert de $\mathbb{R}^p$, $f : \Omega \to \mathbb{R}$ différentiable, $a \in \Omega$. Alors
+      $$f(a + h) = f(a) + \mathrm{d}_a f(h) + \|h\|\,\varepsilon(h),\qquad \varepsilon(h) \xrightarrow[h \to 0]{} 0.$$
+    </div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Taylor–Young à l'ordre 2</span>
+      $f : \Omega \to \mathbb{R}$ de classe $\mathcal{C}^2$. Alors
+      $$f(a + h) = f(a) + \mathrm{d}_a f(h) + \tfrac{1}{2}\, Q_a f(h) + \|h\|^2\,\varepsilon(h),\qquad \varepsilon(h) \xrightarrow[h \to 0]{} 0$$
+      avec
+      $$\mathrm{d}_a f(h) = \sum_{i=1}^{p} h_i\,\frac{\partial f}{\partial x_i}(a),\qquad
+      Q_a f(h) = \sum_{i=1}^{p} h_i^2\,\frac{\partial^2 f}{\partial x_i^2}(a) + 2\!\!\sum_{1 \le i < j \le p}\!\! h_i h_j\,\frac{\partial^2 f}{\partial x_i\, \partial x_j}(a).$$
+    </div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Polynôme de Taylor d'ordre 2</span>
+      $$P_a(h) = f(a) + \mathrm{d}_a f(h) + \tfrac{1}{2}\, Q_a f(h).$$
+      $Q_a f$ est une <em>forme quadratique</em> sur $\mathbb{R}^p$ — un polynôme homogène de degré 2 à $p$ variables.
+    </div>
+
+    <div class="box rem">
+      <span class="lbl">Astuce polynomiale</span>
+      Si $f$ est un polynôme à $p$ variables et que tous ses termes sont de degré $\geq 3$, alors au voisinage de $0$&nbsp;: $f(h) = \|h\|^2\,\varepsilon(h)$. C'est exactement le résidu, et ça permet d'écrire $P_a$ directement par développement (méthode 2 de <span class="kw">TD4 ex.2</span>).
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 3.2</span><h3>Matrice Hessienne</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Matrice Hessienne</span>
+      $f : \Omega \subset \mathbb{R}^p \to \mathbb{R}$ admettant des dérivées partielles d'ordre 2&nbsp;:
+      $$H_a(f) = \left(\frac{\partial^2 f}{\partial x_i\, \partial x_j}(a)\right)_{1 \le i,j \le p}.$$
+      Si $f \in \mathcal{C}^2$, $H_a(f)$ est <em>symétrique</em> (par Schwarz), donc diagonalisable dans une base orthonormée.
+    </div>
+
+    <div class="box prop">
+      <span class="lbl">Lien Hessienne ↔ forme quadratique</span>
+      <span class="ttl">Cas $p = 2$&nbsp;: les coefficients $r, s, t$</span>
+      Pour $f : \Omega \subset \mathbb{R}^2 \to \mathbb{R}$ de classe $\mathcal{C}^2$, en $a = (a_1, a_2)$&nbsp;:
+      $$r = \frac{\partial^2 f}{\partial x^2}(a),\quad s = \frac{\partial^2 f}{\partial x\, \partial y}(a),\quad t = \frac{\partial^2 f}{\partial y^2}(a),\qquad
+      H_a(f) = \begin{pmatrix} r & s \\ s & t \end{pmatrix}.$$
+      $$Q_a f(h_1, h_2) = r\,h_1^2 + 2s\,h_1 h_2 + t\,h_2^2 = \langle h,\, H_a(f) \cdot h \rangle.$$
+      D'où
+      $$P_a(h) = f(a) + h_1 \tfrac{\partial f}{\partial x}(a) + h_2 \tfrac{\partial f}{\partial y}(a) + \tfrac{1}{2}\langle H_a(f) \cdot h,\, h \rangle.$$
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 3.3</span><h3>Points critiques &amp; extrema</h3></div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Point critique (ou stationnaire)</span>
+      $f : \Omega \to \mathbb{R}$ numérique de classe $\mathcal{C}^1$, $\Omega$ ouvert. $a \in \Omega$ est un <em>point critique</em> si
+      $\mathrm{d}_a f \equiv \tilde 0$, c.-à-d.
+      $$\frac{\partial f}{\partial x_i}(a) = 0 \quad \forall\, 1 \le i \le p.$$
+      Chercher les points critiques d'une fonction à $p$ variables, c'est résoudre un système de $p$ équations à $p$ inconnues, en général non linéaire.
+    </div>
+
+    <div class="box def">
+      <span class="lbl">Définition</span>
+      <span class="ttl">Extrema</span>
+      $\mathcal{U}$ ouvert de $\mathbb{R}^p$, $a \in \mathcal{U}$, $f : \mathcal{U} \to \mathbb{R}$.
+      <ul class="bullets">
+        <li>$f$ admet un <em>maximum</em> en $a$ si $\forall x \in \mathcal{U},\ f(x) \le f(a)$.</li>
+        <li>$f$ admet un <em>minimum</em> en $a$ si $\forall x \in \mathcal{U},\ f(x) \ge f(a)$.</li>
+        <li>$f$ admet un <em>max / min local</em> en $a$ si $\exists r > 0\ /\ \forall x \in \mathcal{U} \cap B(a, r),\ f(x) \le f(a)$ (resp. $\ge$).</li>
+        <li>$f$ admet un <em>extremum local</em> en $a$ si elle admet un max ou min local.</li>
+      </ul>
+    </div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Condition nécessaire (Fermat)</span>
+      Si $f : \mathcal{U} \to \mathbb{R}$ de classe $\mathcal{C}^1$ possède un <em>extremum local</em> en $a \in \mathcal{U}$ (ouvert),
+      <strong>alors $a$ est un point critique de $f$</strong>.
+      <div style="margin-top:6px;font-size:13.5px;color:var(--ink-soft);">
+        <em>Condition nécessaire mais non suffisante</em>&nbsp;: $(0,0)$ est point critique de $f(x,y) = x^2 - y^2$, mais c'est un col.
+      </div>
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 3.4</span><h3>Condition suffisante — cas général</h3></div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Nature via les valeurs propres</span>
+      $f : \mathcal{U} \subset \mathbb{R}^p \to \mathbb{R}$ de classe $\mathcal{C}^2$, $a \in \mathcal{U}$ <em>point critique</em>. Comme $\mathrm{d}_a f \equiv 0$&nbsp;:
+      $$f(a+h) - f(a) = \tfrac{1}{2}\langle H_a(f) \cdot h, h \rangle + \|h\|^2 \varepsilon(h).$$
+      Selon le signe de la forme quadratique $Q_a f$&nbsp;:
+      <ul class="bullets">
+        <li>Toutes les valeurs propres de $H_a(f)$ <strong>$> 0$</strong> $\Rightarrow Q_a f$ définie positive $\Rightarrow $ <strong>minimum local</strong> en $a$.</li>
+        <li>Toutes les valeurs propres <strong>$< 0$</strong> $\Rightarrow Q_a f$ définie négative $\Rightarrow $ <strong>maximum local</strong>.</li>
+        <li>Une valeur propre $> 0$ et une $< 0$ $\Rightarrow a$ <strong>n'est pas un extremum local</strong> (point col / selle).</li>
+        <li>Une valeur propre <em>nulle</em> et toutes les autres de même signe $\Rightarrow$ <strong>on ne peut rien conclure</strong> (cas dégénéré, étude à part).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="ssec">
+    <div class="ssec-head"><span class="ssec-num">§ 3.5</span><h3>Cas $p = 2$ : critère $s^2 - rt$</h3></div>
+
+    <div class="box thm">
+      <span class="lbl">Théorème</span>
+      <span class="ttl">Classification en dimension 2</span>
+      $f : \mathcal{U} \subset \mathbb{R}^2 \to \mathbb{R}$ de classe $\mathcal{C}^2$, $a$ point critique. Avec $r, s, t$ comme ci-dessus&nbsp;:
+      $$\Delta = s^2 - rt.$$
+      <table style="border-collapse:collapse;margin:8px 0 4px;font-size:14.5px;">
+        <tr><td style="padding:3px 14px 3px 0;"><strong>$\Delta < 0$ et $r > 0$</strong></td><td>minimum local en $a$</td></tr>
+        <tr><td style="padding:3px 14px 3px 0;"><strong>$\Delta < 0$ et $r < 0$</strong></td><td>maximum local en $a$</td></tr>
+        <tr><td style="padding:3px 14px 3px 0;"><strong>$\Delta > 0$</strong></td><td>point col (point selle) — ni max ni min</td></tr>
+        <tr><td style="padding:3px 14px 3px 0;"><strong>$\Delta = 0$</strong></td><td>cas dégénéré — on ne peut rien conclure</td></tr>
+      </table>
+      <em>Mémo&nbsp;:</em> $\Delta < 0 \iff \det H_a(f) > 0$ (les deux valeurs propres ont même signe, donné par celui de $r$).
+    </div>
+
+    <div class="viz" id="vizSrt">
+      <header>
+        <span class="vtag">Viz · §3.5 · interactif</span>
+        <h4><em>Classificateur de points critiques — critère $s^2 - rt$</em></h4>
+      </header>
+      <div class="body">
+        <div class="stage">
+          <svg viewBox="0 0 460 340" id="srtSvg" aria-label="Forme quadratique r,s,t">
+            <defs>
+              <pattern id="grid2" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(31,26,20,0.06)" stroke-width="1"/>
+              </pattern>
+              <radialGradient id="qfPos" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(44,86,100,.65)"/>
+                <stop offset="100%" stop-color="rgba(44,86,100,0)"/>
+              </radialGradient>
+              <radialGradient id="qfNeg" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(123,45,38,.65)"/>
+                <stop offset="100%" stop-color="rgba(123,45,38,0)"/>
+              </radialGradient>
+            </defs>
+            <rect width="460" height="340" fill="url(#grid2)"/>
+            <line x1="20" y1="170" x2="440" y2="170" stroke="rgba(31,26,20,0.18)"/>
+            <line x1="230" y1="20" x2="230" y2="320" stroke="rgba(31,26,20,0.18)"/>
+            <text x="442" y="168" font-family="JetBrains Mono" font-size="10" fill="#3A322A" text-anchor="end">h₁</text>
+            <text x="234" y="22" font-family="JetBrains Mono" font-size="10" fill="#3A322A">h₂</text>
+            <!-- iso-level curves of Q -->
+            <g id="isoCurves"></g>
+            <!-- the title above -->
+            <text x="230" y="335" font-family="JetBrains Mono" font-size="10" fill="#3A322A" text-anchor="middle">
+              lignes de niveau de Q(h) = r h₁² + 2s h₁h₂ + t h₂²
+            </text>
+          </svg>
+        </div>
+        <div class="side">
+          <div class="controls">
+            <div class="ctrl">
+              <label>r = ∂²f/∂x² <span class="val" id="rNum">2.0</span></label>
+              <input type="range" id="rIn" min="-3" max="3" step="0.1" value="2"/>
+            </div>
+            <div class="ctrl">
+              <label>s = ∂²f/∂x∂y <span class="val" id="sNum">0.0</span></label>
+              <input type="range" id="sIn" min="-3" max="3" step="0.1" value="0"/>
+            </div>
+            <div class="ctrl">
+              <label>t = ∂²f/∂y² <span class="val" id="tNum">2.0</span></label>
+              <input type="range" id="tIn" min="-3" max="3" step="0.1" value="2"/>
+            </div>
+            <div class="btn-row">
+              <button class="btn" id="preset1">min</button>
+              <button class="btn" id="preset2">max</button>
+              <button class="btn" id="preset3">col</button>
+              <button class="btn" id="preset4">dégénéré</button>
+            </div>
+          </div>
+          <div class="readout">
+            <span class="k">det H =</span> <span class="v" id="detV">—</span> &nbsp;
+            <span class="k">Δ = s²−rt =</span> <span class="v" id="discV">—</span><br>
+            <span class="k">λ₁, λ₂ =</span> <span class="v" id="eigV">—</span>
+          </div>
+          <div class="verdict" id="verdictV">—</div>
+          <div class="legend">
+            <span><span class="sw" style="background:rgba(44,86,100,.55)"></span>Q &gt; 0 (cuvette)</span>
+            <span><span class="sw" style="background:rgba(123,45,38,.55)"></span>Q &lt; 0 (dôme)</span>
+            <span><span class="sw" style="background:rgba(184,146,74,.55)"></span>Q indéfinie</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box tip">
+      <span class="lbl">✦ Astuce TD4</span>
+      Pour <span class="kw">TD4 ex.4</span> et l'exo similaire, calcul standard&nbsp;: <em>(i)</em> résoudre $\nabla f = 0$
+      pour trouver les points critiques, <em>(ii)</em> calculer $r, s, t$ en chaque point critique, <em>(iii)</em>
+      appliquer le tableau ci-dessus. Si $\Delta = 0$, passer aux <strong>directions particulières</strong>&nbsp;:
+      étudier $f(t,t)$ et $f(t,-t)$, ou $f(x_n, x_n)$ ; si la fonction change de signe arbitrairement près de $a$, ce n'est pas un extremum.
+    </div>
+
+    <div class="viz" id="vizTaylor">
+      <header>
+        <span class="vtag">Viz · §3.1 · interactif</span>
+        <h4><em>Polynôme de Taylor — ordres 0, 1, 2</em></h4>
+      </header>
+      <div class="body">
+        <div class="stage">
+          <svg viewBox="0 0 460 320" id="taylorSvg" aria-label="Polynôme de Taylor">
+            <defs>
+              <pattern id="grid3" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(31,26,20,0.06)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="460" height="320" fill="url(#grid3)"/>
+            <line x1="20" y1="200" x2="440" y2="200" stroke="rgba(31,26,20,0.22)"/>
+            <line x1="230" y1="20" x2="230" y2="300" stroke="rgba(31,26,20,0.22)"/>
+            <path id="fCurve" d="" fill="none" stroke="#1F1A14" stroke-width="2.2"/>
+            <path id="p0" d="" fill="none" stroke="#B8924A" stroke-width="1.7" stroke-dasharray="3 3"/>
+            <path id="p1" d="" fill="none" stroke="#2C5664" stroke-width="2" stroke-dasharray="6 3"/>
+            <path id="p2" d="" fill="none" stroke="#7B2D26" stroke-width="2.2"/>
+            <circle id="aPt" cx="230" cy="200" r="5" fill="#1F1A14" stroke="#F4EFE4" stroke-width="1.5" style="cursor:grab;"/>
+            <text id="aLbl" x="236" y="195" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#1F1A14">a</text>
+            <text x="442" y="198" font-family="JetBrains Mono" font-size="10" fill="#3A322A" text-anchor="end">x</text>
+            <text x="234" y="22" font-family="JetBrains Mono" font-size="10" fill="#3A322A">y</text>
+          </svg>
+        </div>
+        <div class="side">
+          <div class="controls">
+            <div class="ctrl">
+              <label>Fonction f</label>
+              <div class="btn-row" id="fnPicker">
+                <button class="btn on" data-fn="sin">sin x</button>
+                <button class="btn" data-fn="exp">eˣ⁻¹</button>
+                <button class="btn" data-fn="poly">x³−2x</button>
+                <button class="btn" data-fn="cos">cos x</button>
+              </div>
+            </div>
+            <div class="ctrl">
+              <label>Point a <span class="val" id="aNum">0.0</span></label>
+              <input type="range" id="aIn" min="-3" max="3" step="0.05" value="0"/>
+            </div>
+            <div class="ctrl">
+              <label>Ordres affichés</label>
+              <div class="btn-row" id="ordPicker">
+                <button class="btn on" data-ord="0">P₀</button>
+                <button class="btn on" data-ord="1">P₁</button>
+                <button class="btn on" data-ord="2">P₂</button>
+              </div>
+            </div>
+          </div>
+          <div class="readout">
+            <span class="k">f(a) =</span> <span class="v" id="faV">—</span><br>
+            <span class="k">f'(a) =</span> <span class="v" id="fpaV">—</span><br>
+            <span class="k">f''(a) =</span> <span class="v" id="fppaV">—</span><br>
+            <span class="k">P₂(x) =</span> <span class="v" id="p2V">—</span>
+          </div>
+          <div class="legend">
+            <span><span class="sw" style="background:#1F1A14"></span>f</span>
+            <span><span class="sw" style="background:#B8924A"></span>P₀ (constante)</span>
+            <span><span class="sw" style="background:#2C5664"></span>P₁ (tangente)</span>
+            <span><span class="sw" style="background:#7B2D26"></span>P₂ (parabole osculatrice)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">◆ &nbsp; ◆ &nbsp; ◆</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MÉTHODES -->
+<!-- ============================================================ -->
+<section class="panel" id="meth">
+
+  <div class="chapter-head">
+    <span class="ch-num">Cookbook · Méthodes</span>
+    <h2><em>Comment </em><em style="color:var(--burgundy)">répondre</em><em> aux questions des TDs</em></h2>
+  </div>
+  <p class="chapter-sub"><em>Un schéma directeur par type de question. Chaque carte renvoie aux exercices où le pattern apparaît.</em></p>
+
+  <div class="method-grid">
+
+    <!-- M.1 -->
+    <div class="method">
+      <span class="q">Q · 01</span>
+      <p class="question"><em>Comment calculer les dérivées partielles d'une fonction par morceaux en $(0,0)$&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Sur $\mathbb{R}^2 \setminus \{(0,0)\}$, $f$ est une fraction rationnelle / un produit-composé&nbsp;: dériver normalement par les règles usuelles.</li>
+        <li>En $(0,0)$, <strong>revenir à la définition par limite</strong>&nbsp;: $\dfrac{\partial f}{\partial x}(0,0) = \displaystyle\lim_{h \to 0} \dfrac{f(h, 0) - f(0,0)}{h}$.</li>
+        <li>De même pour $\partial f / \partial y$ en remplaçant $h, 0$ par $0, h$. Souvent la limite vaut $0$ car $f(h, 0) = 0$ par définition.</li>
+        <li>Conclure&nbsp;: $\partial f / \partial x$ et $\partial f / \partial y$ existent en $(0,0)$ et valent $\dots$</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span>Cette étape est le préalable obligatoire à toute étude de différentiabilité en $(0,0)$. Apparu dans <span class="kw">TD2 ex.3, 5, 6, 7, 8</span>.</div>
+    </div>
+
+    <!-- M.2 -->
+    <div class="method">
+      <span class="q">Q · 02</span>
+      <p class="question"><em>Comment montrer qu'une fonction est de classe $\mathcal{C}^1$ sur $\mathbb{R}^2$&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Sur $\mathbb{R}^2 \setminus \{(0,0)\}$&nbsp;: $\partial f / \partial x$ et $\partial f / \partial y$ sont continues comme produit / quotient / composée de fonctions continues (fraction rationnelle dont le dénominateur ne s'annule pas, etc.).</li>
+        <li>Calculer $\partial f / \partial x (0,0)$ et $\partial f / \partial y (0,0)$ par la définition (cf. Q.01).</li>
+        <li>Étudier la continuité de $\partial f / \partial x$ en $(0,0)$&nbsp;: majorer $|\partial f / \partial x (x,y)|$ par une expression tendant vers $0$ quand $(x,y) \to (0,0)$, typiquement $C\,\|(x,y)\|_2^\alpha$ avec $\alpha > 0$.</li>
+        <li>Utiliser $|x| \le \sqrt{x^2 + y^2}$ et $|y| \le \sqrt{x^2 + y^2}$ pour transformer les puissances de $x, y$ en puissances de la norme.</li>
+        <li>Conclure que $\lim_{(x,y) \to (0,0)} \partial f / \partial x (x,y) = 0 = \partial f / \partial x (0,0)$. Idem pour $y$. Donc $\partial f / \partial x, \partial f / \partial y$ sont continues en $(0,0)$, et $f \in \mathcal{C}^1$.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span>Cf. <span class="kw">TD2 ex.3 q.1</span> et <span class="kw">TD2 ex.8 q.4</span>. La majoration $|x|^a |y|^b \le (x^2+y^2)^{(a+b)/2}$ est ton meilleur ami.</div>
+    </div>
+
+    <!-- M.3 -->
+    <div class="method">
+      <span class="q">Q · 03</span>
+      <p class="question"><em>Comment montrer qu'une fonction n'est pas $\mathcal{C}^2$ via la contraposée de Schwarz&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Vérifier (ou supposer) que $f$ admet des dérivées secondes croisées en $a$.</li>
+        <li>Calculer $\dfrac{\partial^2 f}{\partial x \partial y}(a)$ et $\dfrac{\partial^2 f}{\partial y \partial x}(a)$ <em>par la définition</em> à partir des $\partial f / \partial x$, $\partial f / \partial y$ déjà calculées&nbsp;:
+        $\dfrac{\partial^2 f}{\partial y \partial x}(0,0) = \displaystyle\lim_{h \to 0} \dfrac{\partial f / \partial x (0, h) - \partial f / \partial x (0,0)}{h}$.</li>
+        <li>Si les deux valeurs <strong>diffèrent</strong>, conclure par la contraposée de Schwarz&nbsp;: <em>au moins l'une</em> de ces dérivées n'est pas continue en $a$, donc $f \notin \mathcal{C}^2$.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span><span class="kw">TD2 ex.3 q.3</span>&nbsp;: $\partial^2 f / \partial x \partial y (0,0) = 1$ vs $\partial^2 f / \partial y \partial x (0,0) = -1$ ⇒ $f$ pas $\mathcal{C}^2$, alors qu'elle est $\mathcal{C}^1$.</div>
+    </div>
+
+    <!-- M.4 -->
+    <div class="method">
+      <span class="q">Q · 04</span>
+      <p class="question"><em>Comment montrer qu'une fonction est différentiable en $(0,0)$&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Vérifier d'abord que $\partial f / \partial x (0,0)$ et $\partial f / \partial y (0,0)$ existent (cf. Q.01). Le plus souvent elles valent $0$ ; alors si $f$ est différentiable en $(0,0)$, on aura $\mathrm{d}_{(0,0)} f \equiv \tilde 0$.</li>
+        <li>Poser $\varepsilon(h) = \dfrac{f(h) - f(0) - \mathrm{d}_{(0,0)} f(h)}{\|h\|}$ et étudier sa limite quand $h \to 0$.</li>
+        <li>Majorer $|\varepsilon(h)|$ par une expression $\to 0$, en utilisant&nbsp;: $|x|, |y| \le \|h\|_2$, développements limités usuels ($e^u = 1 + u + u^2/2 + \dots$, $\sin u \approx u$), inégalités triangulaires.</li>
+        <li>Si $\lim_{h \to 0} \varepsilon(h) = 0$, conclure&nbsp;: $f$ est différentiable en $(0,0)$ et $\mathrm{d}_{(0,0)} f = $ la fonction trouvée à l'étape 1.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span>Patron type de <span class="kw">TD2 ex.4, 6, 8</span>. Pour $\frac{1-e^{xy} + xy}{x^2 + y^2}$, utiliser $\frac{1 + u - e^u}{u^2} \to -\frac{1}{2}$ quand $u \to 0$.</div>
+    </div>
+
+    <!-- M.5 -->
+    <div class="method">
+      <span class="q">Q · 05</span>
+      <p class="question"><em>Comment montrer qu'une fonction <strong>n'est pas</strong> différentiable en $(0,0)$&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Calculer $\partial f / \partial x (0,0)$ et $\partial f / \partial y (0,0)$ par définition (Q.01).</li>
+        <li>Supposer par l'absurde que $f$ est différentiable&nbsp;: alors $\mathrm{d}_{(0,0)} f(h) = h_1 \cdot \partial f / \partial x (0,0) + h_2 \cdot \partial f / \partial y (0,0)$ <strong>est déterminée</strong>.</li>
+        <li>Calculer $\varepsilon(h) = \dfrac{f(h) - f(0) - \mathrm{d}_{(0,0)} f(h)}{\|h\|}$ et chercher une direction particulière où la limite est non nulle&nbsp;: typiquement $h_1 = h_2 = t$, ou $h_1 = t,\, h_2 = t^k$.</li>
+        <li>Trouver une suite $h_n \to 0$ avec $\varepsilon(h_n) \not\to 0$&nbsp;: contradiction avec la différentiabilité.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span><span class="kw">TD2 ex.5</span> et <span class="kw">ex.7</span>&nbsp;: pour $f(x,y) = \frac{xy}{\sqrt{x^2+y^2}}$, prendre $h_1 = h_2$ donne $\varepsilon = 1/2 \ne 0$.</div>
+    </div>
+
+    <!-- M.6 -->
+    <div class="method">
+      <span class="q">Q · 06</span>
+      <p class="question"><em>Comment calculer la matrice jacobienne d'une composée $g \circ f$ en $a$&nbsp;?</em></p>
+      <ol class="steps">
+        <li><strong>Méthode 1 — directe</strong>&nbsp;: expliciter $g \circ f$ (par substitution des coordonnées), puis calculer les dérivées partielles de chaque composante.</li>
+        <li><strong>Méthode 2 — règle de chaîne</strong>&nbsp;: $J_{g \circ f}(a) = J_g(f(a)) \times J_f(a)$. Calculer $b = f(a)$, puis les jacobiennes individuelles, et multiplier (attention à l'ordre&nbsp;!).</li>
+        <li>Vérifier la <strong>compatibilité dimensionnelle</strong>&nbsp;: si $f : \mathbb{R}^p \to \mathbb{R}^n$ et $g : \mathbb{R}^n \to \mathbb{R}^q$, alors $J_g(b) \in \mathcal{M}_{q,n}$, $J_f(a) \in \mathcal{M}_{n,p}$, le produit est dans $\mathcal{M}_{q,p}$.</li>
+        <li>Les deux méthodes doivent donner exactement la même matrice — outil de vérification idéal.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span><span class="kw">TD3 ex.3</span> demande explicitement les deux méthodes. Bonne occasion d'éviter les erreurs de calcul.</div>
+    </div>
+
+    <!-- M.7 -->
+    <div class="method">
+      <span class="q">Q · 07</span>
+      <p class="question"><em>Comment résoudre une EDP par changement de variables&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Identifier le difféomorphisme $\varphi : (u,v) \mapsto (x,y)$ suggéré (linéaire, polaire, $(u, v/u)$…).</li>
+        <li>Poser $F = f \circ \varphi$ ; appliquer la règle de chaîne&nbsp;: $(\partial F / \partial u,\ \partial F / \partial v) = (\partial f / \partial x,\ \partial f / \partial y) \cdot J_\varphi$.</li>
+        <li>Exprimer $\partial f / \partial x$ et $\partial f / \partial y$ en fonction de $\partial F / \partial u$ et $\partial F / \partial v$ — résoudre le petit système 2×2.</li>
+        <li>Réinjecter dans l'EDP de départ&nbsp;: elle se réduit le plus souvent à $\partial F / \partial u = 0$ (ou similaire), donc $F(u,v) = \psi(v)$.</li>
+        <li>Remonter à $f$ via $f(x,y) = F(\varphi^{-1}(x,y))$. Conclure&nbsp;: $f(x,y) = \psi(\text{combinaison de } x, y)$.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span><span class="kw">TD3 ex.5</span>&nbsp;: l'EDP $\partial f / \partial x - 3 \partial f / \partial y = 0$ avec $u = x,\ v = 3x + y$ ⇒ $f(x,y) = \psi(3x + y)$. Pour le passage en polaires, on note $F(r, \theta) = f(r\cos\theta, r\sin\theta)$ ; l'opérateur $x \partial_y - y \partial_x$ devient $\partial_\theta$.</div>
+    </div>
+
+    <!-- M.8 -->
+    <div class="method">
+      <span class="q">Q · 08</span>
+      <p class="question"><em>Comment calculer le polynôme de Taylor d'ordre 2 en $a$&nbsp;?</em></p>
+      <ol class="steps">
+        <li><strong>Méthode 1 — formule</strong>&nbsp;: calculer $f(a)$, toutes les $\partial f / \partial x_i (a)$, toutes les $\partial^2 f / \partial x_i \partial x_j (a)$. Assembler&nbsp;:
+        $P_a(h) = f(a) + \sum h_i\, \partial f / \partial x_i (a) + \frac{1}{2}\left(\sum h_i^2\, \partial^2 f / \partial x_i^2 + 2 \sum_{i<j} h_i h_j\, \partial^2 f / \partial x_i \partial x_j\right)$.</li>
+        <li><strong>Méthode 2 — pour les polynômes</strong>&nbsp;: si $f$ est un polynôme de degré $\le 3$, écrire directement $f(a+h)$ par développement, puis identifier les termes de degré $\le 2$&nbsp;: ils forment $P_a(h)$. Les termes de degré $\ge 3$ sont absorbés dans $\|h\|^2 \varepsilon(h)$.</li>
+        <li>Vérifier la cohérence&nbsp;: $P_a(0) = f(a)$, $\nabla P_a (0) = \nabla f(a)$, Hessienne de $P_a$ en $0$ = Hessienne de $f$ en $a$.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span><span class="kw">TD4 ex.1 &amp; ex.2</span>&nbsp;: pour $f(x,y) = e^x \sin(x+y)$ au point $(0, \pi/2)$, la méthode 1 est obligatoire. Pour $f$ polynôme de degré 3 en $(1, 0, -1)$, la méthode 2 est plus rapide.</div>
+    </div>
+
+    <!-- M.9 -->
+    <div class="method">
+      <span class="q">Q · 09</span>
+      <p class="question"><em>Comment trouver les points critiques d'une fonction&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Calculer le système $\nabla f = 0$, soit $\partial f / \partial x = 0$ et $\partial f / \partial y = 0$ (en $\mathbb{R}^2$).</li>
+        <li>Factoriser&nbsp;: souvent l'une des équations donne une <em>relation</em> entre $x$ et $y$ (ex&nbsp;: $y(x-y)(x+y) = 0$ ⇒ $y = 0$, $y = x$, ou $y = -x$).</li>
+        <li>Substituer chaque cas dans l'autre équation et résoudre. Énumérer tous les points $(x, y)$ obtenus.</li>
+        <li>Vérifier qu'aucun n'est exclu par le domaine $\Omega$.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span><span class="kw">TD4 ex.3</span>&nbsp;: $f(x,y) = x^4 + 14 x^2 y^2 - 7y^4 - 4x + 6$ donne 3 points critiques $(1,0)$, $(1/2, 1/2)$, $(1/2, -1/2)$.</div>
+    </div>
+
+    <!-- M.10 -->
+    <div class="method">
+      <span class="q">Q · 10</span>
+      <p class="question"><em>Comment classer un point critique en dimension 2 (max / min / col)&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Calculer $r = \partial^2 f / \partial x^2$, $s = \partial^2 f / \partial x \partial y$, $t = \partial^2 f / \partial y^2$ <strong>au point critique $a$</strong> (pas en général).</li>
+        <li>Calculer $\Delta = s^2 - rt$.</li>
+        <li>Conclure selon le tableau&nbsp;: $\Delta < 0$ &amp; $r > 0$ → min ; $\Delta < 0$ &amp; $r < 0$ → max ; $\Delta > 0$ → col / selle ; $\Delta = 0$ → étude particulière (Q.11).</li>
+        <li>Pour les fonctions à plus de 2 variables, calculer les valeurs propres de $H_a(f)$ et appliquer le critère général (§3.4).</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span>Utiliser la visualisation interactive du chapitre III pour vérifier ton intuition. <span class="kw">TD4 ex.3, ex.4</span>.</div>
+    </div>
+
+    <!-- M.11 -->
+    <div class="method">
+      <span class="q">Q · 11</span>
+      <p class="question"><em>Comment conclure dans le cas dégénéré $s^2 - rt = 0$&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Le théorème ne s'applique pas&nbsp;: passer à l'<strong>étude directe</strong> du signe de $f(x) - f(a)$ près de $a$.</li>
+        <li>Tester des <strong>directions particulières</strong>&nbsp;: $f(t, t)$, $f(t, -t)$, $f(t, 0)$, ou $f(t, t^k)$. Si on trouve une direction où $f - f(a) > 0$ et une autre où $f - f(a) < 0$ <em>arbitrairement près</em> de $a$ ⇒ pas un extremum.</li>
+        <li>Sinon, essayer de minorer / majorer $f(x) - f(a)$ par une forme positive (ou négative) sur tout un voisinage&nbsp;: ça prouve un min (resp. max) local.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span><span class="kw">TD4 ex.4 q.2</span>&nbsp;: $f(x,y) = (x-y)^2 + x^3 + y^3$, point critique $(0,0)$, $\Delta = 0$. On évalue $f(x, x) = 2x^3$ qui change de signe en $0$ ⇒ pas d'extremum.</div>
+    </div>
+
+    <!-- M.12 -->
+    <div class="method">
+      <span class="q">Q · 12</span>
+      <p class="question"><em>Comment montrer qu'une partie de $\mathbb{R}^p$ est ouverte / fermée&nbsp;?</em></p>
+      <ol class="steps">
+        <li>Identifier l'ensemble comme image réciproque d'un ouvert / fermé par une fonction <em>continue</em>.</li>
+        <li>Par exemple&nbsp;: $\{(x,y) : x^2 + y^2 < 1\} = \varphi^{-1}(]-\infty, 1[)$ avec $\varphi(x,y) = x^2 + y^2$ continue ; or $]-\infty, 1[$ est ouvert ⇒ l'ensemble est ouvert.</li>
+        <li>Si difficile, revenir à la définition&nbsp;: pour chaque $x$ de l'ensemble, exhiber un $\varepsilon > 0$ tel que $B(x, \varepsilon)$ y soit inclus (ouvert), ou montrer que le complémentaire est ouvert (fermé).</li>
+        <li>Mémoriser les exemples canoniques&nbsp;: $\varnothing$, $\mathbb{R}^p$, toute boule ouverte, toute union d'ouverts sont ouverts ; tout singleton, toute boule fermée, toute sphère, toute intersection de fermés sont fermés.</li>
+      </ol>
+      <div class="astuce"><span class="lab">✦ Astuce</span>Méthode de référence du chapitre I — sans calcul une fois l'image réciproque identifiée. Aussi utile pour montrer la <em>continuité</em> d'une fonction (caractérisation par images réciproques).</div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ &nbsp; ◆ &nbsp; ◆</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SYNTHÈSE -->
+<!-- ============================================================ -->
+<section class="panel" id="synt">
+
+  <div class="chapter-head">
+    <span class="ch-num">Synthèse</span>
+    <h2><em>Comment les </em><em style="color:var(--burgundy)">chapitres</em><em> se parlent</em></h2>
+  </div>
+  <p class="chapter-sub"><em>Le cours est une chaîne&nbsp;: topologie → différentielle → polynôme de Taylor → Hessienne → classification des extrema. Tout repose sur la même idée — approximer une fonction par sa partie linéaire ou quadratique près d'un point.</em></p>
+
+  <h3 style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:24px;margin:18px 0 4px;">Vue d'ensemble des chapitres</h3>
+  <div class="flow-grid">
+    <div class="chap-node">
+      <span class="roman">CH. I</span>
+      <h4>Topologie de $\mathbb{R}^m$</h4>
+      <div class="pills">
+        <span class="pill">norme</span><span class="pill">distance</span><span class="pill">boules</span>
+        <span class="pill">ouvert / fermé</span><span class="pill">suite</span>
+        <span class="pill">continuité</span><span class="pill">compact</span><span class="pill">bornes atteintes</span>
+      </div>
+    </div>
+    <div class="chap-node">
+      <span class="roman">CH. II</span>
+      <h4>Différentielles</h4>
+      <div class="pills">
+        <span class="pill">$\partial f / \partial x_i$</span><span class="pill">$\mathcal{C}^1$ / $\mathcal{C}^k$</span>
+        <span class="pill">Schwarz</span><span class="pill">$\mathrm{d}_a f$</span>
+        <span class="pill">jacobienne</span><span class="pill">gradient</span>
+        <span class="pill">chaîne</span><span class="pill">difféomorphisme</span>
+      </div>
+    </div>
+    <div class="chap-node">
+      <span class="roman">CH. III</span>
+      <h4>Taylor &amp; Extrema</h4>
+      <div class="pills">
+        <span class="pill">Taylor-Young</span><span class="pill">$P_a(h)$</span>
+        <span class="pill">Hessienne</span><span class="pill">point critique</span>
+        <span class="pill">$r, s, t$</span><span class="pill">$s^2 - rt$</span>
+        <span class="pill">min / max / col</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:24px;margin:18px 0 4px;">Quatre ponts</h3>
+  <div class="bridges">
+    <div class="bridge">
+      <span class="arc">Pont · I → II</span>
+      <em class="name">Continuité comme préalable</em>
+      La continuité (Ch.&nbsp;I) est <strong>nécessaire</strong> à la différentiabilité (Ch.&nbsp;II)&nbsp;:
+      $f$ différentiable en $a \Rightarrow f$ continue en $a$. La classe $\mathcal{C}^1$ est définie via la continuité des dérivées partielles.
+    </div>
+    <div class="bridge">
+      <span class="arc">Pont · II → III</span>
+      <em class="name">Différentielle première et seconde</em>
+      $\mathrm{d}_a f$ donne la partie linéaire de Taylor ; les dérivées secondes (Schwarz ⇒ Hessienne symétrique) donnent la forme quadratique $Q_a f$. Sans Ch.&nbsp;II, pas de polynôme de Taylor.
+    </div>
+    <div class="bridge">
+      <span class="arc">Pont · I → III</span>
+      <em class="name">Compacité &amp; existence d'extrema</em>
+      Le théorème «&nbsp;continue sur compact ⇒ bornée et atteint ses bornes&nbsp;» (Ch.&nbsp;I) garantit l'existence d'extrema globaux. Sur un ouvert, on cherche des extrema locaux via Taylor (Ch.&nbsp;III).
+    </div>
+    <div class="bridge">
+      <span class="arc">Pont · Schwarz → Hessienne</span>
+      <em class="name">Symétrie ⇒ diagonalisabilité</em>
+      Schwarz (Ch.&nbsp;II) ⇒ $H_a(f)$ symétrique ⇒ diagonalisable en base orthonormée ⇒ valeurs propres réelles ⇒ critère de classification des extrema (Ch.&nbsp;III).
+    </div>
+  </div>
+
+  <h3 style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:24px;margin:18px 0 4px;">Patterns d'exercices récurrents</h3>
+
+  <div class="pattern-card">
+    <span class="ptag">Pattern · A</span>
+    <span class="pname"><em>Étude d'une fonction par morceaux en $(0,0)$</em></span>
+    <div class="chain">
+      <span class="step">continuité en $(0,0)$</span><span class="arrow">→</span>
+      <span class="step">∂f/∂x, ∂f/∂y par définition</span><span class="arrow">→</span>
+      <span class="step">continuité des ∂f</span><span class="arrow">→</span>
+      <span class="step">classe $\mathcal{C}^1$ ?</span><span class="arrow">→</span>
+      <span class="step">différentiabilité (ε(h) → 0 ?)</span><span class="arrow">→</span>
+      <span class="step">dérivées secondes / Schwarz</span>
+    </div>
+    <div style="margin-top:6px;font-size:14px;color:var(--ink-soft);"><em>Présent dans</em>&nbsp;: <span class="kw">TD2 ex.3, 4, 5, 6, 7, 8</span> — c'est <strong>le</strong> pattern central du chapitre&nbsp;II.</div>
+  </div>
+
+  <div class="pattern-card">
+    <span class="ptag">Pattern · B</span>
+    <span class="pname"><em>Jacobienne d'une composée — deux méthodes</em></span>
+    <div class="chain">
+      <span class="step">expliciter $g \circ f$</span><span class="arrow">→</span>
+      <span class="step">calculer $J_{g\circ f}$ directement</span><span class="arrow">↔</span>
+      <span class="step">calculer $J_g(f(a))$, $J_f(a)$</span><span class="arrow">→</span>
+      <span class="step">multiplier (vérifier dimensions)</span>
+    </div>
+    <div style="margin-top:6px;font-size:14px;color:var(--ink-soft);"><em>Présent dans</em>&nbsp;: <span class="kw">TD3 ex.3, 4</span>.</div>
+  </div>
+
+  <div class="pattern-card">
+    <span class="ptag">Pattern · C</span>
+    <span class="pname"><em>Changement de variables pour résoudre une EDP</em></span>
+    <div class="chain">
+      <span class="step">choisir $\varphi$ ($\mathcal{C}^1$-difféo.)</span><span class="arrow">→</span>
+      <span class="step">poser $F = f \circ \varphi$</span><span class="arrow">→</span>
+      <span class="step">règle de chaîne</span><span class="arrow">→</span>
+      <span class="step">EDP devient $\partial F / \partial u = 0$</span><span class="arrow">→</span>
+      <span class="step">$F(u,v) = \psi(v)$</span><span class="arrow">→</span>
+      <span class="step">retour à $f$ via $\varphi^{-1}$</span>
+    </div>
+    <div style="margin-top:6px;font-size:14px;color:var(--ink-soft);"><em>Présent dans</em>&nbsp;: <span class="kw">TD3 ex.5, 6</span>.</div>
+  </div>
+
+  <div class="pattern-card">
+    <span class="ptag">Pattern · D</span>
+    <span class="pname"><em>Recherche et classification d'extrema</em></span>
+    <div class="chain">
+      <span class="step">$\nabla f = 0$ ⇒ points critiques</span><span class="arrow">→</span>
+      <span class="step">$r, s, t$ en chaque point</span><span class="arrow">→</span>
+      <span class="step">$\Delta = s^2 - rt$</span><span class="arrow">→</span>
+      <span class="step">tableau : min / max / col</span><span class="arrow">→</span>
+      <span class="step">si $\Delta = 0$ : directions particulières</span>
+    </div>
+    <div style="margin-top:6px;font-size:14px;color:var(--ink-soft);"><em>Présent dans</em>&nbsp;: <span class="kw">TD4 ex.3, 4</span>.</div>
+  </div>
+
+  <div class="pattern-card">
+    <span class="ptag">Pattern · E</span>
+    <span class="pname"><em>Polynôme de Taylor d'ordre 2 — deux méthodes</em></span>
+    <div class="chain">
+      <span class="step">méthode formule (générale)</span><span class="arrow">↔</span>
+      <span class="step">méthode polynôme (degré ≤ 3)</span><span class="arrow">→</span>
+      <span class="step">identifier termes de degré ≤ 2</span><span class="arrow">→</span>
+      <span class="step">le reste = $\|h\|^2 \varepsilon(h)$</span>
+    </div>
+    <div style="margin-top:6px;font-size:14px;color:var(--ink-soft);"><em>Présent dans</em>&nbsp;: <span class="kw">TD4 ex.1, 2</span>.</div>
+  </div>
+
+  <h3 style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:24px;margin:30px 0 4px;">Carte conceptuelle</h3>
+  <div class="map-wrap">
+    <svg viewBox="0 0 1000 460" id="conceptMap" aria-label="Carte conceptuelle">
+      <!-- nodes -->
+      <defs>
+        <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#7B2D26"/>
+        </marker>
+        <marker id="arrowGold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#B8924A"/>
+        </marker>
+      </defs>
+
+      <!-- background grid -->
+      <rect width="1000" height="460" fill="#FBF7EC"/>
+
+      <!-- arrows -->
+      <line x1="170" y1="100" x2="290" y2="100" stroke="#B8924A" stroke-width="1.8" marker-end="url(#arrowGold)"/>
+      <line x1="170" y1="220" x2="290" y2="220" stroke="#B8924A" stroke-width="1.8" marker-end="url(#arrowGold)"/>
+      <line x1="170" y1="340" x2="290" y2="340" stroke="#B8924A" stroke-width="1.8" marker-end="url(#arrowGold)"/>
+
+      <line x1="430" y1="100" x2="600" y2="100" stroke="#7B2D26" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <line x1="430" y1="220" x2="600" y2="220" stroke="#7B2D26" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <line x1="430" y1="340" x2="600" y2="340" stroke="#7B2D26" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+      <line x1="740" y1="100" x2="860" y2="220" stroke="#7B2D26" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <line x1="740" y1="220" x2="860" y2="220" stroke="#7B2D26" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <line x1="740" y1="340" x2="860" y2="220" stroke="#7B2D26" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+      <!-- nodes -->
+      <g>
+        <rect x="20" y="70" width="150" height="60" rx="3" fill="#fff" stroke="#2C5664" stroke-width="1.5"/>
+        <text x="95" y="95" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">norme, distance</text>
+        <text x="95" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#2C5664">Ch.I §1.1–1.2</text>
+      </g>
+      <g>
+        <rect x="20" y="190" width="150" height="60" rx="3" fill="#fff" stroke="#2C5664" stroke-width="1.5"/>
+        <text x="95" y="215" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">topologie de $\mathbb{R}^m$</text>
+        <text x="95" y="235" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#2C5664">Ch.I §1.4–1.5</text>
+      </g>
+      <g>
+        <rect x="20" y="310" width="150" height="60" rx="3" fill="#fff" stroke="#2C5664" stroke-width="1.5"/>
+        <text x="95" y="335" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">compacité</text>
+        <text x="95" y="355" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#2C5664">Ch.I §1.6</text>
+      </g>
+
+      <g>
+        <rect x="290" y="70" width="140" height="60" rx="3" fill="#fff" stroke="#B8924A" stroke-width="1.5"/>
+        <text x="360" y="95" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">∂f/∂x_i, classe $\mathcal{C}^1$</text>
+        <text x="360" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#B8924A">Ch.II §2.1–2.2</text>
+      </g>
+      <g>
+        <rect x="290" y="190" width="140" height="60" rx="3" fill="#fff" stroke="#B8924A" stroke-width="1.5"/>
+        <text x="360" y="215" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">différentielle $\mathrm{d}_a f$</text>
+        <text x="360" y="235" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#B8924A">Ch.II §2.4–2.5</text>
+      </g>
+      <g>
+        <rect x="290" y="310" width="140" height="60" rx="3" fill="#fff" stroke="#B8924A" stroke-width="1.5"/>
+        <text x="360" y="335" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">Schwarz, Hessienne</text>
+        <text x="360" y="355" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#B8924A">Ch.II §2.3 / Ch.III §3.2</text>
+      </g>
+
+      <g>
+        <rect x="600" y="70" width="140" height="60" rx="3" fill="#fff" stroke="#7B2D26" stroke-width="1.5"/>
+        <text x="670" y="95" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">polynôme Taylor</text>
+        <text x="670" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#7B2D26">Ch.III §3.1</text>
+      </g>
+      <g>
+        <rect x="600" y="190" width="140" height="60" rx="3" fill="#fff" stroke="#7B2D26" stroke-width="1.5"/>
+        <text x="670" y="215" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">points critiques</text>
+        <text x="670" y="235" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#7B2D26">Ch.III §3.3</text>
+      </g>
+      <g>
+        <rect x="600" y="310" width="140" height="60" rx="3" fill="#fff" stroke="#7B2D26" stroke-width="1.5"/>
+        <text x="670" y="335" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="15" fill="#1F1A14">forme quadratique $Q_a f$</text>
+        <text x="670" y="355" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#7B2D26">Ch.III §3.2</text>
+      </g>
+
+      <!-- central theorem -->
+      <g>
+        <rect x="855" y="165" width="135" height="110" rx="3" fill="#7B2D26" stroke="#1F1A14" stroke-width="1.5"/>
+        <text x="922" y="195" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#F4EFE4">Classification</text>
+        <text x="922" y="215" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#F4EFE4">des extrema</text>
+        <text x="922" y="240" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#D0AC6A">$\Delta = s^2 - rt$</text>
+        <text x="922" y="258" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#F7E8B8">Ch.III §3.4–3.5</text>
+      </g>
+    </svg>
+  </div>
+
+  <h3 style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:24px;margin:30px 0 4px;">Check-list finale</h3>
+  <div class="checklist">
+    <div class="cklist">
+      <h5>À savoir énoncer</h5>
+      <ul>
+        <li>3 axiomes d'une norme</li>
+        <li>Équivalence des normes en dim. finie</li>
+        <li>Définitions ouvert, fermé, compact</li>
+        <li>Continue sur compact ⇒ bornes atteintes</li>
+        <li>Définition de la différentiabilité ($\varepsilon(h) \to 0$)</li>
+        <li>Hiérarchie&nbsp;: $\mathcal{C}^1 \Rightarrow $ diff. $\Rightarrow$ continue, et diff. $\Rightarrow$ ∂f existent</li>
+        <li>Théorème de Schwarz et sa contraposée</li>
+        <li>Caractérisation des $\mathcal{C}^1$-difféomorphismes ($\det J \ne 0$)</li>
+        <li>Formules Taylor à l'ordre 1 et 2</li>
+        <li>Condition nécessaire&nbsp;: extremum local ⇒ pt critique</li>
+        <li>Tableau de classification $\Delta = s^2 - rt$</li>
+      </ul>
+    </div>
+    <div class="cklist">
+      <h5>À savoir faire</h5>
+      <ul>
+        <li>Calculer ∂f/∂x au point $(0,0)$ par la définition</li>
+        <li>Montrer qu'une fonction est ou n'est pas $\mathcal{C}^1$</li>
+        <li>Montrer qu'une fonction est ou n'est pas différentiable</li>
+        <li>Appliquer la contraposée de Schwarz</li>
+        <li>Calculer $J_{g \circ f}$ par les deux méthodes</li>
+        <li>Résoudre une EDP par changement de variables</li>
+        <li>Calculer $P_a$ par la formule ou par développement polynomial</li>
+        <li>Trouver tous les points critiques d'une fonction</li>
+        <li>Classer un point critique avec $r, s, t$</li>
+        <li>Conclure dans le cas $\Delta = 0$ par directions particulières</li>
+      </ul>
+    </div>
+    <div class="cklist">
+      <h5>Formules clés</h5>
+      <ul>
+        <li>$\|x\|_1 = \sum |x_i|$, $\|x\|_2 = \sqrt{\sum x_i^2}$, $\|x\|_\infty = \max |x_i|$</li>
+        <li>$\mathrm{d}_a f(h) = \sum h_i\, \partial f / \partial x_i (a) = \langle \nabla_a f, h \rangle$</li>
+        <li>$J_{f \circ g}(a) = J_f(g(a)) \cdot J_g(a)$</li>
+        <li>$Q_a f(h) = \langle h, H_a(f) \cdot h \rangle = r h_1^2 + 2 s h_1 h_2 + t h_2^2$</li>
+        <li>$P_a(h) = f(a) + \mathrm{d}_a f(h) + \tfrac{1}{2} Q_a f(h)$</li>
+        <li>$\Delta = s^2 - rt$ (signe et signe de $r$)</li>
+        <li>$\Delta f = \partial^2 f / \partial x^2 + \partial^2 f / \partial y^2$ (Laplacien)</li>
+      </ul>
+    </div>
+    <div class="cklist">
+      <h5>Pièges classiques</h5>
+      <ul>
+        <li>Les ∂f existent n'implique pas la continuité</li>
+        <li>∂f continues ⇒ $\mathcal{C}^1$ ⇒ diff., mais réciproques fausses</li>
+        <li>Une fonction peut être différentiable sans être $\mathcal{C}^1$</li>
+        <li>$\Delta = s^2 - rt$ — attention au signe&nbsp;: $\Delta < 0$ donne un extremum, $\Delta > 0$ donne un col</li>
+        <li>Un point critique <em>n'est pas</em> automatiquement un extremum</li>
+        <li>$\det H = rt - s^2 = -\Delta$&nbsp;: ne pas confondre le signe</li>
+        <li>Schwarz exige la <em>continuité</em> des dérivées croisées, pas seulement leur existence</li>
+        <li>Intersection <em>infinie</em> d'ouverts n'est en général pas ouverte</li>
+        <li>$[a,b[$ n'est ni ouvert ni fermé</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider">◆ &nbsp; ◆ &nbsp; ◆</div>
+
+</section>
+
+<footer class="foot">
+  INSAT GL2 <span class="glyph">◆</span> Analyse à plusieurs variables <span class="glyph">◆</span> fiche interactive
+</footer>
+
+</div>
+
+<script>
+/* ===== TABS ===== */
+(function(){
+  const btns = document.querySelectorAll('#tabs .tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.classList.remove('active'));
+    panels.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }));
+})();
+
+/* ===== KaTeX auto-render ===== */
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "$",  right: "$",  display: false},
+        {left: "\\(", right: "\\)", display: false},
+        {left: "\\[", right: "\\]", display: true}
+      ],
+      throwOnError: false
+    });
+  } else {
+    // KaTeX loads with defer; retry once
+    setTimeout(() => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$",  right: "$",  display: false},
+            {left: "\\(", right: "\\)", display: false},
+            {left: "\\[", right: "\\]", display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    }, 350);
+  }
+});
+
+/* ============================================================ */
+/* VIZ 1 — BOULES / TOPOLOGIE                                   */
+/* ============================================================ */
+(function(){
+  const svg = document.getElementById('ballSvg');
+  if(!svg) return;
+  const ball = document.getElementById('ball');
+  const sphereLine = document.getElementById('sphereLine');
+  const center = document.getElementById('centerPt');
+  const centerLbl = document.getElementById('centerLbl');
+  const testPt = document.getElementById('testPt');
+  const testLbl = document.getElementById('testLbl');
+  const radiusLine = document.getElementById('radiusLine');
+  const radiusLbl = document.getElementById('radiusLbl');
+  const rSlide = document.getElementById('rSlide');
+  const rVal = document.getElementById('rVal');
+  const distVal = document.getElementById('distVal');
+  const ballVerdict = document.getElementById('ballVerdict');
+  const modeBtns = document.querySelectorAll('#vizBalls .btn[data-mode]');
+
+  let mode = 'open';
+  let state = { cx:210, cy:160, tx:310, ty:120, r:70 };
+
+  function svgPoint(evt){
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+  function render(){
+    ball.setAttribute('cx', state.cx);
+    ball.setAttribute('cy', state.cy);
+    ball.setAttribute('r',  state.r);
+    sphereLine.setAttribute('cx', state.cx);
+    sphereLine.setAttribute('cy', state.cy);
+    sphereLine.setAttribute('r',  state.r);
+    center.setAttribute('cx', state.cx);
+    center.setAttribute('cy', state.cy);
+    centerLbl.setAttribute('x', state.cx + 8);
+    centerLbl.setAttribute('y', state.cy - 5);
+
+    testPt.setAttribute('cx', state.tx);
+    testPt.setAttribute('cy', state.ty);
+    testLbl.setAttribute('x', state.tx + 8);
+    testLbl.setAttribute('y', state.ty - 4);
+
+    // radius line from center toward test direction
+    radiusLine.setAttribute('x1', state.cx);
+    radiusLine.setAttribute('y1', state.cy);
+    radiusLine.setAttribute('x2', state.cx + state.r);
+    radiusLine.setAttribute('y2', state.cy);
+    radiusLbl.setAttribute('x', state.cx + state.r/2);
+    radiusLbl.setAttribute('y', state.cy - 5);
+
+    // mode
+    if(mode === 'sphere'){
+      ball.setAttribute('fill', 'none');
+      ball.setAttribute('stroke', '#2C5664');
+      ball.setAttribute('stroke-dasharray', '0');
+      sphereLine.style.display = 'block';
+      ball.style.display = 'none';
+    } else if(mode === 'open'){
+      ball.style.display = 'block';
+      sphereLine.style.display = 'none';
+      ball.setAttribute('fill', 'rgba(44,86,100,0.16)');
+      ball.setAttribute('stroke', '#2C5664');
+      ball.setAttribute('stroke-dasharray', '5 4');
+    } else { // closed
+      ball.style.display = 'block';
+      sphereLine.style.display = 'none';
+      ball.setAttribute('fill', 'rgba(44,86,100,0.22)');
+      ball.setAttribute('stroke', '#2C5664');
+      ball.setAttribute('stroke-dasharray', '0');
+    }
+
+    // readout
+    const dist = Math.hypot(state.tx - state.cx, state.ty - state.cy);
+    // scale: 20 svg units = 1 unit
+    const distU = dist / 20;
+    const rU = state.r / 20;
+    distVal.textContent = distU.toFixed(2);
+
+    let verdict = '';
+    if(mode === 'open'){
+      verdict = dist < state.r ? 'x ∈ B_o(a, r)' : (dist === state.r ? 'x sur ∂B' : 'x ∉ B_o(a, r)');
+    } else if(mode === 'closed'){
+      verdict = dist <= state.r ? 'x ∈ B_f(a, r)' : 'x ∉ B_f(a, r)';
+    } else {
+      verdict = Math.abs(dist - state.r) < 4 ? 'x ∈ S(a, r)' : (dist < state.r ? 'x à l\'intérieur' : 'x à l\'extérieur');
+    }
+    ballVerdict.textContent = verdict;
+
+    rVal.textContent = (state.r/20).toFixed(1);
+  }
+
+  // sliders
+  rSlide.addEventListener('input', () => {
+    state.r = parseInt(rSlide.value, 10);
+    render();
+  });
+  modeBtns.forEach(b => b.addEventListener('click', () => {
+    modeBtns.forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    mode = b.dataset.mode;
+    render();
+  }));
+
+  // dragging
+  function attachDrag(elem, onMove){
+    let dragging = false;
+    elem.addEventListener('mousedown', e => { dragging = true; elem.style.cursor='grabbing'; e.preventDefault(); });
+    elem.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); }, {passive:false});
+    window.addEventListener('mousemove', e => { if(dragging){ const p = svgPoint(e); onMove(p); } });
+    window.addEventListener('touchmove', e => {
+      if(dragging && e.touches[0]){
+        const p = svgPoint(e.touches[0]); onMove(p);
+        e.preventDefault();
+      }
+    }, {passive:false});
+    window.addEventListener('mouseup', () => { dragging = false; elem.style.cursor='grab'; });
+    window.addEventListener('touchend', () => { dragging = false; });
+  }
+  attachDrag(center, p => {
+    state.cx = clamp(p.x, 20, 400);
+    state.cy = clamp(p.y, 20, 300);
+    render();
+  });
+  attachDrag(testPt, p => {
+    state.tx = clamp(p.x, 10, 410);
+    state.ty = clamp(p.y, 10, 310);
+    render();
+  });
+
+  render();
+})();
+
+/* ============================================================ */
+/* VIZ 2 — CLASSIFICATEUR s² − rt                               */
+/* ============================================================ */
+(function(){
+  const svg = document.getElementById('srtSvg');
+  if(!svg) return;
+  const iso = document.getElementById('isoCurves');
+  const rIn = document.getElementById('rIn'), sIn = document.getElementById('sIn'), tIn = document.getElementById('tIn');
+  const rNum = document.getElementById('rNum'), sNum = document.getElementById('sNum'), tNum = document.getElementById('tNum');
+  const detV = document.getElementById('detV'), discV = document.getElementById('discV'), eigV = document.getElementById('eigV');
+  const verdictV = document.getElementById('verdictV');
+
+  function evalQ(r,s,t,h1,h2){ return r*h1*h1 + 2*s*h1*h2 + t*h2*h2; }
+
+  function eigenvalues(r,s,t){
+    // 2x2 sym matrix [[r,s],[s,t]]
+    const tr = r + t;
+    const det = r*t - s*s;
+    const disc = Math.sqrt(Math.max(0, tr*tr - 4*det));
+    return [(tr - disc)/2, (tr + disc)/2];
+  }
+
+  function colorForLevel(lv, r, s, t){
+    // assign color by sign of Q at that level
+    if(lv > 0) return 'rgba(44,86,100,0.45)';
+    if(lv < 0) return 'rgba(123,45,38,0.45)';
+    return 'rgba(184,146,74,0.55)';
+  }
+
+  function render(){
+    const r = parseFloat(rIn.value), s = parseFloat(sIn.value), t = parseFloat(tIn.value);
+    rNum.textContent = r.toFixed(1);
+    sNum.textContent = s.toFixed(1);
+    tNum.textContent = t.toFixed(1);
+    const det = r*t - s*s;
+    const disc = s*s - r*t;
+    detV.textContent = det.toFixed(2);
+    discV.textContent = disc.toFixed(2);
+    const [l1,l2] = eigenvalues(r,s,t);
+    eigV.textContent = `${l1.toFixed(2)}, ${l2.toFixed(2)}`;
+
+    let verd = '';
+    if(Math.abs(disc) < 1e-3){
+      verd = 'Δ = 0 — indéterminé, étude particulière requise';
+    } else if(disc < 0 && r > 0){ verd = 'Δ < 0 et r > 0 — minimum local'; }
+    else if(disc < 0 && r < 0){ verd = 'Δ < 0 et r < 0 — maximum local'; }
+    else if(disc > 0){ verd = 'Δ > 0 — point col (point selle)'; }
+    else { verd = 'cas frontière'; }
+    verdictV.textContent = verd;
+
+    // draw iso-level curves of Q on viewBox 460x340
+    // map: x in [-3,3], y in [-3,3] -> svg coords
+    const cx = 230, cy = 170; // center
+    const scaleX = 60, scaleY = 60; // 60 px per unit
+    iso.innerHTML = '';
+
+    // Sample several level values
+    const levels = [-4, -2, -1, -0.5, 0.5, 1, 2, 4];
+    // Use marching-squares-ish: render filled regions by drawing many small rects
+    // Simpler: draw thick polylines via parametric approach (for quadratic forms)
+    // We use an implicit approach: sample grid, draw contours via thresholded squares.
+
+    // Build value grid
+    const N = 60; // grid resolution
+    const grid = [];
+    const xs = [], ys = [];
+    for(let i=0;i<=N;i++){
+      const u = -3 + 6*i/N;
+      xs.push(u);
+      ys.push(u);
+    }
+    for(let i=0;i<=N;i++){
+      const row = [];
+      for(let j=0;j<=N;j++){
+        const h1 = xs[j], h2 = ys[i];
+        row.push(evalQ(r,s,t,h1,h2));
+      }
+      grid.push(row);
+    }
+
+    // For each level, marching squares
+    function toSvg(x,y){ return [cx + x*scaleX, cy - y*scaleY]; }
+
+    levels.forEach(L => {
+      let pathData = '';
+      for(let i=0;i<N;i++){
+        for(let j=0;j<N;j++){
+          const v00 = grid[i][j]   - L;
+          const v01 = grid[i][j+1] - L;
+          const v10 = grid[i+1][j] - L;
+          const v11 = grid[i+1][j+1]-L;
+          let cnt = 0;
+          if(v00 > 0) cnt += 1;
+          if(v01 > 0) cnt += 2;
+          if(v11 > 0) cnt += 4;
+          if(v10 > 0) cnt += 8;
+          if(cnt === 0 || cnt === 15) continue;
+          // edge intersections (linear interp)
+          const x0 = xs[j], x1 = xs[j+1], y0 = ys[i], y1 = ys[i+1];
+          function lerp(a,b,va,vb){
+            const tt = va/(va-vb);
+            return a + tt*(b-a);
+          }
+          const eTop    = [lerp(x0,x1,v00,v01), y0];
+          const eRight  = [x1, lerp(y0,y1,v01,v11)];
+          const eBottom = [lerp(x0,x1,v10,v11), y1];
+          const eLeft   = [x0, lerp(y0,y1,v00,v10)];
+
+          function seg(a, b){
+            const A = toSvg(a[0], a[1]);
+            const B = toSvg(b[0], b[1]);
+            pathData += `M${A[0].toFixed(1)} ${A[1].toFixed(1)} L${B[0].toFixed(1)} ${B[1].toFixed(1)} `;
+          }
+          // standard MS lookup (simplified, no saddle disambiguation; OK visually)
+          switch(cnt){
+            case 1: case 14: seg(eLeft, eTop); break;
+            case 2: case 13: seg(eTop, eRight); break;
+            case 3: case 12: seg(eLeft, eRight); break;
+            case 4: case 11: seg(eRight, eBottom); break;
+            case 5: seg(eLeft, eTop); seg(eRight, eBottom); break;
+            case 6: case 9: seg(eTop, eBottom); break;
+            case 7: case 8: seg(eLeft, eBottom); break;
+            case 10: seg(eTop, eRight); seg(eLeft, eBottom); break;
+          }
+        }
+      }
+      const color = colorForLevel(L, r, s, t);
+      const strokeW = (Math.abs(L) < 0.6) ? 1.6 : 1.1;
+      iso.insertAdjacentHTML('beforeend',
+        `<path d="${pathData}" fill="none" stroke="${color}" stroke-width="${strokeW}" />`);
+    });
+  }
+
+  [rIn, sIn, tIn].forEach(x => x.addEventListener('input', render));
+
+  // presets
+  document.getElementById('preset1').addEventListener('click', () => { rIn.value=2; sIn.value=0; tIn.value=2; render(); });
+  document.getElementById('preset2').addEventListener('click', () => { rIn.value=-2; sIn.value=0; tIn.value=-2; render(); });
+  document.getElementById('preset3').addEventListener('click', () => { rIn.value=2; sIn.value=0; tIn.value=-2; render(); });
+  document.getElementById('preset4').addEventListener('click', () => { rIn.value=1; sIn.value=1; tIn.value=1; render(); });
+
+  render();
+})();
+
+/* ============================================================ */
+/* VIZ 3 — POLYNÔME DE TAYLOR                                   */
+/* ============================================================ */
+(function(){
+  const svg = document.getElementById('taylorSvg');
+  if(!svg) return;
+  const fCurve = document.getElementById('fCurve');
+  const p0 = document.getElementById('p0');
+  const p1 = document.getElementById('p1');
+  const p2 = document.getElementById('p2');
+  const aPt = document.getElementById('aPt');
+  const aLbl = document.getElementById('aLbl');
+  const aIn = document.getElementById('aIn');
+  const aNum = document.getElementById('aNum');
+  const faV = document.getElementById('faV');
+  const fpaV = document.getElementById('fpaV');
+  const fppaV = document.getElementById('fppaV');
+  const p2V = document.getElementById('p2V');
+  const fnBtns = document.querySelectorAll('#fnPicker .btn');
+  const ordBtns = document.querySelectorAll('#ordPicker .btn');
+
+  // viewBox 460x320, x in [-pi, pi] mapped to [20, 440], y in [-3,3] mapped to [20, 380]
+  const xMin = -Math.PI, xMax = Math.PI;
+  const yMin = -3, yMax = 3;
+  const xpix = (x) => 20 + (x - xMin)/(xMax - xMin) * (440 - 20);
+  const ypix = (y) => 20 + (yMax - y)/(yMax - yMin) * (300 - 20);
+
+  let fn = 'sin';
+  let ords = { 0:true, 1:true, 2:true };
+
+  const fns = {
+    sin: { f: Math.sin, fp: Math.cos, fpp: x=>-Math.sin(x), name:'sin x' },
+    cos: { f: Math.cos, fp: x=>-Math.sin(x), fpp: x=>-Math.cos(x), name:'cos x' },
+    exp: { f: x=>Math.exp(x) - 1, fp: Math.exp, fpp: Math.exp, name:'eˣ − 1' },
+    poly: { f: x => x*x*x - 2*x, fp: x => 3*x*x - 2, fpp: x => 6*x, name:'x³ − 2x' }
+  };
+
+  function pathOf(fn){
+    let d = '';
+    const N = 200;
+    let started = false;
+    for(let i=0;i<=N;i++){
+      const x = xMin + (xMax - xMin) * i / N;
+      const y = fn(x);
+      if(y < yMin - 1 || y > yMax + 1) { started = false; continue; }
+      const X = xpix(x).toFixed(1), Y = ypix(y).toFixed(1);
+      d += (started ? 'L' : 'M') + X + ' ' + Y + ' ';
+      started = true;
+    }
+    return d;
+  }
+  function linePath(f, a){
+    // y = f(a) + f'(a)(x-a)
+    return pathOf(x => f.f(a) + f.fp(a) * (x - a));
+  }
+  function constPath(f, a){
+    return pathOf(_ => f.f(a));
+  }
+  function parPath(f, a){
+    return pathOf(x => f.f(a) + f.fp(a)*(x-a) + 0.5*f.fpp(a)*(x-a)*(x-a));
+  }
+
+  function render(){
+    const a = parseFloat(aIn.value);
+    aNum.textContent = a.toFixed(2);
+    const F = fns[fn];
+    fCurve.setAttribute('d', pathOf(F.f));
+    p0.setAttribute('d', ords[0] ? constPath(F, a) : '');
+    p1.setAttribute('d', ords[1] ? linePath(F, a) : '');
+    p2.setAttribute('d', ords[2] ? parPath(F, a) : '');
+    aPt.setAttribute('cx', xpix(a));
+    aPt.setAttribute('cy', ypix(F.f(a)));
+    aLbl.setAttribute('x', xpix(a) + 6);
+    aLbl.setAttribute('y', ypix(F.f(a)) - 5);
+    faV.textContent = F.f(a).toFixed(3);
+    fpaV.textContent = F.fp(a).toFixed(3);
+    fppaV.textContent = F.fpp(a).toFixed(3);
+    // P2(x) = f(a) + f'(a)(x-a) + 1/2 f''(a)(x-a)^2 — show symbolically
+    p2V.textContent = `${F.f(a).toFixed(2)} + ${F.fp(a).toFixed(2)}·(x−${a.toFixed(2)}) + ${(F.fpp(a)/2).toFixed(2)}·(x−${a.toFixed(2)})²`;
+  }
+
+  aIn.addEventListener('input', render);
+  fnBtns.forEach(b => b.addEventListener('click', () => {
+    fnBtns.forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    fn = b.dataset.fn;
+    render();
+  }));
+  ordBtns.forEach(b => b.addEventListener('click', () => {
+    b.classList.toggle('on');
+    const o = parseInt(b.dataset.ord, 10);
+    ords[o] = b.classList.contains('on');
+    render();
+  }));
+
+  // drag a along curve
+  function svgPoint(evt){
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+  let dragging = false;
+  aPt.addEventListener('mousedown', e => { dragging = true; e.preventDefault(); });
+  aPt.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); }, {passive:false});
+  window.addEventListener('mousemove', e => {
+    if(!dragging) return;
+    const p = svgPoint(e);
+    const xUnits = xMin + (p.x - 20) / (440 - 20) * (xMax - xMin);
+    const clamped = Math.max(-3, Math.min(3, xUnits));
+    aIn.value = clamped;
+    render();
+  });
+  window.addEventListener('touchmove', e => {
+    if(!dragging || !e.touches[0]) return;
+    const p = svgPoint(e.touches[0]);
+    const xUnits = xMin + (p.x - 20) / (440 - 20) * (xMax - xMin);
+    const clamped = Math.max(-3, Math.min(3, xUnits));
+    aIn.value = clamped;
+    render();
+    e.preventDefault();
+  }, {passive:false});
+  window.addEventListener('mouseup', () => dragging = false);
+  window.addEventListener('touchend', () => dragging = false);
+
+  render();
+})();
+
+</script>
+</body>
+</html>

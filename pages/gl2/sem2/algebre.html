@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Révision Algèbre · INSAT GL2-RT2</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+
+<style>
+:root {
+  --bg: #F4EFE4;
+  --bg-deep: #ECE5D5;
+  --bg-card: #FBF8F0;
+  --ink: #1F1A14;
+  --ink-soft: #4A3F32;
+  --ink-faint: #8A7D6B;
+  --burgundy: #7B2D26;
+  --burgundy-light: #A04438;
+  --teal: #2C5664;
+  --teal-light: #4A7A88;
+  --gold: #B8924A;
+  --gold-light: #E8C77B;
+  --rule: #C9BFAC;
+  --rule-soft: #DDD3BF;
+  --highlight: #F7E8B8;
+  --shadow: rgba(80, 60, 30, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(184, 146, 74, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 90%, rgba(123, 45, 38, 0.04) 0%, transparent 50%);
+  color: var(--ink);
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.65;
+  min-height: 100vh;
+  padding: 0 0 80px;
+}
+
+/* Subtle paper grain */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+main, header { position: relative; z-index: 1; }
+
+/* ─── HEADER ─── */
+header {
+  padding: 48px 32px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+
+header::after {
+  content: '◆ ◆ ◆';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  padding: 0 14px;
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 8px;
+}
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 68px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+h1 em {
+  font-style: italic;
+  color: var(--burgundy);
+}
+
+.subtitle {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 19px;
+  color: var(--ink-soft);
+  font-weight: 300;
+  margin-top: 8px;
+}
+
+/* ─── TABS ─── */
+.tabs-wrapper {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding: 0 32px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0;
+  margin-bottom: 32px;
+}
+
+.tab-btn {
+  font-family: 'Newsreader', serif;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 14px 22px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  margin-bottom: -1px;
+  letter-spacing: 0.01em;
+}
+
+.tab-btn .tab-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  margin-right: 8px;
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+.tab-btn:hover {
+  color: var(--ink);
+  background: rgba(184, 146, 74, 0.08);
+}
+
+.tab-btn.active {
+  color: var(--burgundy);
+  border-bottom-color: var(--burgundy);
+}
+
+.tab-btn.active .tab-num {
+  opacity: 1;
+  color: var(--burgundy);
+}
+
+/* ─── CONTENT ─── */
+.tab-content {
+  display: none;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-size: 38px;
+  color: var(--ink);
+  margin: 48px 0 8px;
+  letter-spacing: -0.01em;
+  position: relative;
+  padding-left: 0;
+}
+
+h2 .h-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: var(--burgundy);
+  margin-top: 12px;
+}
+
+h3 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-size: 26px;
+  color: var(--burgundy);
+  margin: 32px 0 12px;
+  font-style: italic;
+}
+
+h4 {
+  font-family: 'Newsreader', serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--teal);
+  margin: 20px 0 8px;
+  letter-spacing: 0.01em;
+}
+
+p {
+  margin-bottom: 14px;
+  color: var(--ink-soft);
+}
+
+p strong, li strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+ul, ol { padding-left: 24px; margin-bottom: 14px; color: var(--ink-soft); }
+li { margin-bottom: 6px; }
+
+/* ─── BOXES ─── */
+.box {
+  background: var(--bg-card);
+  border-left: 3px solid var(--rule);
+  padding: 18px 22px;
+  margin: 16px 0;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 1px 2px var(--shadow);
+}
+
+.box-def { border-left-color: var(--teal); }
+.box-thm { border-left-color: var(--burgundy); }
+.box-prop { border-left-color: var(--gold); }
+.box-remark { border-left-color: var(--ink-faint); background: rgba(138, 125, 107, 0.05); }
+.box-method { border-left-color: var(--burgundy); background: linear-gradient(180deg, rgba(123,45,38,0.04), transparent); }
+
+.box-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+.box-def .box-label { background: var(--teal); color: var(--bg-card); }
+.box-thm .box-label { background: var(--burgundy); color: var(--bg-card); }
+.box-prop .box-label { background: var(--gold); color: var(--ink); }
+.box-remark .box-label { background: var(--ink-faint); color: var(--bg-card); }
+.box-method .box-label { background: var(--burgundy); color: var(--bg-card); }
+
+.box-title {
+  font-family: 'Newsreader', serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--ink);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+/* ─── KATEX TWEAKS ─── */
+.katex { font-size: 1.02em; }
+.katex-display { margin: 16px 0 !important; }
+
+/* ─── KEY-VALUE TABLE ─── */
+.kv {
+  display: grid;
+  grid-template-columns: minmax(180px, auto) 1fr;
+  gap: 8px 24px;
+  margin: 16px 0;
+  padding: 16px 0;
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.kv dt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 500;
+  padding-top: 2px;
+}
+
+.kv dd {
+  color: var(--ink);
+}
+
+/* ─── INTERACTIVE WIDGETS ─── */
+.viz-card {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 24px;
+  margin: 24px 0;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.viz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule-soft);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.viz-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 24px;
+  color: var(--burgundy);
+  font-style: italic;
+}
+
+.viz-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(184, 146, 74, 0.12);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+.viz-body {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .viz-body { grid-template-columns: 1fr; }
+}
+
+.viz-svg {
+  width: 100%;
+  height: auto;
+  background: #FCFAF3;
+  border: 1px solid var(--rule-soft);
+  border-radius: 4px;
+  display: block;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.viz-svg:active { cursor: grabbing; }
+
+.viz-controls {
+  background: var(--bg-deep);
+  padding: 16px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.viz-controls h5 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.viz-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--rule-soft);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+
+.viz-stat:last-child { border-bottom: none; }
+.viz-stat-key { color: var(--ink-soft); }
+.viz-stat-val { color: var(--burgundy); font-weight: 600; }
+
+.slider-row { margin-top: 12px; }
+.slider-row label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+.slider-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--burgundy);
+}
+
+.btn-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+  font-weight: 500;
+}
+
+.btn:hover {
+  background: var(--burgundy);
+  color: var(--bg-card);
+  border-color: var(--burgundy);
+}
+
+.btn-active {
+  background: var(--burgundy);
+  color: var(--bg-card);
+  border-color: var(--burgundy);
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+/* ─── STEP CARD (Gram-Schmidt) ─── */
+.gs-step {
+  background: var(--bg-card);
+  border-left: 3px solid var(--rule);
+  padding: 14px 18px;
+  margin: 10px 0;
+  border-radius: 0 4px 4px 0;
+  transition: all 0.3s ease;
+  opacity: 0.4;
+}
+
+.gs-step.active {
+  border-left-color: var(--burgundy);
+  opacity: 1;
+  background: linear-gradient(90deg, rgba(123,45,38,0.06), transparent);
+}
+
+.gs-step.done {
+  opacity: 0.8;
+  border-left-color: var(--teal);
+}
+
+.gs-step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* ─── METHOD CARD ─── */
+.method-card {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 2px 6px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.method-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--burgundy), var(--gold));
+}
+
+.method-question {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 24px;
+  color: var(--ink);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.method-question::before {
+  content: 'Q.';
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--burgundy);
+  margin-right: 10px;
+  letter-spacing: 0.1em;
+  vertical-align: super;
+}
+
+.method-steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+}
+
+.method-steps li {
+  counter-increment: step;
+  padding: 10px 0 10px 44px;
+  border-bottom: 1px dashed var(--rule-soft);
+  position: relative;
+  color: var(--ink-soft);
+}
+
+.method-steps li:last-child { border-bottom: none; }
+
+.method-steps li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  width: 32px;
+  text-align: right;
+  padding-right: 8px;
+  border-right: 1px solid var(--rule-soft);
+}
+
+.method-tip {
+  background: linear-gradient(90deg, var(--highlight), transparent);
+  padding: 10px 14px;
+  margin-top: 14px;
+  border-radius: 3px;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-soft);
+  border-left: 2px solid var(--gold);
+}
+
+.method-tip::before {
+  content: '✦ Astuce  ';
+  font-family: 'JetBrains Mono', monospace;
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ─── FLOW DIAGRAM ─── */
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.flow-node {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  padding: 18px;
+  border-radius: 4px;
+  position: relative;
+}
+
+.flow-node-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 20px;
+  color: var(--burgundy);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.flow-node-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+/* ─── TWO COL ─── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 16px 0;
+}
+
+@media (max-width: 700px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+
+/* ─── PILL ─── */
+.pill {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 99px;
+  background: var(--bg-deep);
+  color: var(--ink-soft);
+  margin: 2px 4px 2px 0;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--rule-soft);
+}
+
+.pill-burgundy { background: var(--burgundy); color: var(--bg-card); border-color: var(--burgundy); }
+.pill-teal { background: var(--teal); color: var(--bg-card); border-color: var(--teal); }
+.pill-gold { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+/* ─── CONNECTOR LINES ─── */
+.connector {
+  text-align: center;
+  margin: 12px 0;
+  color: var(--gold);
+  font-size: 18px;
+  letter-spacing: 0.5em;
+}
+
+/* ─── INTRO ─── */
+.intro {
+  font-family: 'Newsreader', serif;
+  font-size: 19px;
+  font-style: italic;
+  color: var(--ink-soft);
+  max-width: 720px;
+  margin: 0 auto 32px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ─── SVG STYLING ─── */
+.viz-svg text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  fill: var(--ink-soft);
+  user-select: none;
+}
+
+.viz-svg .axis {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.viz-svg .grid {
+  stroke: var(--rule-soft);
+  stroke-width: 0.5;
+}
+
+.viz-svg .subspace {
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+}
+
+.viz-svg .vec-u {
+  stroke: var(--burgundy);
+  stroke-width: 2.5;
+  fill: none;
+}
+
+.viz-svg .vec-proj {
+  stroke: var(--teal);
+  stroke-width: 2.5;
+  fill: none;
+}
+
+.viz-svg .vec-perp {
+  stroke: var(--ink-faint);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 4 3;
+}
+
+.viz-svg .vec-sym {
+  stroke: var(--burgundy-light);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 8 2;
+  opacity: 0.7;
+}
+
+.viz-svg .point {
+  fill: var(--burgundy);
+  stroke: var(--bg-card);
+  stroke-width: 2;
+  cursor: grab;
+}
+
+.viz-svg .point:active { cursor: grabbing; }
+
+.viz-svg .vec-base {
+  stroke-width: 2;
+  fill: none;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-swatch {
+  width: 18px; height: 3px;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  max-width: 1200px;
+  margin: 64px auto 0;
+  padding: 32px;
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 13px;
+  border-top: 1px solid var(--rule);
+  font-style: italic;
+}
+
+footer .footer-ornament {
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  margin-bottom: 12px;
+}
+
+/* ─── HIGHLIGHT TEXT ─── */
+.hl {
+  background: linear-gradient(180deg, transparent 60%, var(--highlight) 60%);
+  padding: 0 2px;
+}
+
+.warn {
+  background: rgba(184, 146, 74, 0.12);
+  border-left: 3px solid var(--gold);
+  padding: 12px 16px;
+  margin: 14px 0;
+  border-radius: 0 3px 3px 0;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.warn::before {
+  content: '⚠ ';
+  color: var(--gold);
+  font-weight: bold;
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88em;
+  background: var(--bg-deep);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--burgundy);
+}
+
+/* ─── EXAM PATTERN CARD ─── */
+.pattern-card {
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-deep));
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 24px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.pattern-card-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 26px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.pattern-card-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--burgundy);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* matrix display helper */
+.matrix {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 4px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="eyebrow">INSAT · DGIM · GL2 / RT2 · A.U. 2024-2025</div>
+  <h1>Algèbre <em>linéaire</em> & espaces euclidiens</h1>
+  <p class="subtitle">Révision interactive — Chapitres 1, 2, 3 + Méthodes & Synthèse</p>
+</header>
+
+<main>
+
+<div class="tabs-wrapper">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="ch1"><span class="tab-num">I</span>Algèbre linéaire</button>
+    <button class="tab-btn" data-tab="ch2"><span class="tab-num">II</span>Espaces euclidiens</button>
+    <button class="tab-btn" data-tab="ch3"><span class="tab-num">III</span>Sym. & Adjoint</button>
+    <button class="tab-btn" data-tab="methods"><span class="tab-num">M</span>Méthodes</button>
+    <button class="tab-btn" data-tab="synth"><span class="tab-num">S</span>Synthèse</button>
+  </nav>
+</div>
+
+<!-- ═══════════════════ TAB 1 : CHAPITRE 1 ═══════════════════ -->
+<section class="tab-content active" id="ch1">
+
+  <p class="intro">Les fondations — sommes directes, valeurs propres, diagonalisation et polynômes annulateurs. Tout ce sur quoi le chapitre 3 va s'appuyer.</p>
+
+  <h2><span class="h-num">§ 1.1</span>Somme directe & sous-espaces supplémentaires</h2>
+
+  <div class="box box-def">
+    <span class="box-label">Définition</span>
+    <p>Soient $E_1, E_2, \dots, E_n$ des s.e.v de $E$. On dit qu'ils sont en somme directe si l'application</p>
+    $$\varphi : E_1 \times E_2 \times \cdots \times E_n \longrightarrow E, \quad (x_1, \dots, x_n) \longmapsto x_1 + x_2 + \cdots + x_n$$
+    <p>est <strong>injective</strong>.</p>
+  </div>
+
+  <div class="box box-prop">
+    <span class="box-label">Caractérisations</span>
+    <ul>
+      <li>$E_1, \dots, E_n$ en somme directe $\iff \ker\varphi = \{(0,\dots,0)\}$</li>
+      <li>$\iff$ si $x_1 + x_2 + \cdots + x_n = 0$ alors $x_1 = x_2 = \cdots = x_n = 0$</li>
+      <li>$E_1 \oplus E_2 \oplus \cdots \oplus E_n = E \iff \forall z \in E,\ z = x_1 + \cdots + x_n$ <span class="hl">de manière unique</span></li>
+      <li>Si $\mathcal{B}_i$ base de $E_i$ alors $\bigcup_{i=1}^n \mathcal{B}_i$ est base de $E$</li>
+    </ul>
+  </div>
+
+  <div class="warn">Pour 2 sev seulement : $E_1 \oplus E_2 = E \iff E_1 \cap E_2 = \{0\}$ et $\dim E_1 + \dim E_2 = \dim E$.</div>
+
+  <h2><span class="h-num">§ 1.2</span>Matrices de passage</h2>
+
+  <div class="box box-thm">
+    <span class="box-label">Théorème — Changement de base</span>
+    $$\text{mat}(f, \mathcal{B}_1', \mathcal{B}_2') = P^{-1}\,\text{mat}(f, \mathcal{B}_1, \mathcal{B}_2)\,Q$$
+    <p>Avec $P = P_{\mathcal{B}_2 \to \mathcal{B}_2'}$ et $Q = P_{\mathcal{B}_1 \to \mathcal{B}_1'}$.</p>
+    <p>Cas particulier (endomorphisme) :</p>
+    $$\text{mat}(f, \mathcal{B}') = P^{-1}\,\text{mat}(f, \mathcal{B})\,P$$
+  </div>
+
+  <h2><span class="h-num">§ 1.3</span>Valeurs propres & vecteurs propres</h2>
+
+  <div class="box box-def">
+    <span class="box-label">Définition</span>
+    <p>Soit $f \in \mathcal{L}(E)$ et $M = \text{mat}(f, \mathcal{B})$.</p>
+    <p>$\lambda \in \mathbb{K}$ est une <strong>valeur propre</strong> de $f$ s'il existe $v \in E$ <strong>non nul</strong> tel que :</p>
+    $$f(v) = \lambda v \quad (\text{i.e. } Mv = \lambda v)$$
+    <p>$v$ est alors un <strong>vecteur propre</strong> associé à $\lambda$.</p>
+  </div>
+
+  <div class="box box-def">
+    <span class="box-label">Espace propre</span>
+    $$E_\lambda = \{v \in E \mid Mv = \lambda v\} = \ker(f - \lambda\,\text{id}_E)$$
+    <p>C'est l'ensemble du vecteur nul et des vecteurs propres associés à $\lambda$.</p>
+  </div>
+
+  <h3>Polynôme caractéristique</h3>
+
+  <div class="box box-def">
+    $$P_M(X) = \det(M - X\,I_n)$$
+    <p>Les valeurs propres de $M$ sont exactement les <strong>racines</strong> de $P_M(X)$.</p>
+  </div>
+
+  <div class="box box-prop">
+    <span class="box-label">Propriétés</span>
+    <ul>
+      <li>$P_M(X) = (-1)^n X^n + (-1)^{n-1} \text{Tr}(M) X^{n-1} + \cdots + \det(M)$</li>
+      <li>Deux matrices d'un même endomorphisme ont le même polynôme caractéristique → on note $P_f(X)$</li>
+      <li>$M$ admet au plus $n$ valeurs propres (où $n = \dim E$)</li>
+      <li>$0$ est valeur propre $\iff \det M = 0 \iff M$ non inversible</li>
+    </ul>
+  </div>
+
+  <h2><span class="h-num">§ 1.4</span>Ordre & multiplicité</h2>
+
+  <div class="box box-def">
+    <p>L'<strong>ordre</strong> d'une v.p $\lambda$ = sa multiplicité comme racine de $P_M(X)$.</p>
+  </div>
+
+  <div class="box box-thm">
+    <span class="box-label">Théorème fondamental</span>
+    $$1 \leq \dim E_\lambda \leq \text{ordre}(\lambda)$$
+    <p>Conséquence : si $\lambda$ est valeur propre <strong>simple</strong> alors $\dim E_\lambda = 1$.</p>
+  </div>
+
+  <h2><span class="h-num">§ 1.5</span>Diagonalisation</h2>
+
+  <div class="box box-def">
+    <p>$M \in \mathcal{M}_n(\mathbb{R})$ est <strong>diagonalisable</strong> $\iff$ il existe $D$ diagonale et $P$ inversible telles que :</p>
+    $$M = P D P^{-1}$$
+  </div>
+
+  <div class="box box-thm">
+    <span class="box-label">Critère de diagonalisation</span>
+    <p>$M$ diagonalisable $\iff$ (toutes équivalentes) :</p>
+    <ul>
+      <li>Il existe une base de $\mathbb{R}^n$ formée de vecteurs propres</li>
+      <li>$E_{\lambda_1} \oplus E_{\lambda_2} \oplus \cdots \oplus E_{\lambda_p} = \mathbb{R}^n$</li>
+      <li>$\sum_i \dim E_{\lambda_i} = n$</li>
+      <li><span class="hl">$P_M$ scindé sur $\mathbb{R}$ <strong>et</strong> $\dim E_\lambda = \text{ordre}(\lambda)$ pour toute v.p</span></li>
+    </ul>
+  </div>
+
+  <div class="warn">Si $M$ admet $n$ valeurs propres distinctes, elle est <strong>automatiquement</strong> diagonalisable (chaque $\dim E_{\lambda_i} = 1$ et la somme fait bien $n$).</div>
+
+  <h2><span class="h-num">§ 1.6</span>Polynôme minimal & Cayley-Hamilton</h2>
+
+  <div class="box box-def">
+    <p>Pour $Q(X) = a_p X^p + \cdots + a_1 X + a_0 \in \mathbb{R}[X]$, on définit :</p>
+    $$Q(M) = a_p M^p + \cdots + a_1 M + a_0 I_n$$
+    <p>$Q$ est <strong>annulateur</strong> de $M$ si $Q(M) = 0$.</p>
+  </div>
+
+  <div class="box box-thm">
+    <span class="box-label">Cayley-Hamilton</span>
+    <p>$P_M(M) = 0$ : le polynôme caractéristique est annulateur.</p>
+  </div>
+
+  <div class="box box-def">
+    <span class="box-label">Polynôme minimal</span>
+    <p>$m_p(X)$ = polynôme annulateur <strong>unitaire de plus petit degré</strong>.</p>
+    <ul>
+      <li>$\text{Spec}(M) = \{$racines de $m_p(X)\}$</li>
+      <li>Si $Q(M) = 0$ alors $m_p(X)$ divise $Q(X)$</li>
+      <li>$\#\text{Spec}(M) \leq \deg(m_p) \leq n$</li>
+    </ul>
+  </div>
+
+  <div class="box box-thm">
+    <span class="box-label">Lemme des noyaux</span>
+    <p>Soit $Q$ annulateur de $M$ avec $Q = Q_1 \cdot Q_2 \cdots Q_n$ et $\gcd(Q_i, Q_j) = 1$ pour $i \neq j$. Alors :</p>
+    $$\mathbb{R}^n = \ker Q_1(f) \oplus \ker Q_2(f) \oplus \cdots \oplus \ker Q_n(f)$$
+  </div>
+
+</section>
+
+<!-- ═══════════════════ TAB 2 : CHAPITRE 2 ═══════════════════ -->
+<section class="tab-content" id="ch2">
+
+  <p class="intro">L'arrivée de la <em>géométrie</em> en algèbre — formes bilinéaires, produit scalaire, et toute la machinerie orthogonale.</p>
+
+  <h2><span class="h-num">§ 2.1</span>Formes bilinéaires</h2>
+
+  <div class="box box-def">
+    <p>$\varphi : E \times E \longrightarrow \mathbb{R}$ est une <strong>forme bilinéaire</strong> si :</p>
+    <ol>
+      <li>$\forall v_0 \in E$, l'application $u \mapsto \varphi(u, v_0)$ est linéaire</li>
+      <li>$\forall u_0 \in E$, l'application $v \mapsto \varphi(u_0, v)$ est linéaire</li>
+    </ol>
+    <p>Équivalent à :</p>
+    $$\varphi(\alpha_1 u_1 + \alpha_2 u_2,\ \beta_1 v_1 + \beta_2 v_2) = \sum \alpha_i \beta_j \varphi(u_i, v_j)$$
+  </div>
+
+  <div class="box box-def">
+    <span class="box-label">Symétrique</span>
+    <p>$\varphi$ symétrique $\iff \forall (u,v) \in E^2,\ \varphi(u,v) = \varphi(v,u)$</p>
+    <p><strong>Si symétrique :</strong> il suffit de montrer la linéarité par rapport à <strong>une seule</strong> variable.</p>
+  </div>
+
+  <div class="box box-method">
+    <span class="box-label">Méthode — Montrer que $\varphi$ est bilinéaire</span>
+    <p><strong>Méthode 1 :</strong> Fixer $v_0$ et montrer que $u \mapsto \varphi(u, v_0)$ est linéaire. Idem pour l'autre variable.</p>
+    <p><strong>Méthode 2 :</strong> Si $\varphi(u,v) = f(u) \cdot g(v)$, montrer que $f$ et $g$ sont linéaires.</p>
+    <p><strong>Méthode 3 (dans $\mathbb{R}^2$) :</strong> $\varphi$ est bilinéaire $\iff \exists a,b,c,d \in \mathbb{R}$ tels que $\varphi(u,v) = axx' + bxy' + cx'y + dyy'$. Symétrique $\iff b = c$.</p>
+  </div>
+
+  <h2><span class="h-num">§ 2.2</span>Matrice d'une forme bilinéaire</h2>
+
+  <div class="box box-def">
+    <p>Soit $\mathcal{B} = (e_1, \dots, e_n)$ une base de $E$ :</p>
+    $$\text{mat}_\mathcal{B}(\varphi) = \big(\varphi(e_i, e_j)\big)_{1 \leq i,j \leq n}$$
+    <p>$\varphi$ symétrique $\iff \text{mat}_\mathcal{B}(\varphi)$ symétrique ($A = {}^t A$).</p>
+  </div>
+
+  <div class="box box-prop">
+    <span class="box-label">Expression matricielle</span>
+    $$\varphi(u, v) = {}^t u_\mathcal{B} \cdot \text{mat}_\mathcal{B}(\varphi) \cdot v_\mathcal{B}$$
+    <p><strong>Changement de base :</strong> Si $P = P_{\mathcal{B} \to \mathcal{B}'}$ alors</p>
+    $$\text{mat}_{\mathcal{B}'}(\varphi) = {}^t P \cdot \text{mat}_\mathcal{B}(\varphi) \cdot P$$
+  </div>
+
+  <div class="warn">Pour une forme bilinéaire, on a ${}^t P$ (et non $P^{-1}$). C'est différent du changement de base pour un endomorphisme !</div>
+
+  <h2><span class="h-num">§ 2.3</span>Produit scalaire — Espace euclidien</h2>
+
+  <div class="box box-def">
+    <p>$\varphi : E^2 \to \mathbb{R}$ est un <strong>produit scalaire</strong> $\iff$ elle est :</p>
+    <ol>
+      <li><strong>Bilinéaire</strong></li>
+      <li><strong>Symétrique</strong> : $\varphi(u,v) = \varphi(v,u)$</li>
+      <li><strong>Positive</strong> : $\forall u \in E,\ \varphi(u,u) \geq 0$</li>
+      <li><strong>Définie</strong> : $\varphi(u,u) = 0 \iff u = 0$</li>
+    </ol>
+    <p>On note $\varphi(u,v) = \langle u, v \rangle$.</p>
+    <p>$(E, \langle\cdot,\cdot\rangle)$ avec $\dim E < \infty$ s'appelle un <strong>espace euclidien</strong>.</p>
+  </div>
+
+  <h3>Inégalités fondamentales</h3>
+
+  <div class="box box-thm">
+    <span class="box-label">Cauchy-Schwarz</span>
+    $$\big|\langle u, v\rangle\big|^2 \leq \langle u, u\rangle \cdot \langle v, v\rangle$$
+    <p>Égalité $\iff u$ et $v$ sont colinéaires.</p>
+  </div>
+
+  <div class="box box-thm">
+    <span class="box-label">Minkowski (inégalité triangulaire)</span>
+    $$\|u + v\| \leq \|u\| + \|v\|$$
+  </div>
+
+  <h2><span class="h-num">§ 2.4</span>Norme & identités remarquables</h2>
+
+  <div class="box box-def">
+    $$\|u\|_E = \sqrt{\langle u, u\rangle}$$
+  </div>
+
+  <div class="box box-prop">
+    <span class="box-label">Identités à connaître par cœur</span>
+    <ul>
+      <li>$\|u+v\|^2 = \|u\|^2 + 2\langle u,v\rangle + \|v\|^2$</li>
+      <li>$\|u+v\|^2 - \|u-v\|^2 = 4\langle u,v\rangle$ — <em>identité de polarisation</em></li>
+      <li>$\|u+v\|^2 + \|u-v\|^2 = 2(\|u\|^2 + \|v\|^2)$ — <em>identité du parallélogramme</em></li>
+      <li>$\langle u,v\rangle = \frac{1}{2}\big(\|u+v\|^2 - \|u\|^2 - \|v\|^2\big) = \frac{1}{4}\big(\|u+v\|^2 - \|u-v\|^2\big)$</li>
+    </ul>
+  </div>
+
+  <h2><span class="h-num">§ 2.5</span>Orthogonalité — Base orthonormée</h2>
+
+  <div class="box box-def">
+    <p>$u$ et $v$ sont <strong>orthogonaux</strong> $\iff \langle u, v\rangle = 0$.</p>
+    <p><strong>Pythagore :</strong> $u \perp v \iff \|u+v\|^2 = \|u\|^2 + \|v\|^2$.</p>
+  </div>
+
+  <div class="box box-def">
+    <span class="box-label">Base orthonormée (b.o.n)</span>
+    <p>$(u_1, \dots, u_n)$ est une b.o.n de $E$ si :</p>
+    $$\langle u_i, u_j\rangle = \delta_{ij} = \begin{cases}1 & \text{si } i=j \\ 0 & \text{sinon}\end{cases}$$
+  </div>
+
+  <div class="box box-prop">
+    <p>$p$ vecteurs non nuls deux à deux orthogonaux forment une famille <strong>libre</strong>.</p>
+  </div>
+
+  <h3>Produit scalaire dans une b.o.n</h3>
+
+  <div class="box box-thm">
+    <p>Si $\mathcal{B} = (u_1, \dots, u_n)$ est une b.o.n et $X = \sum x_i u_i$, $Y = \sum y_i u_i$, alors :</p>
+    $$\langle X, Y\rangle = \sum_{i=1}^n x_i y_i \quad \text{(produit scalaire canonique !)}$$
+    <p>De plus : $\text{mat}_\mathcal{B}(\langle\cdot,\cdot\rangle) = I_n$ et $x_i = \langle X, u_i\rangle$.</p>
+  </div>
+
+  <!-- ─── GRAM-SCHMIDT WIDGET ─── -->
+  <h2><span class="h-num">§ 2.6</span>Algorithme de Gram-Schmidt</h2>
+
+  <div class="box box-thm">
+    <p>À partir d'une base $(v_1, \dots, v_n)$ quelconque, on construit une b.o.n $(w_1, \dots, w_n)$ par :</p>
+    $$y_k = v_k - \sum_{j=1}^{k-1} \langle v_k, w_j\rangle w_j, \quad w_k = \frac{y_k}{\|y_k\|}$$
+    <p>La matrice de passage $\mathcal{B} \to \mathcal{B}'$ est <strong>triangulaire supérieure</strong> car $w_k$ ne dépend que de $v_1, \dots, v_k$.</p>
+  </div>
+
+  <div class="viz-card">
+    <div class="viz-header">
+      <div>
+        <div class="viz-tag">Visualisation interactive</div>
+        <div class="viz-title">Gram-Schmidt en 2D</div>
+      </div>
+      <span class="pill pill-burgundy">DRAG ME</span>
+    </div>
+    <div class="viz-body">
+      <svg id="gsSvg" class="viz-svg" viewBox="0 0 500 400"></svg>
+      <div class="viz-controls">
+        <h5>Étapes</h5>
+        <div id="gsSteps">
+          <div class="gs-step" data-step="0">
+            <div class="gs-step-num">Étape 1</div>
+            <div style="margin-top:4px; font-size:13px;">$w_1 = v_1 / \|v_1\|$</div>
+          </div>
+          <div class="gs-step" data-step="1">
+            <div class="gs-step-num">Étape 2</div>
+            <div style="margin-top:4px; font-size:13px;">$y_2 = v_2 - \langle v_2, w_1\rangle w_1$</div>
+          </div>
+          <div class="gs-step" data-step="2">
+            <div class="gs-step-num">Étape 3</div>
+            <div style="margin-top:4px; font-size:13px;">$w_2 = y_2 / \|y_2\|$</div>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn" id="gsPrev">← Préc.</button>
+          <button class="btn" id="gsNext">Suiv. →</button>
+          <button class="btn btn-ghost" id="gsReset">Reset</button>
+        </div>
+        <div style="margin-top:14px; font-family: 'JetBrains Mono', monospace; font-size:11px; color:var(--ink-soft);">
+          <div class="viz-stat"><span class="viz-stat-key">v₁</span><span class="viz-stat-val" id="gsV1">—</span></div>
+          <div class="viz-stat"><span class="viz-stat-key">v₂</span><span class="viz-stat-val" id="gsV2">—</span></div>
+          <div class="viz-stat"><span class="viz-stat-key">w₁</span><span class="viz-stat-val" id="gsW1">—</span></div>
+          <div class="viz-stat"><span class="viz-stat-key">w₂</span><span class="viz-stat-val" id="gsW2">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-swatch" style="background:#7B2D26"></span>v₁, v₂ (base initiale)</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#2C5664"></span>w₁, w₂ (base orthonormée)</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#8A7D6B; border-top:1px dashed"></span>projection</span>
+    </div>
+  </div>
+
+  <h2><span class="h-num">§ 2.7</span>Matrices orthogonales</h2>
+
+  <div class="box box-def">
+    <p>$P \in \mathcal{M}_n(\mathbb{R})$ <strong>orthogonale</strong> $\iff$ $P$ inversible et :</p>
+    $$P^{-1} = {}^t P \quad \iff \quad {}^t P \cdot P = I_n$$
+  </div>
+
+  <div class="box box-thm">
+    <p>Soit $\mathcal{B}$ b.o.n de $E$. Alors $\mathcal{B}'$ b.o.n $\iff P_{\mathcal{B} \to \mathcal{B}'}$ orthogonale.</p>
+  </div>
+
+  <h2><span class="h-num">§ 2.8</span>Orthogonal d'un sous-espace</h2>
+
+  <div class="box box-def">
+    <p>Soit $F \subset E$ :</p>
+    $$F^\perp = \{v \in E \mid \forall u \in F,\ \langle u, v\rangle = 0\}$$
+    <p>Si $(u_1, \dots, u_p)$ est une base de $F$ : $v \in F^\perp \iff \langle v, u_i\rangle = 0\ \forall i$.</p>
+  </div>
+
+  <div class="box box-thm">
+    <p>Si $F$ est un s.e.v de $E$ alors $F^\perp$ aussi, et :</p>
+    $$F \oplus F^\perp = E$$
+  </div>
+
+  <div class="box box-prop">
+    <ol>
+      <li>$\{0\}^\perp = E$ et $E^\perp = \{0\}$</li>
+      <li>$F \subset G \implies G^\perp \subset F^\perp$</li>
+      <li>$(F^\perp)^\perp = F$</li>
+      <li>$(F + G)^\perp = F^\perp \cap G^\perp$</li>
+    </ol>
+  </div>
+
+  <!-- ─── PROJECTION WIDGET ─── -->
+  <h2><span class="h-num">§ 2.9</span>Projection & symétrie orthogonales</h2>
+
+  <div class="box box-def">
+    <p>$p$ est une <strong>projection</strong> si $p \circ p = p$.</p>
+    <p>$s$ est une <strong>symétrie</strong> si $s \circ s = \text{Id}_E$.</p>
+    <p>Si $E = F \oplus G$, alors $\forall u \in E,\ u = x + y$ avec $x \in F,\ y \in G$ et :</p>
+    <ul>
+      <li>$p(u) = x$ : <strong>projection sur $F$ parallèlement à $G$</strong></li>
+      <li>$s(u) = x - y$ : <strong>symétrie par rapport à $F$ parallèlement à $G$</strong></li>
+    </ul>
+    <p>Si en plus $G = F^\perp$ : <strong>orthogonale</strong>.</p>
+    <p>Relation clef : $s = 2p - \text{Id}_E$.</p>
+  </div>
+
+  <div class="viz-card">
+    <div class="viz-header">
+      <div>
+        <div class="viz-tag">Visualisation interactive</div>
+        <div class="viz-title">Projection & symétrie orthogonales</div>
+      </div>
+      <span class="pill pill-burgundy">DRAG U</span>
+    </div>
+    <div class="viz-body">
+      <svg id="projSvg" class="viz-svg" viewBox="0 0 500 400"></svg>
+      <div class="viz-controls">
+        <h5>Contrôles</h5>
+        <div class="slider-row">
+          <label>Angle de F (degrés) : <span id="projAngleVal">30</span>°</label>
+          <input type="range" id="projAngle" min="0" max="180" value="30">
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-active" id="btnShowProj">Projection</button>
+          <button class="btn" id="btnShowSym">Symétrie</button>
+          <button class="btn btn-ghost" id="btnShowPerp">u − π(u)</button>
+        </div>
+        <div style="margin-top:14px;">
+          <div class="viz-stat"><span class="viz-stat-key">u</span><span class="viz-stat-val" id="projU">—</span></div>
+          <div class="viz-stat"><span class="viz-stat-key">π(u)</span><span class="viz-stat-val" id="projPi">—</span></div>
+          <div class="viz-stat"><span class="viz-stat-key">u−π(u)</span><span class="viz-stat-val" id="projDiff">—</span></div>
+          <div class="viz-stat"><span class="viz-stat-key">s(u)</span><span class="viz-stat-val" id="projSym">—</span></div>
+          <div class="viz-stat"><span class="viz-stat-key">‖u‖</span><span class="viz-stat-val" id="projNorm">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-swatch" style="background:#7B2D26"></span>u</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#2C5664"></span>π(u)</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#8A7D6B; border-top:1px dashed"></span>u − π(u) ⊥ F</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#B8924A; border-top:1px dashed"></span>droite F</span>
+    </div>
+  </div>
+
+  <div class="box box-thm">
+    <span class="box-label">Théorème — Formule de la projection</span>
+    <p>Si $(u_1, \dots, u_p)$ est une <strong>b.o.n de $F$</strong>, alors :</p>
+    $$\pi_F(u) = \sum_{i=1}^p \langle u, u_i\rangle\, u_i$$
+  </div>
+
+  <div class="box box-prop">
+    <span class="box-label">Propriétés clés</span>
+    <ul>
+      <li>$\text{Im}\,\pi = F = E_1$ (espace propre pour $\lambda = 1$)</li>
+      <li>$\ker\pi = F^\perp = E_0$ (espace propre pour $\lambda = 0$)</li>
+      <li>$\pi$ est diagonalisable, valeurs propres $\in \{0, 1\}$</li>
+      <li>$\pi$ est projection orthogonale $\iff \pi$ est <strong>symétrique</strong> (auto-adjointe)</li>
+      <li><span class="hl">$\forall x \in F,\ \|u - x\| \geq \|u - \pi(u)\|$</span> : $\pi(u)$ minimise la distance à $F$ !</li>
+    </ul>
+  </div>
+
+  <div class="box box-remark">
+    <span class="box-label">Démo de la propriété minimale</span>
+    $$\|u-x\|^2 = \|u - \pi(u) + \pi(u) - x\|^2$$
+    <p>$u - \pi(u) \in F^\perp$ et $\pi(u) - x \in F$ donc orthogonaux :</p>
+    $$= \|u - \pi(u)\|^2 + \|\pi(u) - x\|^2 \geq \|u - \pi(u)\|^2$$
+  </div>
+
+</section>
+
+<!-- ═══════════════════ TAB 3 : CHAPITRE 3 ═══════════════════ -->
+<section class="tab-content" id="ch3">
+
+  <p class="intro">Le théorème spectral et l'endomorphisme adjoint — où la structure euclidienne du chapitre 2 rencontre la diagonalisation du chapitre 1.</p>
+
+  <h2><span class="h-num">§ 3.1</span>Endomorphisme symétrique</h2>
+
+  <div class="box box-def">
+    <p>$f \in \mathcal{L}(E)$ est <strong>symétrique</strong> $\iff$ sa matrice dans une b.o.n est symétrique : $A = {}^t A$.</p>
+  </div>
+
+  <div class="box box-prop">
+    <span class="box-label">Caractérisation utile</span>
+    $$f \text{ symétrique} \iff \forall (u,v) \in E^2,\ \langle f(u), v\rangle = \langle u, f(v)\rangle$$
+  </div>
+
+  <div class="box box-prop">
+    <span class="box-label">Propriété d'orthogonalité des sous-espaces propres</span>
+    <p>Soit $f$ symétrique. Si $\lambda_1 \neq \lambda_2$ sont deux v.p distinctes, alors :</p>
+    $$E_{\lambda_1} \perp E_{\lambda_2}$$
+    <p><strong>Preuve :</strong> Soit $u \in E_{\lambda_1}$, $v \in E_{\lambda_2}$.</p>
+    $$\langle f(u), v\rangle = \langle \lambda_1 u, v\rangle = \lambda_1 \langle u, v\rangle$$
+    $$\langle u, f(v)\rangle = \langle u, \lambda_2 v\rangle = \lambda_2 \langle u, v\rangle$$
+    <p>Comme $f$ symétrique : $\lambda_1 \langle u, v\rangle = \lambda_2 \langle u, v\rangle$, donc $\langle u, v\rangle = 0$.</p>
+  </div>
+
+  <h2><span class="h-num">§ 3.2</span>Théorème spectral</h2>
+
+  <div class="box box-thm">
+    <span class="box-label">★ Théorème spectral (à connaître par cœur)</span>
+    <p>Soit $A \in \mathcal{M}_n(\mathbb{R})$ telle que ${}^t A = A$. Alors :</p>
+    <ul>
+      <li>$A$ est <strong>diagonalisable dans $\mathbb{R}$</strong></li>
+      <li>Il existe une <strong>b.o.n formée de vecteurs propres</strong></li>
+      <li>Il existe $P$ <strong>orthogonale</strong> ($P^{-1} = {}^t P$) telle que :</li>
+    </ul>
+    $$\boxed{A = P D P^{-1} = P D\, {}^t P}$$
+  </div>
+
+  <div class="box box-remark">
+    <span class="box-label">Pourquoi diagonalisable ?</span>
+    <p>Une matrice symétrique réelle satisfait automatiquement les conditions de diagonalisation :</p>
+    <ol>
+      <li>Polynôme caractéristique scindé sur $\mathbb{R}$ (à racines réelles)</li>
+      <li>$\dim E_\lambda = \text{ordre}(\lambda)$ pour toute v.p</li>
+      <li>$\sum \text{ordre}(\lambda_i) = \dim E$</li>
+    </ol>
+  </div>
+
+  <h2><span class="h-num">§ 3.3</span>Endomorphisme adjoint</h2>
+
+  <p>L'adjoint $f^*$ est défini <strong>même quand $f$ n'est pas symétrique</strong>. C'est une généralisation.</p>
+
+  <div class="box box-thm">
+    <span class="box-label">Théorème de Riesz</span>
+    <p>Soit $(E, \langle\cdot,\cdot\rangle)$ un espace euclidien. Pour toute forme linéaire $\vartheta \in E^* = \mathcal{L}(E, \mathbb{R})$, il existe un <strong>unique</strong> $a \in E$ tel que :</p>
+    $$\forall v \in E,\ \vartheta(v) = \langle a, v\rangle$$
+    <p>Plus précisément, $a \in (\ker\vartheta)^\perp$, qui est une droite.</p>
+  </div>
+
+  <div class="box box-def">
+    <span class="box-label">Définition de l'adjoint</span>
+    <p>Pour $f \in \mathcal{L}(E)$ et $u \in E$ fixé, l'application $\vartheta : v \mapsto \langle u, f(v)\rangle$ est linéaire.</p>
+    <p>Par Riesz : $\exists!\, a \in E$ (dépendant de $u$) tel que $\vartheta(v) = \langle a, v\rangle$.</p>
+    <p>On note $a = f^*(u)$ et on a :</p>
+    $$\boxed{\langle u, f(v)\rangle = \langle f^*(u), v\rangle}$$
+    <p>$f^*$ est appelé <strong>endomorphisme adjoint</strong> de $f$.</p>
+  </div>
+
+  <div class="box box-prop">
+    <span class="box-label">Propriétés</span>
+    <ul>
+      <li>$(f^*)^* = f$</li>
+      <li>$(u + v)^* = u^* + v^*$</li>
+      <li>$(\lambda u)^* = \lambda u^*$</li>
+      <li>$(u \circ v)^* = v^* \circ u^*$</li>
+      <li>$f$ symétrique $\iff f^* = f$ → on dit $f$ <strong>auto-adjoint</strong></li>
+      <li>$f$ auto-adjoint $\iff$ sa matrice dans une b.o.n est symétrique</li>
+    </ul>
+  </div>
+
+  <div class="box box-thm">
+    <span class="box-label">★ Formule clé : matrice de l'adjoint</span>
+    <p>Si $\mathcal{B}$ est une <strong>b.o.n</strong> de $E$, alors :</p>
+    $$\boxed{\text{mat}(f^*, \mathcal{B}) = {}^t \text{mat}(f, \mathcal{B})}$$
+  </div>
+
+  <div class="warn">Attention : cette formule n'est valable que dans une <strong>base orthonormée</strong>. L'adjoint dépend du produit scalaire choisi.</div>
+
+  <h2><span class="h-num">§ 3.4</span>Notions avancées (de TD)</h2>
+
+  <h3>Sous-espace stable</h3>
+  <div class="box box-prop">
+    <p>$F$ est <strong>stable par $f$</strong> si $\forall u \in F,\ f(u) \in F$ (i.e. $f(F) \subset F$).</p>
+    <p><strong>Théorème :</strong> Si $f$ est symétrique et $F$ stable par $f$, alors $F^\perp$ est aussi stable par $f$.</p>
+  </div>
+
+  <h3>Endomorphisme orthogonal</h3>
+  <div class="box box-def">
+    <p>$u$ est <strong>orthogonal</strong> $\iff \forall (x,y),\ \langle u(x), u(y)\rangle = \langle x, y\rangle$.</p>
+    <p>Équivalent à : $\|u(x)\| = \|x\|$ pour tout $x$ (préserve les longueurs).</p>
+  </div>
+
+  <h3>Endomorphisme normal & similitude</h3>
+  <div class="box box-def">
+    <p>$u$ <strong>normal</strong> $\iff u \circ u^* = u^* \circ u$.</p>
+    <p>$u$ <strong>similitude</strong> $\iff \exists \alpha > 0,\ \langle u(x), u(y)\rangle = \alpha\langle x, y\rangle$.</p>
+    <p>Si $u$ similitude : $u$ automorphisme, $u^{-1} = \frac{1}{\alpha} u^*$, et $u$ normal.</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════ TAB 4 : MÉTHODES ═══════════════════ -->
+<section class="tab-content" id="methods">
+
+  <p class="intro">Cookbook pour les exercices : pour chaque type de question, une méthode pas-à-pas testée sur les TDs 3 et 4.</p>
+
+  <div class="method-card">
+    <div class="method-question">Comment montrer qu'une application $\varphi$ est un produit scalaire ?</div>
+    <ol class="method-steps">
+      <li><strong>Bilinéarité :</strong> Soit montrer la linéarité dans chaque variable, soit (méthode 3 dans $\mathbb{R}^n$) reconnaître la forme $axx' + bxy' + cx'y + dyy'$.</li>
+      <li><strong>Symétrie :</strong> Vérifier $\varphi(u,v) = \varphi(v,u)$. <em>Si symétrique, on peut simplifier l'étape 1 en ne montrant la linéarité que par rapport à une variable.</em></li>
+      <li><strong>Positivité :</strong> Montrer $\varphi(u,u) \geq 0$. Souvent en complétant un carré : pour $\varphi(X,X) = ax^2 + 2bxy + cy^2$, écrire en somme de carrés.</li>
+      <li><strong>Définie :</strong> Montrer $\varphi(u,u) = 0 \Rightarrow u = 0$. Si on a écrit en somme de carrés, chaque carré doit être nul.</li>
+    </ol>
+    <div class="method-tip">Pour $\varphi(X,X') = xx' - 2(xy' + x'y) + 6yy'$ (TD3 ex.1) : c'est de la forme $ax^2 - 4xy + 6y^2 = (x-2y)^2 + 2y^2 \geq 0$, nul ssi $x = y = 0$.</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment trouver $F^\perp$ ?</div>
+    <ol class="method-steps">
+      <li>Identifier une base $(u_1, \dots, u_p)$ de $F$.</li>
+      <li>$v \in F^\perp \iff \langle v, u_i\rangle = 0$ pour tout $i = 1, \dots, p$.</li>
+      <li>Cela donne un système d'équations linéaires en les coordonnées de $v$.</li>
+      <li>Résoudre le système → on obtient une base de $F^\perp$.</li>
+    </ol>
+    <div class="method-tip">$\dim F^\perp = \dim E - \dim F$. Pour un plan dans $\mathbb{R}^3$, $F^\perp$ est une droite (vecteur normal). Pour une droite, $F^\perp$ est un plan.</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment construire une b.o.n par Gram-Schmidt ?</div>
+    <ol class="method-steps">
+      <li>Partir d'une base $(v_1, v_2, \dots, v_n)$ de $E$.</li>
+      <li>Calculer $w_1 = \dfrac{v_1}{\|v_1\|}$.</li>
+      <li>Pour $k = 2, 3, \dots, n$ : calculer $y_k = v_k - \displaystyle\sum_{j=1}^{k-1} \langle v_k, w_j\rangle w_j$.</li>
+      <li>Puis normaliser : $w_k = \dfrac{y_k}{\|y_k\|}$.</li>
+      <li>La b.o.n cherchée est $(w_1, \dots, w_n)$.</li>
+    </ol>
+    <div class="method-tip">Vérification rapide : à chaque étape, calculer $\langle w_i, w_j\rangle$ ; cela doit faire 0 si $i \neq j$ et 1 si $i = j$. Si le produit scalaire est <em>non canonique</em>, utiliser <strong>celui de l'énoncé</strong>, pas le canonique !</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment calculer la projection orthogonale $\pi_F(u)$ ?</div>
+    <ol class="method-steps">
+      <li><strong>Méthode 1 (avec b.o.n) :</strong> Si on a une b.o.n $(u_1, \dots, u_p)$ de $F$ :
+        $$\pi_F(u) = \sum_{i=1}^p \langle u, u_i\rangle\, u_i$$</li>
+      <li><strong>Méthode 2 (par complément) :</strong> Calculer d'abord $\pi_{F^\perp}$ qui est souvent plus simple (si $F^\perp$ est une droite), puis $\pi_F = \text{Id} - \pi_{F^\perp}$.</li>
+      <li><strong>Méthode 3 (par décomposition) :</strong> Écrire $u = x + y$ avec $x \in F$ et $y \in F^\perp$, résoudre le système, $\pi_F(u) = x$.</li>
+      <li><strong>Méthode 4 (par minimisation) :</strong> $\pi_F(u)$ est l'unique $x \in F$ qui minimise $\|u - x\|$.</li>
+    </ol>
+    <div class="method-tip">Si $F^\perp$ est une droite engendrée par un vecteur $n$ (vecteur normal), alors $\pi_{F^\perp}(u) = \dfrac{\langle u, n\rangle}{\|n\|^2} n$. Puis $\pi_F(u) = u - \pi_{F^\perp}(u)$. C'est souvent plus rapide que d'orthonormaliser une base de $F$ (TD3 ex.3).</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment donner la matrice d'une projection/symétrie dans une base ?</div>
+    <ol class="method-steps">
+      <li>Calculer l'image $\pi(e_j)$ de chaque vecteur $e_j$ de la base $\mathcal{B}_c$.</li>
+      <li>Placer ces images en colonnes : $\text{mat}(\pi, \mathcal{B}_c) = (\pi(e_1) | \pi(e_2) | \cdots | \pi(e_n))$.</li>
+      <li>Pour la symétrie : utiliser $s = 2\pi - \text{Id}$, donc $\text{mat}(s) = 2\,\text{mat}(\pi) - I_n$.</li>
+    </ol>
+    <div class="method-tip">Dans une b.o.n adaptée (où les $u_i$ sont une b.o.n de $F$ complétée par une b.o.n de $F^\perp$), la matrice de $\pi$ est diagonale : $\text{diag}(\underbrace{1, \dots, 1}_{p \text{ fois}}, \underbrace{0, \dots, 0}_{n-p \text{ fois}})$.</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment diagonaliser une matrice symétrique en b.o.n ?</div>
+    <ol class="method-steps">
+      <li>Calculer $P_A(X) = \det(A - XI_n)$ et trouver les valeurs propres $\lambda_1, \dots, \lambda_p$.</li>
+      <li>Pour chaque $\lambda_i$, calculer $E_{\lambda_i} = \ker(A - \lambda_i I_n)$ en résolvant le système.</li>
+      <li><strong>Astuce :</strong> les sous-espaces propres sont automatiquement <strong>orthogonaux entre eux</strong> (car $A$ est symétrique).</li>
+      <li>Dans chaque $E_{\lambda_i}$, appliquer Gram-Schmidt pour obtenir une b.o.n de $E_{\lambda_i}$.</li>
+      <li>Concaténer ces b.o.n → b.o.n de $\mathbb{R}^n$ formée de vecteurs propres.</li>
+      <li>$P$ = matrice de ces vecteurs propres (en colonnes). $P$ est <strong>orthogonale</strong>.</li>
+      <li>Conclusion : $A = PD\,{}^tP$ avec $D = \text{diag}(\lambda_1, \dots)$.</li>
+    </ol>
+    <div class="method-tip">Pour TD4 ex.3 ($A$ avec $a$ sur la diagonale et $b$ ailleurs) : $P_A(X) = (a + 2b - X)(a - b - X)^2$. V.p simples = $a + 2b$, ordre 2 = $a - b$. Le vecteur $(1,1,1)$ est propre pour $a+2b$. Pour $a-b$ : trouver le plan d'équation $x+y+z=0$ et l'orthonormer.</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment trouver l'endomorphisme adjoint $f^*$ ?</div>
+    <ol class="method-steps">
+      <li><strong>Si on travaille dans une b.o.n :</strong> calculer $A = \text{mat}(f, \mathcal{B})$, puis $\text{mat}(f^*, \mathcal{B}) = {}^t A$. C'est tout.</li>
+      <li><strong>Si la base n'est pas orthonormée :</strong> il faut d'abord trouver une b.o.n (Gram-Schmidt), exprimer $f$ dans cette b.o.n, transposer, puis revenir si nécessaire.</li>
+      <li><strong>Approche directe :</strong> écrire $\langle f(u), v\rangle$ et chercher à le mettre sous la forme $\langle u, g(v)\rangle$. Alors $g = f^*$.</li>
+    </ol>
+    <div class="method-tip">Pour TD4 ex.5 ($f : P \mapsto P'$ sur $\mathbb{R}_2[X]$ avec $\langle P, Q\rangle = \int_{-1}^1 PQ$) : il faut d'abord trouver la b.o.n par Gram-Schmidt (à partir de $1, X, X^2$), calculer la matrice de $f$ dans cette b.o.n, puis transposer.</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment trouver tous les sous-espaces stables par $f$ ?</div>
+    <ol class="method-steps">
+      <li>Étudier selon $\dim F$ : 0, 1, ..., $n$.</li>
+      <li><strong>$\dim F = 0$ :</strong> $F = \{0\}$, toujours stable.</li>
+      <li><strong>$\dim F = n$ :</strong> $F = E$, toujours stable.</li>
+      <li><strong>$\dim F = 1$ :</strong> $F = \text{vect}(u)$. Stable $\iff f(u) = \alpha u$, i.e. $u$ vecteur propre. Donc droites stables = droites engendrées par des vecteurs propres.</li>
+      <li><strong>$\dim F = 2$ (cas $n=3$) :</strong> $\dim F^\perp = 1$. Si $f$ symétrique : $F$ stable $\iff F^\perp$ stable $\iff F^\perp = $ droite propre. Donc $F = (\text{droite propre})^\perp$.</li>
+    </ol>
+    <div class="method-tip">Pour TD4 ex.4.2 (matrice de rang 1, tous les 1) : v.p sont 0 (ordre 2) et 3 (ordre 1). $E_3 = \text{vect}((1,1,1))$, $E_0 = $ plan $x+y+z=0$. Droites stables : toute droite incluse dans $E_0$, et la droite $\text{vect}((1,1,1))$. Plans stables : $E_0$ et tout plan contenant $E_3$.</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment montrer qu'une projection est orthogonale ?</div>
+    <ol class="method-steps">
+      <li>Montrer que la direction $G$ (ker de $p$) est égale à $F^\perp$ (image de $p$ orthogonale).</li>
+      <li><strong>Ou plus simple :</strong> $p$ projection orthogonale $\iff p$ est un <strong>endomorphisme symétrique</strong>.</li>
+      <li>Donc montrer que $\langle p(x), y\rangle = \langle x, p(y)\rangle$ pour tout $x, y \in E$.</li>
+    </ol>
+    <div class="method-tip">Démo TD4 ex.1 (sens direct) : si $p$ est projection orthogonale, décomposer $x = x_1 + x_2$ avec $x_1 \in F$, $x_2 \in F^\perp$, et idem pour $y$. Alors $\langle p(x), y\rangle = \langle x_1, y_1 + y_2\rangle = \langle x_1, y_1\rangle$ (car $\langle x_1, y_2\rangle = 0$). Idem pour $\langle x, p(y)\rangle$. Les deux sont égaux.</div>
+  </div>
+
+  <div class="method-card">
+    <div class="method-question">Comment montrer qu'un endomorphisme $u$ est orthogonal ?</div>
+    <ol class="method-steps">
+      <li><strong>Méthode 1 (par produit scalaire) :</strong> montrer $\langle u(x), u(y)\rangle = \langle x, y\rangle$ pour tous $x, y$.</li>
+      <li><strong>Méthode 2 (par norme) :</strong> montrer $\|u(x)\| = \|x\|$ pour tout $x$ (équivalent par polarisation).</li>
+      <li><strong>Méthode 3 (par matrice) :</strong> dans une b.o.n, montrer que $A = \text{mat}(u, \mathcal{B})$ vérifie ${}^tA \cdot A = I_n$.</li>
+    </ol>
+    <div class="method-tip">L'équivalence entre "$\langle u(x), u(y)\rangle = \langle x, y\rangle$ pour tous $x, y$" et "$\|u(x)\| = \|x\|$ pour tout $x$" utilise l'identité de polarisation : $\langle a, b\rangle = \frac{1}{4}(\|a+b\|^2 - \|a-b\|^2)$.</div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════ TAB 5 : SYNTHÈSE ═══════════════════ -->
+<section class="tab-content" id="synth">
+
+  <p class="intro">Tout le cours dans une vue d'ensemble. Comment les trois chapitres s'enchaînent et se combinent dans les exercices typiques.</p>
+
+  <h2><span class="h-num">§ S.1</span>L'enchaînement logique du cours</h2>
+
+  <div class="flow-grid">
+    <div class="flow-node">
+      <div class="flow-node-tag">Chapitre 1</div>
+      <div class="flow-node-title">Outils linéaires</div>
+      <p>Sommes directes · valeurs propres · diagonalisation · polynôme minimal · Cayley-Hamilton</p>
+      <div style="margin-top:10px;">
+        <span class="pill">$M = PDP^{-1}$</span>
+        <span class="pill">$P_M(X)$</span>
+        <span class="pill">$E_\lambda$</span>
+      </div>
+    </div>
+
+    <div class="flow-node">
+      <div class="flow-node-tag">Chapitre 2</div>
+      <div class="flow-node-title">Structure euclidienne</div>
+      <p>Produit scalaire · orthogonalité · b.o.n · Gram-Schmidt · projection orthogonale · symétrie</p>
+      <div style="margin-top:10px;">
+        <span class="pill">$\langle\cdot,\cdot\rangle$</span>
+        <span class="pill">$F^\perp$</span>
+        <span class="pill">$\pi_F$</span>
+      </div>
+    </div>
+
+    <div class="flow-node">
+      <div class="flow-node-tag">Chapitre 3</div>
+      <div class="flow-node-title">Synthèse spectrale</div>
+      <p>Théorème spectral · endomorphisme adjoint · auto-adjoint · théorème de Riesz</p>
+      <div style="margin-top:10px;">
+        <span class="pill">$A = PD\,{}^tP$</span>
+        <span class="pill">$f^*$</span>
+        <span class="pill">$\text{mat}(f^*) = {}^t\text{mat}(f)$</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <h2><span class="h-num">§ S.2</span>Les ponts entre chapitres</h2>
+
+  <div class="two-col">
+    <div class="box box-prop">
+      <span class="box-label">Pont 1 → 2</span>
+      <div class="box-title">De la diagonalisation à Gram-Schmidt</div>
+      <p>Quand on diagonalise dans un espace euclidien, on veut souvent que $P$ soit <strong>orthogonale</strong>. Pour cela, on prend les vecteurs propres et on les <strong>orthonormalise par Gram-Schmidt dans chaque sous-espace propre</strong>.</p>
+    </div>
+    <div class="box box-prop">
+      <span class="box-label">Pont 2 → 3</span>
+      <div class="box-title">De la projection à la symétrie</div>
+      <p>$\pi_F$ est diagonalisable avec v.p $\{0, 1\}$ dans la b.o.n adaptée. C'est un endomorphisme <strong>auto-adjoint</strong>, donc symétrique. Et $s = 2\pi - \text{Id}$ est orthogonal.</p>
+    </div>
+    <div class="box box-prop">
+      <span class="box-label">Pont 1 ↔ 3</span>
+      <div class="box-title">Théorème spectral = diagonalisation + orthogonal</div>
+      <p>Le théorème spectral garantit que toute matrice symétrique est diagonalisable <strong>via une matrice orthogonale</strong>. C'est la fusion parfaite des chapitres 1 et 2.</p>
+    </div>
+    <div class="box box-prop">
+      <span class="box-label">Pont 2 ↔ 3</span>
+      <div class="box-title">Adjoint et matrice transposée</div>
+      <p>Dans une b.o.n, $\text{mat}(f^*) = {}^t\text{mat}(f)$. La transposée matricielle <strong>est</strong> l'adjoint, à condition d'être dans une b.o.n.</p>
+    </div>
+  </div>
+
+  <h2><span class="h-num">§ S.3</span>Patterns d'exercices types</h2>
+
+  <div class="pattern-card">
+    <div class="pattern-card-sub">Pattern 1 · Très fréquent</div>
+    <div class="pattern-card-title">Construire une b.o.n adaptée à un problème</div>
+    <p><strong>Énoncé typique :</strong> «&nbsp;On donne un produit scalaire $\varphi$ et une base $\mathcal{B}$. Construire une b.o.n.&nbsp;»</p>
+    <p><strong>Chaîne :</strong></p>
+    <ol>
+      <li>Vérifier que $\varphi$ est un produit scalaire (<em>Méthode 1</em>)</li>
+      <li>Appliquer Gram-Schmidt avec <strong>ce produit scalaire</strong> (<em>Méthode 3</em>)</li>
+      <li>Vérifier le résultat en calculant $\langle w_i, w_j\rangle$</li>
+    </ol>
+    <p><strong>Apparu dans :</strong> TD3 ex.1, TD3 ex.3.c, TD3 ex.4, TD4 ex.5</p>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-card-sub">Pattern 2 · Classique</div>
+    <div class="pattern-card-title">Diagonaliser une matrice symétrique en b.o.n</div>
+    <p><strong>Énoncé typique :</strong> «&nbsp;Diagonaliser $A$ dans une b.o.n de vecteurs propres.&nbsp;»</p>
+    <p><strong>Chaîne :</strong></p>
+    <ol>
+      <li>Vérifier que ${}^t A = A$ → théorème spectral applicable</li>
+      <li>Calculer $P_A(X)$ et trouver les v.p</li>
+      <li>Trouver les $E_{\lambda_i}$</li>
+      <li>Dans chaque $E_{\lambda_i}$ de dimension $\geq 2$ : Gram-Schmidt</li>
+      <li>Concaténer pour avoir $P$ orthogonale, et $A = PD\,{}^tP$</li>
+    </ol>
+    <p><strong>Apparu dans :</strong> TD4 ex.3</p>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-card-sub">Pattern 3 · Géométrique</div>
+    <div class="pattern-card-title">Projection orthogonale & matrice</div>
+    <p><strong>Énoncé typique :</strong> «&nbsp;Soit $F$ un plan/droite. Donner la matrice de $\pi_F$ dans $\mathcal{B}_c$.&nbsp;»</p>
+    <p><strong>Chaîne :</strong></p>
+    <ol>
+      <li>Trouver $F^\perp$ (<em>Méthode 2</em>)</li>
+      <li>Choisir la plus petite des deux pour calculer $\pi$ directement</li>
+      <li>$\pi_F = \text{Id} - \pi_{F^\perp}$ (ou réciproquement)</li>
+      <li>Calculer $\pi_F(e_1), \pi_F(e_2), \pi_F(e_3)$ → matrice par colonnes</li>
+    </ol>
+    <p><strong>Apparu dans :</strong> TD3 ex.3, TD3 ex.5</p>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-card-sub">Pattern 4 · Théorique</div>
+    <div class="pattern-card-title">Caractérisation : projection orthogonale ⟺ symétrique</div>
+    <p><strong>Énoncé typique :</strong> «&nbsp;Montrer que $p$ est projection orthogonale ssi $p$ est symétrique.&nbsp;»</p>
+    <p><strong>Chaîne :</strong></p>
+    <ol>
+      <li>Sens $\Rightarrow$ : décomposer $x = x_1 + x_2$ avec $x_1 \in F$, $x_2 \in F^\perp$, et calculer $\langle p(x), y\rangle$ et $\langle x, p(y)\rangle$</li>
+      <li>Sens $\Leftarrow$ : montrer que $G = F^\perp$. Pour cela, prouver $G \subset F^\perp$ (par symétrie) puis dimensions</li>
+    </ol>
+    <p><strong>Apparu dans :</strong> TD4 ex.1</p>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-card-sub">Pattern 5 · Adjoint</div>
+    <div class="pattern-card-title">Endomorphisme adjoint dans un cadre non standard</div>
+    <p><strong>Énoncé typique :</strong> «&nbsp;Soit $f : P \mapsto P'$ sur $\mathbb{R}_n[X]$ avec un produit scalaire intégral. Trouver $f^*$.&nbsp;»</p>
+    <p><strong>Chaîne :</strong></p>
+    <ol>
+      <li>Vérifier que $\varphi$ est un produit scalaire</li>
+      <li>Construire une b.o.n par Gram-Schmidt</li>
+      <li>Calculer $f(w_i)$ pour chaque $w_i$ de la b.o.n → matrice $A$</li>
+      <li>L'adjoint a pour matrice ${}^t A$ <strong>dans la même b.o.n</strong></li>
+      <li>Revenir à l'expression : $f^*(P) = \sum_{i} \big({}^tA \cdot (\langle P, w_j\rangle)_j\big)_i \cdot w_i$</li>
+    </ol>
+    <p><strong>Apparu dans :</strong> TD4 ex.5</p>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-card-sub">Pattern 6 · Sous-espaces</div>
+    <div class="pattern-card-title">Sous-espaces stables par un endomorphisme</div>
+    <p><strong>Énoncé typique :</strong> «&nbsp;Trouver tous les s.e.v stables par $f$.&nbsp;»</p>
+    <p><strong>Chaîne :</strong></p>
+    <ol>
+      <li>Diagonaliser $f$ (souvent symétrique → spectral)</li>
+      <li>Pour chaque dimension de $F$ entre 0 et $n$ :</li>
+      <li>$\dim F = 1$ : $F$ = droite engendrée par un vecteur propre</li>
+      <li>$\dim F = n - 1$ : $F^\perp$ est une droite, donc $F = (\text{droite propre})^\perp$ ; si $f$ symétrique, $F^\perp$ stable, donc $F$ stable aussi</li>
+    </ol>
+    <p><strong>Apparu dans :</strong> TD4 ex.4</p>
+  </div>
+
+  <h2><span class="h-num">§ S.4</span>Carte conceptuelle de révision</h2>
+
+  <div class="viz-card">
+    <div class="viz-header">
+      <div>
+        <div class="viz-tag">Vue d'ensemble</div>
+        <div class="viz-title">Le grand schéma</div>
+      </div>
+    </div>
+    <svg class="viz-svg" viewBox="0 0 800 500" style="background:#FCFAF3;">
+      <!-- Background -->
+      <rect width="800" height="500" fill="#FCFAF3"/>
+
+      <!-- Chapter 1 box -->
+      <g>
+        <rect x="40" y="40" width="220" height="140" fill="#FBF8F0" stroke="#7B2D26" stroke-width="1.5" rx="4"/>
+        <text x="150" y="68" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#1F1A14" font-style="italic">Chapitre 1</text>
+        <text x="150" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#7B2D26" letter-spacing="2">FONDATIONS</text>
+        <text x="60" y="118" font-family="Newsreader" font-size="13" fill="#4A3F32">• Somme directe</text>
+        <text x="60" y="138" font-family="Newsreader" font-size="13" fill="#4A3F32">• Valeurs propres</text>
+        <text x="60" y="158" font-family="Newsreader" font-size="13" fill="#4A3F32">• Diagonalisation</text>
+        <text x="60" y="174" font-family="Newsreader" font-size="13" fill="#4A3F32">• Polynôme minimal</text>
+      </g>
+
+      <!-- Chapter 2 box -->
+      <g>
+        <rect x="290" y="180" width="220" height="140" fill="#FBF8F0" stroke="#2C5664" stroke-width="1.5" rx="4"/>
+        <text x="400" y="208" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#1F1A14" font-style="italic">Chapitre 2</text>
+        <text x="400" y="232" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#2C5664" letter-spacing="2">GÉOMÉTRIE</text>
+        <text x="310" y="258" font-family="Newsreader" font-size="13" fill="#4A3F32">• Produit scalaire</text>
+        <text x="310" y="278" font-family="Newsreader" font-size="13" fill="#4A3F32">• Gram-Schmidt</text>
+        <text x="310" y="298" font-family="Newsreader" font-size="13" fill="#4A3F32">• Projection orth.</text>
+        <text x="310" y="314" font-family="Newsreader" font-size="13" fill="#4A3F32">• F⊥</text>
+      </g>
+
+      <!-- Chapter 3 box -->
+      <g>
+        <rect x="540" y="40" width="220" height="140" fill="#FBF8F0" stroke="#B8924A" stroke-width="1.5" rx="4"/>
+        <text x="650" y="68" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#1F1A14" font-style="italic">Chapitre 3</text>
+        <text x="650" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#B8924A" letter-spacing="2">SYNTHÈSE</text>
+        <text x="560" y="118" font-family="Newsreader" font-size="13" fill="#4A3F32">• Thm spectral</text>
+        <text x="560" y="138" font-family="Newsreader" font-size="13" fill="#4A3F32">• A = PDᵗP</text>
+        <text x="560" y="158" font-family="Newsreader" font-size="13" fill="#4A3F32">• Adjoint f*</text>
+        <text x="560" y="174" font-family="Newsreader" font-size="13" fill="#4A3F32">• Riesz</text>
+      </g>
+
+      <!-- Arrows -->
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#8A7D6B"/>
+        </marker>
+      </defs>
+
+      <line x1="260" y1="160" x2="290" y2="200" stroke="#8A7D6B" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="510" y1="200" x2="540" y2="160" stroke="#8A7D6B" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="260" y1="110" x2="540" y2="110" stroke="#8A7D6B" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr)"/>
+
+      <!-- Labels on arrows -->
+      <text x="275" y="178" font-family="JetBrains Mono" font-size="10" fill="#8A7D6B">structure</text>
+      <text x="475" y="178" font-family="JetBrains Mono" font-size="10" fill="#8A7D6B">b.o.n</text>
+      <text x="380" y="102" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8A7D6B">P orthogonale = b.o.n de v.p</text>
+
+      <!-- Bottom synthesis -->
+      <g>
+        <rect x="160" y="380" width="480" height="90" fill="#F4EFE4" stroke="#7B2D26" stroke-width="1" rx="4" stroke-dasharray="4 3"/>
+        <text x="400" y="412" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#7B2D26" font-style="italic">★ Théorème spectral</text>
+        <text x="400" y="438" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#1F1A14">A symétrique ⟹ ∃ P orth., D diag. : A = PDᵗP</text>
+        <text x="400" y="458" text-anchor="middle" font-family="Newsreader" font-size="13" font-style="italic" fill="#4A3F32">= diagonalisation (ch.1) + b.o.n (ch.2)</text>
+      </g>
+
+      <line x1="400" y1="320" x2="400" y2="380" stroke="#7B2D26" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="150" y1="180" x2="200" y2="380" stroke="#7B2D26" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+      <line x1="650" y1="180" x2="600" y2="380" stroke="#7B2D26" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <h2><span class="h-num">§ S.5</span>Check-list finale avant l'examen</h2>
+
+  <div class="kv">
+    <dt>SAVOIR ÉNONCER</dt>
+    <dd>Cauchy-Schwarz · Minkowski · Pythagore · théorème spectral · Riesz · Cayley-Hamilton · lemme des noyaux</dd>
+    <dt>SAVOIR FAIRE</dt>
+    <dd>Vérifier un produit scalaire · Gram-Schmidt · trouver $F^\perp$ · calculer une projection · diagonaliser en b.o.n · trouver l'adjoint · matrice de symétrie</dd>
+    <dt>FORMULES CLÉS</dt>
+    <dd>$\pi_F(u) = \sum \langle u, u_i\rangle u_i$ · $s = 2\pi - \text{Id}$ · $A = PD\,{}^tP$ · $\text{mat}(f^*) = {}^t\text{mat}(f)$ (en b.o.n)</dd>
+    <dt>IDENTITÉS</dt>
+    <dd>Polarisation · parallélogramme · $\|u+v\|^2 = \|u\|^2 + 2\langle u,v\rangle + \|v\|^2$</dd>
+    <dt>PIÈGES</dt>
+    <dd>Gram-Schmidt avec le <strong>bon</strong> produit scalaire · $\text{mat}(f^*) = {}^t\text{mat}(f)$ <strong>seulement en b.o.n</strong> · pour les formes bilinéaires, changement de base = ${}^tP \cdot M \cdot P$ (pas $P^{-1}MP$)</dd>
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-ornament">◆ ◆ ◆</div>
+  <div>Révision algèbre · Chapitres 1, 2, 3 · INSAT — DGIM — GL2 / RT2</div>
+  <div style="margin-top:6px; font-size:12px; color:var(--ink-faint);">D'après le cours de Nadia HMIDA · A.U. 2024-2025</div>
+</footer>
+
+<script>
+// ─── TAB NAVIGATION ───
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// ─── PROJECTION VISUALIZATION ───
+// ─────────────────────────────────────────────────────────────
+(function() {
+  const svg = document.getElementById('projSvg');
+  const W = 500, H = 400;
+  const CX = W/2, CY = H/2;
+  const SCALE = 35; // pixels per unit
+
+  // State
+  let uVec = { x: 2.5, y: 1.5 };  // initial vector u
+  let angleDeg = 30;                // angle of F
+  let showProj = true, showSym = false, showPerp = false;
+
+  function svgPoint(evt) {
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function fmt(x) {
+    return (Math.round(x * 100) / 100).toFixed(2);
+  }
+
+  function render() {
+    const angle = angleDeg * Math.PI / 180;
+    const dx = Math.cos(angle), dy = Math.sin(angle);
+
+    // projection of u onto direction (dx, dy)
+    const dot = uVec.x * dx + uVec.y * dy;
+    const piX = dot * dx, piY = dot * dy;
+    const perpX = uVec.x - piX, perpY = uVec.y - piY;
+    const symX = 2*piX - uVec.x, symY = 2*piY - uVec.y;
+    const norm = Math.sqrt(uVec.x*uVec.x + uVec.y*uVec.y);
+
+    // map to SVG coords (y inverted)
+    const toSvg = (x, y) => ({ x: CX + x*SCALE, y: CY - y*SCALE });
+    const O = { x: CX, y: CY };
+    const U = toSvg(uVec.x, uVec.y);
+    const PI = toSvg(piX, piY);
+    const SYM = toSvg(symX, symY);
+    const Fline1 = toSvg(-6*dx, -6*dy);
+    const Fline2 = toSvg(6*dx, 6*dy);
+
+    // Build grid + axes
+    let gridHTML = '';
+    for (let i = -7; i <= 7; i++) {
+      if (i === 0) continue;
+      gridHTML += `<line class="grid" x1="${CX + i*SCALE}" y1="0" x2="${CX + i*SCALE}" y2="${H}"/>`;
+      gridHTML += `<line class="grid" x1="0" y1="${CY + i*SCALE}" x2="${W}" y2="${CY + i*SCALE}"/>`;
+    }
+
+    let symHTML = '', perpHTML = '', projHTML = '';
+    if (showProj) {
+      projHTML = `
+        <line class="vec-proj" x1="${O.x}" y1="${O.y}" x2="${PI.x}" y2="${PI.y}" marker-end="url(#aTeal)"/>
+        <text x="${(O.x+PI.x)/2 + 8}" y="${(O.y+PI.y)/2 - 8}" fill="#2C5664">π(u)</text>
+      `;
+    }
+    if (showPerp) {
+      perpHTML = `
+        <line class="vec-perp" x1="${PI.x}" y1="${PI.y}" x2="${U.x}" y2="${U.y}"/>
+      `;
+    }
+    if (showSym) {
+      symHTML = `
+        <line class="vec-sym" x1="${O.x}" y1="${O.y}" x2="${SYM.x}" y2="${SYM.y}" marker-end="url(#aBur2)"/>
+        <text x="${SYM.x + 8}" y="${SYM.y + 14}" fill="#A04438">s(u)</text>
+      `;
+    }
+
+    svg.innerHTML = `
+      <defs>
+        <marker id="aBur" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#7B2D26"/>
+        </marker>
+        <marker id="aBur2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#A04438"/>
+        </marker>
+        <marker id="aTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#2C5664"/>
+        </marker>
+      </defs>
+      ${gridHTML}
+      <line class="axis" x1="0" y1="${CY}" x2="${W}" y2="${CY}"/>
+      <line class="axis" x1="${CX}" y1="0" x2="${CX}" y2="${H}"/>
+
+      <!-- F line -->
+      <line class="subspace" x1="${Fline1.x}" y1="${Fline1.y}" x2="${Fline2.x}" y2="${Fline2.y}"/>
+      <text x="${Fline2.x - 14}" y="${Fline2.y - 8}" fill="#B8924A">F</text>
+
+      ${projHTML}
+      ${perpHTML}
+      <!-- u vector -->
+      <line class="vec-u" x1="${O.x}" y1="${O.y}" x2="${U.x}" y2="${U.y}" marker-end="url(#aBur)"/>
+      <text x="${U.x + 10}" y="${U.y - 6}" fill="#7B2D26" font-weight="600">u</text>
+      ${symHTML}
+
+      <!-- Draggable point on u -->
+      <circle class="point" cx="${U.x}" cy="${U.y}" r="8"/>
+      <circle cx="${O.x}" cy="${O.y}" r="3" fill="#1F1A14"/>
+    `;
+
+    // Update stats
+    document.getElementById('projU').textContent = `(${fmt(uVec.x)}, ${fmt(uVec.y)})`;
+    document.getElementById('projPi').textContent = `(${fmt(piX)}, ${fmt(piY)})`;
+    document.getElementById('projDiff').textContent = `(${fmt(perpX)}, ${fmt(perpY)})`;
+    document.getElementById('projSym').textContent = `(${fmt(symX)}, ${fmt(symY)})`;
+    document.getElementById('projNorm').textContent = fmt(norm);
+  }
+
+  let dragging = false;
+  svg.addEventListener('pointerdown', (e) => {
+    const p = svgPoint(e);
+    const ux = CX + uVec.x * SCALE, uy = CY - uVec.y * SCALE;
+    const dist = Math.hypot(p.x - ux, p.y - uy);
+    if (dist < 30) {
+      dragging = true;
+      svg.setPointerCapture(e.pointerId);
+    } else {
+      // click elsewhere → move u there
+      uVec.x = (p.x - CX) / SCALE;
+      uVec.y = -(p.y - CY) / SCALE;
+      render();
+    }
+  });
+  svg.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const p = svgPoint(e);
+    uVec.x = (p.x - CX) / SCALE;
+    uVec.y = -(p.y - CY) / SCALE;
+    render();
+  });
+  svg.addEventListener('pointerup', (e) => {
+    dragging = false;
+    try { svg.releasePointerCapture(e.pointerId); } catch(_) {}
+  });
+  svg.addEventListener('pointercancel', () => { dragging = false; });
+
+  const angleSlider = document.getElementById('projAngle');
+  const angleVal = document.getElementById('projAngleVal');
+  angleSlider.addEventListener('input', (e) => {
+    angleDeg = parseFloat(e.target.value);
+    angleVal.textContent = angleDeg;
+    render();
+  });
+
+  document.getElementById('btnShowProj').addEventListener('click', function() {
+    showProj = !showProj;
+    this.classList.toggle('btn-active', showProj);
+    render();
+  });
+  document.getElementById('btnShowSym').addEventListener('click', function() {
+    showSym = !showSym;
+    this.classList.toggle('btn-active', showSym);
+    render();
+  });
+  document.getElementById('btnShowPerp').addEventListener('click', function() {
+    showPerp = !showPerp;
+    this.classList.toggle('btn-active', showPerp);
+    render();
+  });
+
+  render();
+})();
+
+// ─────────────────────────────────────────────────────────────
+// ─── GRAM-SCHMIDT VISUALIZATION ───
+// ─────────────────────────────────────────────────────────────
+(function() {
+  const svg = document.getElementById('gsSvg');
+  const W = 500, H = 400;
+  const CX = W/2, CY = H/2;
+  const SCALE = 40;
+
+  let v1 = { x: 3, y: 1 };
+  let v2 = { x: 1, y: 2.5 };
+  let step = 0; // 0 = nothing, 1 = w1, 2 = y2, 3 = w2 (done)
+  let dragTarget = null;
+
+  function fmt(x) { return (Math.round(x * 100) / 100).toFixed(2); }
+
+  function svgPoint(evt) {
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function norm(v) { return Math.sqrt(v.x*v.x + v.y*v.y); }
+  function scale(v, s) { return { x: v.x*s, y: v.y*s }; }
+  function dot(a, b) { return a.x*b.x + a.y*b.y; }
+  function sub(a, b) { return { x: a.x-b.x, y: a.y-b.y }; }
+
+  function render() {
+    const w1 = scale(v1, 1/norm(v1));
+    const proj = scale(w1, dot(v2, w1));
+    const y2 = sub(v2, proj);
+    const w2 = norm(y2) > 0.01 ? scale(y2, 1/norm(y2)) : { x: 0, y: 0 };
+
+    const toSvg = (x, y) => ({ x: CX + x*SCALE, y: CY - y*SCALE });
+    const O = { x: CX, y: CY };
+    const V1 = toSvg(v1.x, v1.y);
+    const V2 = toSvg(v2.x, v2.y);
+    const W1 = toSvg(w1.x, w1.y);
+    const W2 = toSvg(w2.x, w2.y);
+    const PROJ = toSvg(proj.x, proj.y);
+    const Y2 = toSvg(y2.x, y2.y);
+
+    let gridHTML = '';
+    for (let i = -6; i <= 6; i++) {
+      if (i === 0) continue;
+      gridHTML += `<line class="grid" x1="${CX + i*SCALE}" y1="0" x2="${CX + i*SCALE}" y2="${H}"/>`;
+      gridHTML += `<line class="grid" x1="0" y1="${CY + i*SCALE}" x2="${W}" y2="${CY + i*SCALE}"/>`;
+    }
+
+    // unit circle for reference
+    const circleHTML = `<circle cx="${CX}" cy="${CY}" r="${SCALE}" fill="none" stroke="#DDD3BF" stroke-width="0.8" stroke-dasharray="3 3"/>`;
+
+    // Build elements based on step
+    let w1HTML = '', projHTML = '', y2HTML = '', w2HTML = '';
+    if (step >= 1) {
+      w1HTML = `
+        <line stroke="#2C5664" stroke-width="2.5" x1="${O.x}" y1="${O.y}" x2="${W1.x}" y2="${W1.y}" marker-end="url(#aTeal2)"/>
+        <text x="${W1.x + 8}" y="${W1.y - 5}" fill="#2C5664" font-weight="600">w₁</text>
+      `;
+    }
+    if (step >= 2) {
+      projHTML = `
+        <line stroke="#8A7D6B" stroke-width="1.5" stroke-dasharray="4 3" x1="${O.x}" y1="${O.y}" x2="${PROJ.x}" y2="${PROJ.y}"/>
+        <line stroke="#8A7D6B" stroke-width="1" stroke-dasharray="2 2" x1="${PROJ.x}" y1="${PROJ.y}" x2="${V2.x}" y2="${V2.y}"/>
+        <line stroke="#B8924A" stroke-width="2" x1="${O.x}" y1="${O.y}" x2="${Y2.x}" y2="${Y2.y}" marker-end="url(#aGold)"/>
+        <text x="${Y2.x + 8}" y="${Y2.y - 5}" fill="#B8924A" font-weight="600">y₂</text>
+      `;
+    }
+    if (step >= 3) {
+      w2HTML = `
+        <line stroke="#2C5664" stroke-width="2.5" x1="${O.x}" y1="${O.y}" x2="${W2.x}" y2="${W2.y}" marker-end="url(#aTeal2)"/>
+        <text x="${W2.x + 8}" y="${W2.y - 5}" fill="#2C5664" font-weight="600">w₂</text>
+      `;
+    }
+
+    svg.innerHTML = `
+      <defs>
+        <marker id="aBur3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#7B2D26"/>
+        </marker>
+        <marker id="aTeal2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#2C5664"/>
+        </marker>
+        <marker id="aGold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#B8924A"/>
+        </marker>
+      </defs>
+      ${gridHTML}
+      ${circleHTML}
+      <line class="axis" x1="0" y1="${CY}" x2="${W}" y2="${CY}"/>
+      <line class="axis" x1="${CX}" y1="0" x2="${CX}" y2="${H}"/>
+
+      <!-- v1, v2 -->
+      <line stroke="#7B2D26" stroke-width="2.5" x1="${O.x}" y1="${O.y}" x2="${V1.x}" y2="${V1.y}" marker-end="url(#aBur3)"/>
+      <text x="${V1.x + 8}" y="${V1.y - 5}" fill="#7B2D26" font-weight="600">v₁</text>
+      <line stroke="#7B2D26" stroke-width="2.5" x1="${O.x}" y1="${O.y}" x2="${V2.x}" y2="${V2.y}" marker-end="url(#aBur3)"/>
+      <text x="${V2.x + 8}" y="${V2.y - 5}" fill="#7B2D26" font-weight="600">v₂</text>
+
+      ${projHTML}
+      ${w1HTML}
+      ${w2HTML}
+
+      <!-- Drag handles -->
+      <circle class="point" cx="${V1.x}" cy="${V1.y}" r="8" data-target="v1"/>
+      <circle class="point" cx="${V2.x}" cy="${V2.y}" r="8" data-target="v2"/>
+      <circle cx="${O.x}" cy="${O.y}" r="3" fill="#1F1A14"/>
+    `;
+
+    // Update info
+    document.getElementById('gsV1').textContent = `(${fmt(v1.x)}, ${fmt(v1.y)})`;
+    document.getElementById('gsV2').textContent = `(${fmt(v2.x)}, ${fmt(v2.y)})`;
+    document.getElementById('gsW1').textContent = step >= 1 ? `(${fmt(w1.x)}, ${fmt(w1.y)})` : '—';
+    document.getElementById('gsW2').textContent = step >= 3 ? `(${fmt(w2.x)}, ${fmt(w2.y)})` : '—';
+
+    // Update step cards
+    document.querySelectorAll('#gsSteps .gs-step').forEach((el, i) => {
+      el.classList.remove('active', 'done');
+      const s = parseInt(el.dataset.step);
+      if (s < step) el.classList.add('done');
+      else if (s === step - 1) el.classList.add('active');
+    });
+  }
+
+  // Drag support
+  svg.addEventListener('pointerdown', (e) => {
+    const target = e.target;
+    if (target.dataset && target.dataset.target) {
+      dragTarget = target.dataset.target;
+      svg.setPointerCapture(e.pointerId);
+    }
+  });
+  svg.addEventListener('pointermove', (e) => {
+    if (!dragTarget) return;
+    const p = svgPoint(e);
+    const x = (p.x - CX) / SCALE;
+    const y = -(p.y - CY) / SCALE;
+    if (dragTarget === 'v1') v1 = { x, y };
+    else if (dragTarget === 'v2') v2 = { x, y };
+    render();
+  });
+  svg.addEventListener('pointerup', (e) => {
+    dragTarget = null;
+    try { svg.releasePointerCapture(e.pointerId); } catch(_) {}
+  });
+  svg.addEventListener('pointercancel', () => { dragTarget = null; });
+
+  document.getElementById('gsNext').addEventListener('click', () => {
+    if (step < 3) step++;
+    render();
+  });
+  document.getElementById('gsPrev').addEventListener('click', () => {
+    if (step > 0) step--;
+    render();
+  });
+  document.getElementById('gsReset').addEventListener('click', () => {
+    step = 0;
+    v1 = { x: 3, y: 1 };
+    v2 = { x: 1, y: 2.5 };
+    render();
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
