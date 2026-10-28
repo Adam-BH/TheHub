@@ -24,7 +24,7 @@
 
     <header class="masthead">
       <img class="brand-mark" src="assets/icon.svg" alt="The Hub logo" width="88" height="88" />
-      <div class="eyebrow"><span class="tag">INSAT · GL2 · révisions</span></div>
+      <div class="eyebrow"><span class="tag">INSAT · GL2 → GL3 · révisions</span></div>
       <h1 class="title">The <span class="accent">Hub</span></h1>
       <p class="subtitle">Résumés, fiches interactives et cartes de révision rangés par niveau, semestre et matière.</p>
       <p class="byline">made by Adam Bhouri</p>
@@ -99,6 +99,31 @@
     window.HUB_REPO = { owner: "Adam-BH", repo: "TheHub" };
     window.HUB_REPO_URL = "https://github.com/Adam-BH/TheHub";
     window.HUB_FALLBACK_PAGES = [
+      { path: "pages/gl3/sem1/reseau.html", title: "Ingénierie des protocoles et réseaux", summary: "IPv4 et IPv6 (en-têtes, fragmentation), adressage et sous-réseaux, NAT, CIDR, VLSM, routage RIP et OSPF.", topics: ["IPv4","IPv6","Fragmentation","Sous-réseaux","NAT","CIDR","VLSM","RIP","OSPF"] },
+      {
+        path: "pages/gl3/sem1/logique.html",
+        title: "Logique formelle",
+        summary: "Logique des propositions et des prédicats : tables de vérité, FNC/FND, conséquence logique, quantificateurs, forme prénexe.",
+        topics: ["LP0", "LP1", "Conséquence", "FNP"]
+      },
+      {
+        path: "pages/gl3/sem1/modelisation.html",
+        title: "Modélisation des systèmes",
+        summary: "Machines à états communicantes, automates temporisés et bases des réseaux de Petri, avec simulateurs.",
+        topics: ["Machines à états", "Automates temporisés", "Petri"]
+      },
+      {
+        path: "pages/gl3/sem1/bas-niveau.html",
+        title: "Architectures & programmation bas niveau",
+        summary: "Interfaçage mémoire, GPIO STM32 par registres et HAL, interruptions Cortex-M3, NVIC et EXTI.",
+        topics: ["Interfaçage", "GPIO", "HAL", "NVIC", "EXTI"]
+      },
+      {
+        path: "pages/gl3/sem1/conception.html",
+        title: "Conception des logiciels & design patterns",
+        summary: "Principes SOLID, cinq patrons de création et sept patrons de structure, diagrammes et exercices corrigés.",
+        topics: ["SOLID", "Création", "Structure"]
+      },
       {
         path: "pages/gl2/sem2/analyse.html",
         title: "Analyse à plusieurs variables",

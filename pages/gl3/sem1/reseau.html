@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="version" content="v1">
+<title>Révision Ingénierie des Protocoles &amp; Réseaux · INSAT GL3 · Pré-DS</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4EFE4;--bg-deep:#ECE5D5;--bg-card:#FBF8F0;--ink:#1F1A14;--ink-soft:#4A3F32;--ink-faint:#8A7D6B;
+  --burgundy:#7B2D26;--burgundy-light:#A04438;--teal:#2C5664;--teal-light:#4A7A88;--gold:#B8924A;--gold-light:#E8C77B;
+  --rule:#C9BFAC;--rule-soft:#DDD3BF;--highlight:#F7E8B8;--shadow:rgba(80,60,30,.08);
+  --math:'Newsreader','Cambria Math','STIX Two Math',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);background-image:radial-gradient(circle at 20% 10%,rgba(184,146,74,.04) 0%,transparent 50%),radial-gradient(circle at 80% 90%,rgba(123,45,38,.04) 0%,transparent 50%);color:var(--ink);font-family:'Newsreader',Georgia,serif;font-size:17px;line-height:1.65;min-height:100vh;padding:0 0 80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+main,header,footer{position:relative;z-index:1}
+
+/* hub back */
+.hub-back{position:absolute;top:16px;left:16px;z-index:80;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 12px;border:1px solid var(--rule);border-radius:6px;background:rgba(251,248,240,.88);color:var(--ink);box-shadow:0 10px 28px -22px rgba(31,26,20,.42);font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:500;line-height:1;text-decoration:none;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(8px);transition:transform .15s,border-color .15s}
+.hub-back:hover{transform:translateY(-1px);border-color:var(--burgundy)}
+@media(max-width:560px){.hub-back{top:10px;left:10px;min-height:34px;padding:6px 10px;font-size:.66rem}}
+
+header{padding:64px 32px 24px;max-width:1200px;margin:0 auto;text-align:center;border-bottom:1px solid var(--rule)}
+header::after{content:'◆ ◆ ◆';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 14px;font-size:10px;color:var(--gold);letter-spacing:8px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--burgundy);margin-bottom:12px;font-weight:500}
+h1{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(40px,6vw,68px);line-height:1;letter-spacing:-.01em;margin-bottom:8px}
+h1 em{font-style:italic;color:var(--burgundy)}
+.subtitle{font-style:italic;font-size:19px;color:var(--ink-soft);font-weight:300;margin-top:8px}
+.ds-strip{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+
+.tabs-wrapper{max-width:1200px;margin:32px auto 0;padding:0 32px;position:sticky;top:0;z-index:50;background:var(--bg)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:32px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{font-family:'Newsreader',serif;font-size:16px;font-weight:500;padding:14px 20px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--ink-faint);cursor:pointer;transition:all .25s;margin-bottom:-1px;white-space:nowrap}
+.tab-btn .tab-num{font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;opacity:.6}
+.tab-btn:hover{color:var(--ink);background:rgba(184,146,74,.08)}
+.tab-btn.active{color:var(--burgundy);border-bottom-color:var(--burgundy)}
+.tab-btn.active .tab-num{opacity:1}
+
+.tab-content{display:none;max-width:1200px;margin:0 auto;padding:0 32px;animation:fadeIn .4s ease}
+.tab-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){header{padding:64px 16px 24px}.tabs-wrapper,.tab-content{padding:0 16px}.tab-btn{padding:12px 12px;font-size:15px}}
+
+h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:38px;margin:48px 0 8px;letter-spacing:-.01em;line-height:1.1}
+h2 .h-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);letter-spacing:.15em;display:block;margin-bottom:6px;text-transform:uppercase}
+h2::after{content:'';display:block;width:60px;height:1px;background:var(--burgundy);margin-top:12px}
+h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:26px;color:var(--burgundy);margin:32px 0 12px;font-style:italic}
+h4{font-weight:600;font-size:18px;color:var(--teal);margin:20px 0 8px}
+p{margin-bottom:14px;color:var(--ink-soft)}
+p strong,li strong,td strong{color:var(--ink);font-weight:600}
+ul,ol{padding-left:24px;margin-bottom:14px;color:var(--ink-soft)}
+li{margin-bottom:6px}
+
+.box{background:var(--bg-card);border-left:3px solid var(--rule);padding:18px 22px;margin:16px 0;border-radius:0 4px 4px 0;box-shadow:0 1px 2px var(--shadow)}
+.box>*:last-child{margin-bottom:0}
+.box-def{border-left-color:var(--teal)}.box-thm{border-left-color:var(--burgundy)}.box-prop{border-left-color:var(--gold)}
+.box-remark{border-left-color:var(--ink-faint);background:rgba(138,125,107,.05)}
+.box-method{border-left-color:var(--burgundy);background:linear-gradient(180deg,rgba(123,45,38,.04),transparent)}
+.box-ex{border-left-color:var(--teal-light);background:linear-gradient(180deg,rgba(44,86,100,.04),transparent)}
+.box-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;display:inline-block;margin-bottom:8px;font-weight:500;padding:2px 8px;border-radius:2px}
+.box-def .box-label{background:var(--teal);color:var(--bg-card)}.box-thm .box-label{background:var(--burgundy);color:var(--bg-card)}
+.box-prop .box-label{background:var(--gold);color:var(--ink)}.box-remark .box-label{background:var(--ink-faint);color:var(--bg-card)}
+.box-method .box-label{background:var(--burgundy);color:var(--bg-card)}.box-ex .box-label{background:var(--teal-light);color:var(--bg-card)}
+.src{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--ink-faint);float:right;margin-left:12px}
+
+/* formulas */
+.fx{font-family:var(--math);font-style:italic;color:var(--ink);white-space:nowrap}
+.formula{font-family:var(--math);font-size:20px;text-align:center;margin:14px 0;color:var(--ink);overflow-x:auto;padding:4px 0}
+.formula .c{font-style:normal;color:var(--burgundy)}
+.steps-eq{font-family:var(--math);font-size:17px;margin:10px 0 14px;overflow-x:auto}
+.steps-eq div{display:grid;grid-template-columns:28px 1fr auto;gap:10px;padding:5px 0;border-bottom:1px dashed var(--rule-soft);align-items:baseline}
+.steps-eq div:last-child{border-bottom:none}
+.steps-eq .eq{color:var(--gold);font-weight:600}
+.steps-eq .why{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;white-space:nowrap}
+@media(max-width:600px){.steps-eq div{grid-template-columns:20px 1fr}.steps-eq .why{grid-column:2}}
+
+/* tables */
+.tt-wrap{overflow-x:auto;margin:14px 0}
+table.tt{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--bg-card);margin:0 auto;min-width:240px}
+table.tt th,table.tt td{border:1px solid var(--rule-soft);padding:6px 12px;text-align:center}
+table.tt th{background:var(--bg-deep);color:var(--ink);font-weight:600;font-family:var(--math);font-size:15px;font-style:italic;white-space:nowrap}
+table.tt td.T{color:var(--teal);font-weight:600}table.tt td.F{color:var(--burgundy-light)}
+table.tt tr.hit td{background:rgba(247,232,184,.55)}
+table.tt th.res,table.tt td.res{border-left:2px solid var(--burgundy)}
+table.law{border-collapse:collapse;width:100%;font-size:15px;background:var(--bg-card)}
+table.law td{border-bottom:1px dashed var(--rule-soft);padding:8px 10px;vertical-align:top}
+table.law td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);width:150px}
+table.law td.fx{white-space:normal}
+
+.kv{display:grid;grid-template-columns:minmax(180px,auto) 1fr;gap:10px 24px;margin:16px 0;padding:16px 0;border-top:1px solid var(--rule-soft);border-bottom:1px solid var(--rule-soft)}
+.kv dt{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;padding-top:2px}
+.kv dd{color:var(--ink)}
+@media(max-width:700px){.kv{grid-template-columns:1fr}.kv dd{margin-bottom:10px}}
+
+/* viz */
+.viz-card{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:24px;margin:28px 0;box-shadow:0 2px 8px var(--shadow)}
+.viz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--rule-soft);gap:16px;flex-wrap:wrap}
+.viz-title{font-family:'Instrument Serif',serif;font-size:24px;color:var(--burgundy);font-style:italic}
+.viz-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);background:rgba(184,146,74,.12);padding:4px 10px;border-radius:2px}
+.viz-body{display:grid;grid-template-columns:1fr 290px;gap:24px;align-items:start}
+@media(max-width:860px){.viz-body{grid-template-columns:1fr}.viz-card{padding:16px}}
+.viz-controls{background:var(--bg-deep);padding:16px;border-radius:4px;font-size:14px}
+.viz-controls h5{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;font-weight:500}
+.viz-controls h5:not(:first-child){margin-top:16px}
+.viz-stat{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--rule-soft);font-family:'JetBrains Mono',monospace;font-size:12.5px}
+.viz-stat:last-child{border-bottom:none}.viz-stat-key{color:var(--ink-soft)}.viz-stat-val{color:var(--burgundy);font-weight:600;text-align:right}
+.viz-svg{width:100%;height:auto;background:#FCFAF3;border:1px solid var(--rule-soft);border-radius:4px;display:block}
+.viz-svg text:not([font-family]){font-family:'JetBrains Mono',monospace}.viz-svg text:not([font-size]){font-size:12px}.viz-svg text:not([fill]){fill:var(--ink-soft)}
+.fx-input{width:100%;font-family:var(--math);font-size:20px;padding:10px 12px;border:1px solid var(--rule);background:#FCFAF3;color:var(--ink);border-radius:4px;outline:none}
+.fx-input:focus{border-color:var(--burgundy)}
+.fx-err{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--burgundy-light);min-height:18px;margin-top:6px}
+.btn-group{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;padding:7px 12px;border:1px solid var(--rule);background:var(--bg-card);color:var(--ink-soft);cursor:pointer;border-radius:3px;transition:all .15s;font-weight:500}
+.btn:hover,.btn-active{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
+.btn:disabled{opacity:.4;cursor:default;background:var(--bg-card);color:var(--ink-soft);border-color:var(--rule)}
+.btn-sym{font-family:var(--math);font-size:16px;min-width:38px;text-transform:none}
+.verdict{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;margin:2px 0 6px}
+.verdict.v-valid{color:var(--teal)}.verdict.v-sat{color:var(--gold)}.verdict.v-unsat{color:var(--burgundy)}
+.canon{font-family:var(--math);font-size:15px;color:var(--ink);word-break:break-word;background:var(--bg-card);border:1px solid var(--rule-soft);border-radius:3px;padding:8px 10px;margin-top:4px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:10px}
+.legend-item{display:flex;align-items:center;gap:6px}.legend-swatch{width:14px;height:14px;border-radius:3px;border:1px solid var(--rule)}
+
+/* grid toggles (LP1 lab) */
+.pgrid{border-collapse:separate;border-spacing:6px;margin:6px auto}
+.pgrid th{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);font-weight:500;padding:2px 6px}
+.pgrid td button{width:54px;height:44px;border-radius:5px;border:1px solid var(--rule);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.pgrid td button.on{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
+.pgrid td button.off{background:#FCFAF3;color:var(--burgundy-light)}
+.pgrid td button.wit{box-shadow:0 0 0 3px var(--gold-light)}
+.q-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;margin:6px 0;background:var(--bg-card);border:1px solid var(--rule-soft);border-radius:4px;cursor:pointer;transition:border-color .15s}
+.q-row:hover,.q-row.sel{border-color:var(--burgundy)}
+.q-row .fx{font-size:16px}
+.badge{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px}
+.badge.T{background:var(--teal);color:var(--bg-card)}.badge.F{background:var(--burgundy);color:var(--bg-card)}
+.explain{font-size:14.5px;color:var(--ink-soft);margin-top:10px;padding:10px 12px;border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(247,232,184,.5),transparent)}
+
+/* stepper */
+.stepper .st-step{background:var(--bg-card);border-left:3px solid var(--rule);padding:10px 16px;margin:8px 0;border-radius:0 4px 4px 0;transition:all .3s;opacity:.35}
+.stepper .st-step.active{border-left-color:var(--burgundy);opacity:1;background:linear-gradient(90deg,rgba(123,45,38,.06),transparent)}
+.stepper .st-step.done{opacity:.8;border-left-color:var(--teal)}
+.st-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--ink-faint);text-transform:uppercase}
+.st-f{font-family:var(--math);font-size:18px;color:var(--ink);overflow-x:auto;white-space:nowrap;padding:2px 0}
+.st-why{font-size:14px;color:var(--ink-soft);font-style:italic}
+
+/* method cards */
+.method-card{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:24px;margin:20px 0;box-shadow:0 2px 6px var(--shadow);position:relative;overflow:hidden}
+.method-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--burgundy),var(--gold))}
+.method-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.method-question{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;color:var(--ink);margin-bottom:16px;line-height:1.3}
+.method-question::before{content:'Q.';font-family:'JetBrains Mono',monospace;font-size:12px;font-style:normal;color:var(--burgundy);margin-right:10px;letter-spacing:.1em;vertical-align:super}
+.method-steps{counter-reset:step;list-style:none;padding:0;margin-bottom:0}
+.method-steps>li{counter-increment:step;padding:10px 0 10px 44px;border-bottom:1px dashed var(--rule-soft);position:relative;color:var(--ink-soft)}
+.method-steps>li:last-child{border-bottom:none}
+.method-steps>li::before{content:counter(step,decimal-leading-zero);position:absolute;left:0;top:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);font-weight:600;width:32px;text-align:right;padding-right:8px;border-right:1px solid var(--rule-soft)}
+.method-tip{background:linear-gradient(90deg,var(--highlight),transparent);padding:10px 14px;margin-top:14px;border-radius:3px;font-size:14.5px;font-style:italic;color:var(--ink-soft);border-left:2px solid var(--gold)}
+.method-tip::before{content:'✦ Astuce  ';font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;letter-spacing:.15em;color:var(--gold);font-weight:600}
+details.sol{margin-top:12px;border:1px solid var(--rule-soft);border-radius:4px;background:#FCFAF3}
+details.sol summary{cursor:pointer;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);list-style:none}
+details.sol summary::before{content:'▸ ';}
+details.sol[open] summary::before{content:'▾ ';}
+details.sol>div{padding:4px 14px 12px}
+.method-index{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin:20px 0 8px}
+.method-index a{display:block;padding:10px 12px;border:1px solid var(--rule-soft);border-radius:4px;background:var(--bg-card);color:var(--ink-soft);text-decoration:none;font-size:14.5px;transition:border-color .15s}
+.method-index a:hover{border-color:var(--burgundy);color:var(--ink)}
+.method-index a span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);margin-right:6px}
+
+/* flow / synth */
+.flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
+.flow-node{background:var(--bg-card);border:1px solid var(--rule);padding:18px;border-radius:4px}
+.flow-node.future{border-style:dashed;opacity:.75}
+.flow-node-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--burgundy);margin-bottom:8px;font-style:italic}
+.flow-node-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 9px;border-radius:99px;background:var(--bg-deep);color:var(--ink-soft);margin:2px 4px 2px 0;letter-spacing:.04em;border:1px solid var(--rule-soft)}
+.pill-burgundy{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
+.pill-teal{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
+.pill-gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.pattern-card{background:linear-gradient(135deg,var(--bg-card),var(--bg-deep));border:1px solid var(--rule);border-radius:6px;padding:22px;margin:16px 0}
+.pattern-card-title{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:4px}
+.pattern-card-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--burgundy);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14.5px}
+.chain span.k{background:var(--bg-card);border:1px solid var(--rule-soft);padding:4px 10px;border-radius:3px}
+.chain span.ar{color:var(--gold)}
+.intro{font-size:19px;font-style:italic;color:var(--ink-soft);max-width:760px;margin:0 auto 32px;text-align:center;line-height:1.5}
+.hl{background:linear-gradient(180deg,transparent 60%,var(--highlight) 60%);padding:0 2px}
+.warn{background:rgba(184,146,74,.12);border-left:3px solid var(--gold);padding:12px 16px;margin:14px 0;border-radius:0 3px 3px 0;font-size:15.5px;color:var(--ink-soft)}
+.warn::before{content:'⚠ Piège  ';color:var(--gold);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em}
+.warn.amb::before{content:'⚑ Ambiguïté du cours  ';color:var(--burgundy)}
+.warn.amb{border-left-color:var(--burgundy);background:rgba(123,45,38,.06)}
+code{font-family:'JetBrains Mono',monospace;font-size:.86em;background:var(--bg-deep);padding:1px 6px;border-radius:3px;color:var(--burgundy)}
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.timeline div{border-top:2px solid var(--gold);padding-top:10px}
+.timeline b{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.1em;display:block}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:16px 0}
+.flash{perspective:900px;height:150px;cursor:pointer}
+.flash-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flash.flip .flash-in{transform:rotateY(180deg)}
+.flash-f,.flash-b{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--rule);border-radius:6px;padding:14px 16px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:15.5px}
+.flash-f{background:var(--bg-card);font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;color:var(--ink)}
+.flash-b{background:var(--bg-deep);transform:rotateY(180deg);color:var(--ink-soft)}
+footer{max-width:1200px;margin:64px auto 0;padding:32px;text-align:center;color:var(--ink-faint);font-size:13px;border-top:1px solid var(--rule);font-style:italic}
+footer .footer-ornament{color:var(--gold);font-size:10px;letter-spacing:.5em;margin-bottom:12px}
+@media print{.hub-back,.tabs-wrapper,.viz-card{display:none}.tab-content{display:block!important}body::before{display:none}}
+</style>
+<style>
+.hdr{width:100%;border-collapse:collapse;table-layout:fixed;font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-card);min-width:560px}
+.hdr td{border:1px solid var(--rule);padding:9px 4px;text-align:center;color:var(--ink);vertical-align:middle}
+.hdr td small{display:block;color:var(--ink-faint);font-size:10px}
+.hdr td.hl2{background:rgba(184,146,74,.16)}.hdr td.hl3{background:rgba(44,86,100,.10)}.hdr td.gone{background:rgba(123,45,38,.08);color:var(--burgundy)}
+.hdr th{font-weight:400;color:var(--ink-faint);font-size:10px;text-align:left;padding:2px 0}
+.fld{display:flex;flex-direction:column;gap:4px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft)}
+.fld select,.fld input{font-family:'JetBrains Mono',monospace;font-size:13px;padding:6px 8px;border:1px solid var(--rule);border-radius:4px;background:#FCFAF3;color:var(--ink);min-width:0}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.bin{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.04em;overflow-x:auto;white-space:nowrap;padding:4px 0}
+.bin .n{color:var(--burgundy);font-weight:600}.bin .s{color:var(--gold);font-weight:600}.bin .h{color:var(--teal)}
+.rip{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.rip table.tt{width:100%;min-width:0;font-size:12px}.rip table.tt th,.rip table.tt td{padding:4px 6px}.rip table.tt th{font-size:13px}
+#vl-out td{white-space:nowrap}
+.kvt{width:100%;border-collapse:collapse;font-size:13px}.kvt th{font-family:'JetBrains Mono',monospace;font-weight:400;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);text-align:left;padding:5px 8px 5px 0;vertical-align:top;white-space:nowrap}.kvt td{font-family:'JetBrains Mono',monospace;color:var(--ink);padding:5px 0;word-break:break-word}.kvt tr+tr{border-top:1px solid var(--rule-soft)}
+.rip td.ch{background:var(--highlight);font-weight:600}
+.rip h6{font-family:'Instrument Serif',serif;font-style:italic;font-size:20px;color:var(--burgundy);margin:0 0 4px;font-weight:400}
+.net text:not([font-size]){font-family:'JetBrains Mono',monospace;font-size:11px}
+pre.code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;background:#1F1A14;color:#ECE5D5;padding:14px 16px;border-radius:5px;overflow-x:auto;margin:12px 0}
+</style>
+</head>
+<body>
+
+<a class="hub-back" href="../../../index.html" aria-label="Retourner au Hub"><span aria-hidden="true">&larr;</span> Retour au Hub</a>
+
+<header>
+  <div class="eyebrow">INSAT · GL3 · Semestre 1 · Pré-DS 2026</div>
+  <h1>Ingénierie des protocoles &amp; <em>réseaux</em></h1>
+  <p class="subtitle">Révision interactive — IPv4 · IPv6 · Adressage &amp; sous-réseaux · Privé, NAT, CIDR, VLSM · Routage RIP</p>
+  <div class="ds-strip">
+    <span class="pill pill-burgundy">fragmentation · offset ÷ 8</span>
+    <span class="pill pill-teal">masques · sous-réseaux · VLSM</span>
+    <span class="pill pill-gold">tables RIP t₀ → t₃</span>
+    <span class="pill">10 méthodes</span>
+  </div>
+</header>
+
+<main>
+<div class="tabs-wrapper">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="ch1"><span class="tab-num">I</span>IPv4</button>
+    <button class="tab-btn" data-tab="ch2"><span class="tab-num">II</span>IPv6</button>
+    <button class="tab-btn" data-tab="ch3"><span class="tab-num">III</span>Adressage</button>
+    <button class="tab-btn" data-tab="ch4"><span class="tab-num">IV</span>Privé · NAT · VLSM</button>
+    <button class="tab-btn" data-tab="ch5"><span class="tab-num">V</span>Routage</button>
+    <button class="tab-btn" data-tab="methods"><span class="tab-num">M</span>Méthodes</button>
+    <button class="tab-btn" data-tab="synth"><span class="tab-num">S</span>Synthèse</button>
+  </nav>
+</div>
+
+<!-- ═══════════════════ I · IPv4 ═══════════════════ -->
+<section class="tab-content active" id="ch1">
+  <p class="intro">IP assure le <em>routage des datagrammes à travers plusieurs réseaux</em>. Tout le chapitre tient dans un en-tête de 20 octets, et un exercice revient à chaque DS : la fragmentation.</p>
+
+  <h2><span class="h-num">§ 1.1</span>Le datagramme IPv4</h2>
+  <div class="tt-wrap">
+    <table class="hdr">
+      <tr><th colspan="4">0</th><th colspan="4">8</th><th colspan="8">16</th><th colspan="16" style="text-align:right">31</th></tr>
+      <tr><td colspan="4">Version<small>4 b</small></td><td colspan="4">IHL<small>4 b</small></td><td colspan="8">Type de service<small>8 b</small></td><td colspan="16">Longueur totale<small>16 b · en octets</small></td></tr>
+      <tr><td colspan="16" class="hl2">Identification<small>16 b</small></td><td colspan="3" class="hl2">Flags<small>0 · DF · MF</small></td><td colspan="13" class="hl2">Fragment offset<small>13 b · unités de 8 octets</small></td></tr>
+      <tr><td colspan="8">Durée de vie (TTL)<small>8 b</small></td><td colspan="8">Protocole<small>8 b</small></td><td colspan="16">Checksum d'en-tête<small>16 b</small></td></tr>
+      <tr><td colspan="32">Adresse IP source<small>32 b</small></td></tr>
+      <tr><td colspan="32">Adresse IP destination<small>32 b</small></td></tr>
+      <tr><td colspan="24" class="hl3">Options<small>variable</small></td><td colspan="8" class="hl3">Bourrage</td></tr>
+      <tr><td colspan="32">Données</td></tr>
+    </table>
+  </div>
+  <p style="font-size:14px;color:var(--ink-faint);text-align:center">Les 5 premières lignes = <strong>en-tête minimal : 5 × 32 bits = 20 octets</strong>. En doré : les 3 champs de la fragmentation.</p>
+
+  <h2><span class="h-num">§ 1.2</span>Rôle de chaque champ</h2>
+  <table class="law">
+    <tr><td>Version</td><td><span class="fx">0100</span> = IPv4, <span class="fx">0110</span> = IPv6.</td></tr>
+    <tr><td>IHL (long. en-tête)</td><td>Longueur de l'en-tête en <strong>mots de 32 bits</strong> : pas fixe à cause des options. Minimum 5 (= 20 o), maximum 15 (= 60 o).</td></tr>
+    <tr><td>Longueur totale</td><td>En-tête + données, en octets (max 65 535).</td></tr>
+    <tr><td>Identification</td><td>Numéro unique du datagramme, <strong>recopié dans tous ses fragments</strong> : c'est ce qui permet le réassemblage.</td></tr>
+    <tr><td>Flags</td><td><strong>DF</strong> (Don't Fragment) : fragmentation interdite. <strong>MF</strong> (More Fragments) : il reste des fragments après celui-ci.</td></tr>
+    <tr><td>Fragment offset</td><td>13 bits : position du fragment par rapport au <strong>début des données</strong> du datagramme d'origine, comptée en <strong>blocs de 8 octets</strong>.</td></tr>
+    <tr><td>TTL</td><td>Nombre maximal de sauts (routeur → routeur, hôte → routeur). Décrémenté de 1 par chaque routeur ; à 0, le datagramme est rejeté. (En IPv6 il s'appelle <em>Hop Limit</em>.)</td></tr>
+    <tr><td>Protocole</td><td>À quel protocole appartiennent les données : 1 ICMP · 2 IGMP · 3 GGP · <strong>6 TCP</strong> · 8 EGP · 9 IGP · <strong>17 UDP</strong> · 29 ISO-TP4.</td></tr>
+    <tr><td>Checksum</td><td>Contrôle d'erreur sur l'<strong>en-tête seulement</strong> : complément de la somme des mots de 16 bits de l'en-tête. Vérifié par chaque routeur ; s'il ne correspond pas, le datagramme est rejeté. Recalculé à chaque saut (le TTL change).</td></tr>
+    <tr><td>@ source / destination</td><td>Identifient l'émetteur et le destinataire (32 bits chacune).</td></tr>
+    <tr><td>Options + bourrage</td><td>Longueur variable, optionnelle ; complétée par des bits de bourrage jusqu'à un multiple de 32 bits.</td></tr>
+  </table>
+  <div class="warn amb">Les notes écrivent « Longueur de l'en-tête : 32 bits » et « TTL (originellement Hop Limit) ». Plus précisément : le champ IHL fait <strong>4 bits</strong> et <strong>compte</strong> des mots de 32 bits ; et c'est IPv6 qui a renommé TTL en Hop Limit (pas l'inverse).</div>
+  <div class="two-col">
+    <div class="box box-remark" style="margin:0"><span class="box-label">TCP vs UDP</span><table class="law"><tr><td>TCP (6)</td><td>plus lent, contrôlé, fiable</td></tr><tr><td>UDP (17)</td><td>rapide, sans contrôle, peu fiable</td></tr></table></div>
+    <div class="box box-def" style="margin:0"><span class="box-label">MTU</span><p><strong>Maximum Transfer Unit</strong> : taille maximale (en-tête compris) d'un datagramme sur un réseau donné. Si le datagramme est plus grand que la MTU du réseau suivant → <strong>fragmentation</strong> (si DF = 0).</p></div>
+  </div>
+
+  <h2><span class="h-num">§ 1.3</span>Fragmentation IPv4</h2>
+  <div class="box box-thm">
+    <span class="box-label">Les 4 règles</span>
+    <ol>
+      <li>Données max par fragment = <span class="fx">MTU − 20</span>, <strong>arrondi au multiple de 8 inférieur</strong> (sauf pour le dernier fragment).</li>
+      <li><span class="fx">offset = position des données / 8</span>, relative au datagramme <strong>d'origine</strong>.</li>
+      <li><span class="fx">MF = 1</span> pour tous les fragments sauf le <strong>tout dernier</strong> du datagramme d'origine.</li>
+      <li>Tous les fragments gardent le <strong>même ID</strong>. En IPv4, n'importe quel routeur peut fragmenter (et re-fragmenter un fragment) ; le réassemblage se fait seulement chez le destinataire.</li>
+    </ol>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exercice des notes — corrigé</span>
+    <p>Émetteur MTU 3000 → Réseau 1 MTU 2000 → Réseau 2 MTU 900 → Récepteur MTU 4000. Datagramme de 3000 o = <strong>2980 o de données</strong> + 20 o d'en-tête.</p>
+    <p><strong>Réseau 1 (MTU 2000)</strong> : 2000 − 20 = 1980 → 247 blocs × 8 = <strong>1976 o</strong> de données max.</p>
+    <table class="mat" style="width:100%"><tr><th>frag.</th><th>données</th><th>offset</th><th>MF</th><th>long. totale</th><th>DF</th></tr>
+      <tr><td>f11</td><td>1976</td><td>0</td><td>1</td><td>1996</td><td>0</td></tr>
+      <tr><td>f12</td><td>2980 − 1976 = 1004</td><td>247</td><td>0</td><td>1024</td><td>0</td></tr></table>
+    <p style="margin-top:10px"><strong>Réseau 2 (MTU 900)</strong> : 900 − 20 = 880 = 110 blocs. On re-fragmente f11 et f12 :</p>
+    <table class="mat" style="width:100%"><tr><th>frag.</th><th>données</th><th>offset</th><th>MF</th><th>long. totale</th></tr>
+      <tr><td>f111</td><td>880</td><td>0</td><td>1</td><td>900</td></tr>
+      <tr><td>f112</td><td>880</td><td>110</td><td>1</td><td>900</td></tr>
+      <tr><td>f113</td><td>1976 − 1760 = 216</td><td>220</td><td class="nz">1</td><td>236</td></tr>
+      <tr><td>f121</td><td>880</td><td>247</td><td>1</td><td>900</td></tr>
+      <tr><td>f122</td><td>1004 − 880 = 124</td><td>357</td><td>0</td><td>144</td></tr></table>
+    <p style="font-size:14.5px;margin-top:8px">f113 garde <strong>MF = 1</strong> : il est le dernier morceau de f11, mais pas du datagramme (f12 suit). L'offset de f121 vaut 247 (celui de f12) + 0.</p>
+  </div>
+
+  <!-- VIZ 1 -->
+  <div class="viz-card" id="fraglab">
+    <div class="viz-header"><div class="viz-title">Calculateur de fragmentation</div><div class="viz-tag">IPv4 en chemin · IPv6 à la source</div></div>
+    <div class="fgrid">
+      <label class="fld">Mode<select id="fr-mode"><option value="v4">IPv4 (routeurs)</option><option value="v6min">IPv6 · MTU min 1280</option><option value="v6pmtu">IPv6 · découverte MTU</option></select></label>
+      <label class="fld">Taille datagramme (o)<input id="fr-size" type="number" min="60" max="65535" value="3000"></label>
+      <label class="fld">MTU du chemin (séparées par ,)<input id="fr-mtus" type="text" value="2000, 900, 4000"></label>
+      <label class="fld">Identification<input id="fr-id" type="number" value="1503"></label>
+    </div>
+    <div class="btn-group" style="margin:0 0 10px">
+      <button class="btn" data-ex="v4|3000|2000, 900, 4000">exercice IPv4 des notes</button>
+      <button class="btn" data-ex="v6min|3000|2000, 1900, 4000">IPv6 méthode 1</button>
+      <button class="btn" data-ex="v6pmtu|3000|2000, 1900, 4000">IPv6 méthode 2</button>
+    </div>
+    <div class="viz-body">
+      <div class="tt-wrap" id="fr-out" style="margin:0"></div>
+      <div class="viz-controls"><h5>Calcul</h5><div id="fr-calc" style="font-size:13.5px"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ II · IPv6 ═══════════════════ -->
+<section class="tab-content" id="ch2">
+  <p class="intro">IPv6 : des adresses quatre fois plus longues, un en-tête fixe et plus simple, et des extensions chaînées seulement quand on en a besoin.</p>
+
+  <h2><span class="h-num">§ 2.1</span>Pourquoi IPv6</h2>
+  <div class="flow-grid">
+    <div class="flow-node"><div class="flow-node-tag">Adresses</div><div class="flow-node-title">128 bits</div><p style="font-size:14.5px">32 bits en IPv4 → 4 × 32 = 128 bits.</p></div>
+    <div class="flow-node"><div class="flow-node-tag">Sécurité</div><div class="flow-node-title">Plus sûr</div><p style="font-size:14.5px">Extensions d'authentification (AH) et de chiffrement (ESP).</p></div>
+    <div class="flow-node"><div class="flow-node-tag">Routeurs</div><div class="flow-node-title">Plus léger</div><p style="font-size:14.5px">En-tête de base fixe de <strong>40 o</strong> (vs 20 o + options en IPv4), sans checksum ni fragmentation en route. Les options IPv4 deviennent des <strong>extensions</strong>.</p></div>
+  </div>
+
+  <h2><span class="h-num">§ 2.2</span>Le datagramme IPv6</h2>
+  <div class="tt-wrap">
+    <table class="hdr">
+      <tr><th colspan="4">0</th><th colspan="8">4</th><th colspan="4">12</th><th colspan="8">16</th><th colspan="8" style="text-align:right">31</th></tr>
+      <tr><td colspan="4">Version<small>4 b</small></td><td colspan="8">Priorité (classe de trafic)<small>8 b</small></td><td colspan="20">Étiquette de flux<small>20 b</small></td></tr>
+      <tr><td colspan="16">Longueur charge utile<small>16 b · extensions + données</small></td><td colspan="8" class="hl3">Prochaine en-tête (NH)<small>8 b</small></td><td colspan="8">Hop limit<small>8 b</small></td></tr>
+      <tr><td colspan="32" style="padding:22px 4px">Adresse source<small>128 b</small></td></tr>
+      <tr><td colspan="32" style="padding:22px 4px">Adresse destination<small>128 b</small></td></tr>
+    </table>
+  </div>
+  <table class="law" style="margin-top:14px">
+    <tr><td>Priorité</td><td>Priorité du paquet.</td></tr>
+    <tr><td>Étiquette de flux</td><td>Classe les datagrammes en <strong>flux</strong> selon des attributs (@ source, @ destination, priorité…).</td></tr>
+    <tr><td>Long. charge utile</td><td>Longueur de ce qui suit l'en-tête de base : <strong>extensions + données</strong> (les 40 o ne comptent pas).</td></tr>
+    <tr><td>Next Header</td><td>Type de la structure qui suit immédiatement : une extension ou le protocole (TCP, UDP…).</td></tr>
+    <tr><td>Hop limit</td><td>Nombre max de sauts, décrémenté à chaque routeur, rejet à 0 (= TTL d'IPv4).</td></tr>
+  </table>
+  <div class="box box-thm">
+    <span class="box-label">Ce qui a disparu par rapport à IPv4</span>
+    <p><span class="fx">IHL</span> (en-tête fixe) · <span class="fx">Checksum</span> (laissé aux couches liaison et transport) · <span class="fx">Identification / Flags / Offset</span> (déplacés dans l'extension de fragmentation) · <span class="fx">Options</span> (remplacées par les extensions).</p>
+  </div>
+
+  <h2><span class="h-num">§ 2.3</span>Extensions chaînées</h2>
+  <div class="viz-card" style="padding:16px">
+    <svg class="viz-svg" viewBox="0 0 820 150" role="img" aria-label="Chaînage des en-têtes IPv6" style="cursor:default">
+      <defs><marker id="nh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#B8924A"/></marker></defs>
+      <g font-family="JetBrains Mono, monospace" font-size="12" text-anchor="middle">
+        <rect x="20" y="60" width="170" height="44" rx="4" fill="#FBF8F0" stroke="#4A3F32"/><text x="105" y="80" fill="#1F1A14">IPv6 (40 o)</text><text x="105" y="96" fill="#2C5664">NH = 43</text>
+        <rect x="220" y="60" width="170" height="44" rx="4" fill="#FBF8F0" stroke="#4A3F32"/><text x="305" y="80" fill="#1F1A14">Routing</text><text x="305" y="96" fill="#2C5664">NH = 44</text>
+        <rect x="420" y="60" width="170" height="44" rx="4" fill="#FBF8F0" stroke="#4A3F32"/><text x="505" y="80" fill="#1F1A14">Fragment (8 o)</text><text x="505" y="96" fill="#2C5664">NH = 17</text>
+        <rect x="620" y="60" width="180" height="44" rx="4" fill="#7B2D26"/><text x="710" y="86" fill="#FBF8F0">UDP + données</text>
+      </g>
+      <g stroke="#B8924A" stroke-width="1.6" fill="none" marker-end="url(#nh)"><path d="M150,58 Q220,15 280,58"/><path d="M350,58 Q420,15 480,58"/><path d="M550,58 Q620,15 690,58"/></g>
+      <text x="410" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#8A7D6B">chaque NH annonce le type de l'en-tête suivant</text>
+    </svg>
+  </div>
+  <div class="two-col">
+    <div class="box box-def" style="margin:0">
+      <span class="box-label">Next Header — codes (ordre recommandé)</span>
+      <table class="mat" style="width:100%"><tr><th>ordre</th><th>extension</th><th>NH</th></tr>
+        <tr><td>1</td><td>Hop-by-Hop</td><td>0</td></tr><tr><td>2</td><td>Destination (pour Routing)</td><td>60</td></tr>
+        <tr><td>3</td><td>Routing</td><td>43</td></tr><tr><td>4</td><td>Fragmentation</td><td>44</td></tr>
+        <tr><td>5</td><td>Authentication (AH)</td><td>51</td></tr><tr><td>6</td><td>Security / ESP</td><td>50</td></tr>
+        <tr><td>7</td><td>Destination</td><td>60</td></tr><tr><td>—</td><td>TCP · UDP · ICMPv6</td><td>6 · 17 · 58</td></tr></table>
+      <p style="font-size:14px;margin-top:6px"><strong>L'ordre est important.</strong></p>
+    </div>
+    <div class="box box-def" style="margin:0">
+      <span class="box-label">Extension de fragmentation (8 o)</span>
+      <div class="tt-wrap" style="margin:6px 0"><table class="hdr" style="min-width:0"><tr><td colspan="8">NH<small>8</small></td><td colspan="8">Réservé<small>8</small></td><td colspan="13" class="hl2">Fragment offset<small>13</small></td><td colspan="2">Rés.<small>2</small></td><td colspan="1" class="hl2">M</td></tr><tr><td colspan="32" class="hl2">Identification<small>32</small></td></tr></table></div>
+      <p style="font-size:14px">Même logique qu'IPv4 : offset en blocs de 8 o, M = more fragments, ID commun.</p>
+    </div>
+  </div>
+  <div class="warn amb">Dans les notes, les codes NH sont décalés d'une ligne par rapport aux noms (60 sous Hop-by-Hop, etc.) et l'extension de fragmentation montre deux bits « D | M ». Retiens les codes standards du tableau ci-dessus ; dans l'extension de fragmentation IPv6, il n'y a <strong>pas de DF</strong>, seulement 2 bits réservés et M.</div>
+
+  <h2><span class="h-num">§ 2.4</span>Fragmentation IPv6</h2>
+  <div class="box box-thm">
+    <span class="box-label">De bout en bout, à la source seulement</span>
+    <p>Pour alléger les routeurs, IPv6 supprime checksum et champs de fragmentation de l'en-tête : <span class="hl">la fragmentation ne se fait qu'à la source</span>, avec l'extension de fragmentation. Les routeurs ne fragmentent jamais.</p>
+    <p>Chaque fragment = <strong>40 o</strong> (en-tête) + <strong>8 o</strong> (extension) + données, soit <strong>48 o</strong> de surcharge. Payload length = 8 + données.</p>
+  </div>
+  <div class="two-col">
+    <div class="box box-prop" style="margin:0">
+      <span class="box-label">Méthode 1 · MTU standard minimal</span>
+      <p>On découpe à <strong>1280 o</strong>, la MTU minimale garantie sur tout lien IPv6 : 1280 − 48 = <strong>1232 o</strong> de données (154 blocs). Simple, mais plus de fragments que nécessaire.</p>
+    </div>
+    <div class="box box-prop" style="margin:0">
+      <span class="box-label">Méthode 2 · Découverte de la MTU (PMTUD)</span>
+      <p>La source envoie à sa MTU ; tout routeur qui ne peut pas transmettre renvoie un <strong>ICMPv6 type 2</strong> (« Packet Too Big », <em>use MTU = x</em>). La source recommence avec x, jusqu'à « paquet reçu ». On fragmente ensuite à la <strong>plus petite MTU du chemin</strong> : moins de fragments.</p>
+    </div>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exercice des notes — corrigé</span>
+    <p>Source MTU 3000 → routeur MTU 2000 → routeur MTU 1900 → destination MTU 4000. Paquet de 3000 o : <strong>2960 o de données</strong> (3000 − 40), ID = 1503.</p>
+    <div class="two-col" style="margin:0">
+      <div><h4 style="margin-top:0">Méthode 1 (1280)</h4>
+        <table class="mat" style="width:100%"><tr><th></th><th>données</th><th>payload</th><th>offset</th><th>M</th></tr>
+        <tr><td>f11</td><td>1232</td><td>1240</td><td>0</td><td>1</td></tr><tr><td>f12</td><td>1232</td><td>1240</td><td>154</td><td>1</td></tr><tr><td>f13</td><td>496</td><td>504</td><td>308</td><td>0</td></tr></table>
+        <p style="font-size:14px">f13 : 2960 − 2 × 1232 = <strong>496</strong> (62 blocs), total 544 o.</p></div>
+      <div><h4 style="margin-top:0">Méthode 2 (PMTU = 1900)</h4>
+        <table class="mat" style="width:100%"><tr><th></th><th>données</th><th>payload</th><th>offset</th><th>M</th></tr>
+        <tr><td>f11</td><td>1848</td><td>1856</td><td>0</td><td>1</td></tr><tr><td>f12</td><td>1112</td><td>1120</td><td>231</td><td>0</td></tr></table>
+        <p style="font-size:14px">1900 − 48 = 1852 → 231 blocs = 1848 o ; f11 = 1896 o au total.</p></div>
+    </div>
+    <p style="font-size:14px;color:var(--ink-faint);margin-top:6px">Les notes écrivent « 2960 − 2 × 1232 = 486 » : c'est <strong>496</strong> (62 × 8 = 496 et 496 + 8 = 504 confirment).</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ III · ADRESSAGE ═══════════════════ -->
+<section class="tab-content" id="ch3">
+  <p class="intro">Une adresse IPv4, c'est 32 bits coupés en deux : le réseau et l'hôte. Le masque dit où passe la coupure. Tout le reste découle de conversions en binaire.</p>
+
+  <h2><span class="h-num">§ 3.1</span>Réseau + hôte</h2>
+  <div class="box box-def">
+    <span class="box-label">Structure</span>
+    <p>Adresse IP = champ de <strong>32 bits</strong> = <strong>N° réseau</strong> (affecté par un organisme international) + <strong>N° hôte</strong> (affecté par l'entité utilisatrice). Notation pointée : 4 octets en décimal (<span class="fx">148.32.10.15</span>).</p>
+  </div>
+  <table class="mat" style="width:100%;margin:12px 0">
+    <tr><th>Classe</th><th>1ᵉʳ octet</th><th>bits de tête</th><th>découpage</th><th>masque par défaut</th><th>préfixe</th></tr>
+    <tr><td>A</td><td>1 – 126*</td><td>0</td><td>R.H.H.H</td><td>255.0.0.0</td><td>/8</td></tr>
+    <tr><td>B</td><td>128 – 191</td><td>10</td><td>R.R.H.H</td><td>255.255.0.0</td><td>/16</td></tr>
+    <tr><td>C</td><td>192 – 223</td><td>110</td><td>R.R.R.H</td><td>255.255.255.0</td><td>/24</td></tr>
+    <tr><td>D</td><td>224 – 239</td><td>1110</td><td colspan="3">multicast</td></tr>
+    <tr><td>E</td><td>240 – 255</td><td>1111</td><td colspan="3">expérimental / réservé</td></tr>
+  </table>
+  <p style="font-size:14.5px">* <span class="fx">127.0.0.0 → 127.255.255.255</span> est réservé au <strong>loopback</strong> (test local).</p>
+  <div class="box box-thm">
+    <span class="box-label">Adresses spéciales d'un réseau</span>
+    <ul>
+      <li>Partie hôte <strong>tout à 0</strong> = adresse du <strong>réseau</strong> (non attribuable).</li>
+      <li>Partie hôte <strong>tout à 1</strong> = adresse de <strong>diffusion</strong> (broadcast, non attribuable).</li>
+      <li>Nombre d'hôtes utilisables = <span class="fx">2ʰ − 2</span> (h = bits d'hôte).</li>
+    </ul>
+  </div>
+
+  <h2><span class="h-num">§ 3.2</span>Sous-réseaux</h2>
+  <div class="box box-def">
+    <span class="box-label">Principe</span>
+    <p>Réseaux → <strong>sous-réseaux</strong> → utilisateurs. Le N° réseau est fixe ; on prend des bits <strong>à gauche de la partie hôte</strong> pour le N° de sous-réseau (adjacent au N° réseau) :</p>
+    <div class="formula" style="font-size:18px">| N° réseau | N° sous-réseau | N° hôte |</div>
+    <p>La taille du champ sous-réseau est <strong>variable selon le besoin</strong> : pour k sous-réseaux, il faut s bits avec <span class="fx">2ˢ ≥ k</span>. Ex. 20 sous-réseaux → <strong>5 bits</strong> (16 &lt; 20 ≤ 32 = 2⁵).</p>
+  </div>
+  <div class="box box-thm">
+    <span class="box-label">Masque de sous-réseau</span>
+    <p>Nombre de 32 bits : <strong>1</strong> sur toute la partie réseau + sous-réseau, <strong>0</strong> sur la partie hôte. <span class="fx">@réseau = @IP AND masque</span>.</p>
+    <p>Démarche : 1ᵉʳ octet → <strong>classe</strong> → taille réseau par défaut ; le masque donne réseau + sous-réseau ; la différence = taille du sous-réseau.</p>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exemple des notes</span>
+    <p><span class="fx">148.32.10.15</span> = 10010100.00100000.00001010.00001111 → commence par 10 → <strong>classe B</strong> (/16).</p>
+    <p>Masque <span class="fx">255.255.192.0</span> = 11111111.11111111.<strong>11</strong>000000.00000000 → 2 bits de sous-réseau → <strong>4 sous-réseaux</strong> :</p>
+    <table class="mat"><tr><th>bits</th><td>00</td><td>01</td><td>10</td><td>11</td></tr><tr><th>sous-réseau</th><td>148.32.0.0</td><td>148.32.64.0</td><td>148.32.128.0</td><td>148.32.192.0</td></tr></table>
+    <p style="font-size:14.5px;margin-top:6px">148.32.10.15 est dans le sous-réseau <strong>148.32.0.0/18</strong> (10 &lt; 64), broadcast 148.32.63.255, 2¹⁴ − 2 = 16 382 hôtes.</p>
+  </div>
+  <div class="warn">Le pas entre sous-réseaux = <span class="fx">256 − (octet du masque)</span> dans l'octet où le masque « coupe » : 256 − 192 = <strong>64</strong> → 0, 64, 128, 192. C'est le calcul le plus rapide en DS.</div>
+
+  <!-- VIZ 2 -->
+  <div class="viz-card" id="sublab">
+    <div class="viz-header"><div class="viz-title">Calculateur d'adresse &amp; sous-réseaux</div><div class="viz-tag">IP + préfixe → tout le reste</div></div>
+    <div class="fgrid">
+      <label class="fld">Adresse IP<input id="sb-ip" type="text" value="148.32.10.15"></label>
+      <label class="fld">Préfixe /n (ou masque)<input id="sb-mask" type="text" value="/18"></label>
+    </div>
+    <div class="btn-group" style="margin:0 0 10px"><button class="btn" data-ex="148.32.10.15|/18">exemple des notes</button><button class="btn" data-ex="192.168.10.3|/24">192.168.10.3/24</button><button class="btn" data-ex="10.5.200.77|255.255.240.0">10.5.200.77 / 255.255.240.0</button><button class="btn" data-ex="192.124.16.200|/26">192.124.16.200/26</button></div>
+    <div class="bin" id="sb-bin"></div>
+    <div class="viz-body" style="margin-top:8px">
+      <div id="sb-subs"></div>
+      <div class="viz-controls"><h5>Résultat</h5><div id="sb-out"></div></div>
+    </div>
+    <div class="legend"><div class="legend-item"><span class="legend-swatch" style="background:var(--burgundy)"></span>bits réseau (classe)</div><div class="legend-item"><span class="legend-swatch" style="background:var(--gold)"></span>bits sous-réseau</div><div class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>bits hôte</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ IV · PRIVÉ · NAT · CIDR · VLSM ═══════════════════ -->
+<section class="tab-content" id="ch4">
+  <p class="intro">Le manque d'adresses IPv4 a produit quatre outils : des plages privées, la traduction (NAT, PAT), l'agrégation (CIDR) et les masques de longueur variable (VLSM).</p>
+
+  <h2><span class="h-num">§ 4.1</span>Adressage privé</h2>
+  <div class="two-col">
+    <table class="mat" style="width:100%"><tr><th>classe</th><th>plage privée</th><th>CIDR</th></tr>
+      <tr><td>A</td><td>10.0.0.0 → 10.255.255.255</td><td>10.0.0.0/8</td></tr>
+      <tr><td>B</td><td>172.16.0.0 → 172.31.255.255</td><td>172.16.0.0/12</td></tr>
+      <tr><td>C</td><td>192.168.0.0 → 192.168.255.255</td><td>192.168.0.0/16</td></tr></table>
+    <div class="box box-def" style="margin:0"><span class="box-label">Règle</span><p>Une plage privée s'utilise de façon unique <strong>à l'intérieur</strong> d'une entité. Pour sortir sur Internet → adressage <strong>public</strong> par translation. <span class="hl">Une adresse privée ne doit jamais apparaître sur Internet</span> (fuite d'informations internes, trafic anormal).</p></div>
+  </div>
+
+  <h2><span class="h-num">§ 4.2</span>NAT &amp; PAT</h2>
+  <div class="two-col">
+    <div class="box box-thm" style="margin:0">
+      <span class="box-label">NAT · Network Address Translation</span>
+      <p>Le routeur de bordure remplace l'adresse privée par une adresse publique (et inversement au retour) grâce à une <strong>table de correspondance</strong> :</p>
+      <table class="mat" style="width:100%"><tr><th>@ privée</th><th>@ publique</th></tr><tr><td>192.168.10.3</td><td>194.68.10.5</td></tr></table>
+    </div>
+    <div class="box box-thm" style="margin:0">
+      <span class="box-label">PAT · Port Address Translation</span>
+      <p>Plusieurs machines privées partagent <strong>une seule</strong> adresse publique ; on les distingue par le <strong>port</strong> :</p>
+      <table class="mat" style="width:100%"><tr><th>@ privée</th><th>port</th><th>@ publique</th></tr><tr><td>192.168.10.3</td><td>80</td><td rowspan="2">193.168.15.20</td></tr><tr><td>192.168.10.7</td><td>20</td></tr></table>
+    </div>
+  </div>
+  <div class="warn">Les notes définissent le NAT comme « plusieurs appareils partagent une seule adresse publique » : c'est précisément le <strong>PAT</strong> (NAT avec surcharge). Le NAT simple fait une correspondance <strong>1 privée ↔ 1 publique</strong>. Donne les deux en DS.</div>
+
+  <h2><span class="h-num">§ 4.3</span>CIDR · Classless Inter-Domain Routing</h2>
+  <div class="box box-def">
+    <span class="box-label">Principe</span>
+    <p>On oublie les classes : un réseau = <span class="fx">adresse/préfixe</span>. Plusieurs réseaux contigus s'<strong>agrègent</strong> en un seul (super-réseau) en gardant les bits communs : moins de lignes dans les tables de routage.</p>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exemple des notes</span>
+    <p>203.24.<strong>5</strong>.0 · 203.24.<strong>6</strong>.0 · 203.24.<strong>7</strong>.0 : 3ᵉ octet = 0000 01|01, 0000 01|10, 0000 01|11 → les <strong>6</strong> premiers bits du 3ᵉ octet sont communs → 16 + 6 = <strong>22</strong> bits communs.</p>
+    <div class="formula">203.24.4.0/22</div>
+    <p style="font-size:14.5px">Le /22 couvre 203.24.4.0 → 203.24.7.255 (il inclut aussi 203.24.4.0/24).</p>
+  </div>
+
+  <h2><span class="h-num">§ 4.4</span>VLSM · Variable Length Subnet Mask</h2>
+  <div class="box box-def">
+    <span class="box-label">Principe</span>
+    <p>Donner à chaque sous-réseau un masque <strong>adapté à sa taille</strong> au lieu d'un masque unique. Taille d'un bloc pour n hôtes : plus petite puissance de 2 avec <span class="fx">2ʰ − 2 ≥ n</span> ; préfixe <span class="fx">/(32 − h)</span>. Un lien point-à-point (2 hôtes) = <strong>/30</strong>.</p>
+    <p><strong>Critères des notes</strong> : on alloue dans l'ordre du <strong>nombre d'hôtes décroissant</strong>, puis <strong>ordre alphabétique</strong> en cas d'égalité, en descendant un arbre binaire (branche 1 d'abord).</p>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exercice des notes — 192.124.16.0/24</span>
+    <p>Sites : Tunis 60 · Bizerte 40 · Sfax 25 · Sousse 25 · Tataouine 10 · Tozeur 4 hôtes, plus 6 liens routeur–site (SRB, SRSf, SRSo, SRTa, SRTo, SRTu, 2 hôtes chacun) → <strong>12 sous-réseaux</strong>.</p>
+    <p>Sans VLSM : 12 sous-réseaux → 4 bits → <strong>/28</strong> = 14 hôtes max : impossible pour Tunis (60). D'où le VLSM.</p>
+    <table class="mat" style="width:100%"><tr><th>sous-réseau</th><th>hôtes</th><th>préfixe</th><th>adresse</th><th>plage utilisable</th><th>broadcast</th></tr>
+      <tr><td>Tunis</td><td>60</td><td>/26</td><td>192.124.16.192</td><td>.193 – .254</td><td>.255</td></tr>
+      <tr><td>Bizerte</td><td>40</td><td>/26</td><td>192.124.16.128</td><td>.129 – .190</td><td>.191</td></tr>
+      <tr><td>Sfax</td><td>25</td><td>/27</td><td>192.124.16.96</td><td>.97 – .126</td><td>.127</td></tr>
+      <tr><td>Sousse</td><td>25</td><td>/27</td><td>192.124.16.64</td><td>.65 – .94</td><td>.95</td></tr>
+      <tr><td>Tataouine</td><td>10</td><td>/28</td><td>192.124.16.48</td><td>.49 – .62</td><td>.63</td></tr>
+      <tr><td>Tozeur</td><td>4</td><td>/29</td><td>192.124.16.40</td><td>.41 – .46</td><td>.47</td></tr>
+      <tr><td>SRB … SRTu</td><td>2</td><td>/30</td><td colspan="3">.36, .32, .28, .24, .20, .16 (voir le planificateur)</td></tr></table>
+    <p style="font-size:14px;color:var(--ink-faint);margin-top:6px">Les notes écrivent « Tunis 192.124.16.<strong>182</strong>/26 » : un /26 commence forcément à un multiple de 64 → c'est <strong>.192</strong>. Tozeur (4 hôtes) demande un /29 car un /30 n'a que 2 hôtes utilisables.</p>
+  </div>
+
+  <!-- VIZ 3 -->
+  <div class="viz-card" id="vlsmlab">
+    <div class="viz-header"><div class="viz-title">Planificateur VLSM</div><div class="viz-tag">ordre : hôtes ↓ puis alphabétique · branche 1 d'abord</div></div>
+    <div class="fgrid">
+      <label class="fld">Réseau de départ<input id="vl-net" type="text" value="192.124.16.0/24"></label>
+      <label class="fld" style="grid-column:span 2">Besoins (nom:hôtes, …)<input id="vl-needs" type="text" value="Tunis:60, Bizerte:40, Sfax:25, Sousse:25, Tataouine:10, Tozeur:4, SRB:2, SRSf:2, SRSo:2, SRTa:2, SRTo:2, SRTu:2"></label>
+      <label class="fld">Remplissage<select id="vl-dir"><option value="hi">branche 1 d'abord (notes)</option><option value="lo">branche 0 d'abord</option></select></label>
+    </div>
+    <div class="viz-body">
+      <div class="tt-wrap" id="vl-out" style="margin:0"></div>
+      <div class="viz-controls"><h5>Bilan</h5><div id="vl-sum" style="font-size:13.5px"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ V · ROUTAGE ═══════════════════ -->
+<section class="tab-content" id="ch5">
+  <p class="intro">Chaque routeur décide seul, à chaque datagramme, par où il sort. Il lit sa table de routage, et cette table se construit en parlant aux voisins.</p>
+
+  <h2><span class="h-num">§ 5.1</span>Le routage IP</h2>
+  <div class="box box-def">
+    <span class="box-label">Principe</span>
+    <ul>
+      <li>Le datagramme IP est <strong>encapsulé</strong> dans une trame (couches réseau + liaison + physique).</li>
+      <li>À chaque routeur, l'<strong>en-tête de trame change</strong> (adresses MAC variables, saut par saut) mais les <strong>adresses IP restent fixes</strong> de bout en bout.</li>
+      <li>Le routeur décide la sortie grâce à sa <strong>table de routage</strong>, en fonction de l'adresse de <strong>destination</strong>.</li>
+    </ul>
+    <table class="mat"><tr><th>@ destination</th><th>prochain saut</th><th>coût</th></tr><tr><td>@R</td><td>A</td><td>1</td></tr><tr><td>⋮</td><td>⋮</td><td>⋮</td></tr></table>
+  </div>
+  <div class="two-col">
+    <div class="box box-prop" style="margin:0"><span class="box-label">État de liens · OSPF</span><p>Chaque routeur connaît la <strong>topologie complète</strong> (état des liens) et calcule lui-même les plus courts chemins (Dijkstra). Convergence rapide.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">Vecteur de distance · RIP</span><p>Routing Information Protocol. <strong>Périodiquement</strong>, chaque routeur envoie sa table à ses <strong>voisins</strong> ; chacun met à jour la sienne en prenant le coût le plus faible. Coût = <strong>nombre de sauts</strong>.</p></div>
+  </div>
+  <div class="box box-thm">
+    <span class="box-label">Convergence</span>
+    <p>RIP ne donne pas un résultat optimal dès le premier échange : au début, un routeur ne peut pas atteindre tous les réseaux. L'état où toutes les tables sont stables et complètes s'appelle la <strong>convergence</strong>. <span class="hl">RIP a une convergence lente</span> (une étape d'échange par saut de distance).</p>
+  </div>
+  <div class="box box-remark"><span class="box-label">Compléments utiles (hors notes)</span><p>RIP : maximum <strong>15 sauts</strong> (16 = infini), mises à jour toutes les 30 s, problème du <em>comptage à l'infini</em> après une panne, limité par le <em>split horizon</em>. OSPF : coût basé sur la bande passante, découpage en aires.</p></div>
+
+  <h2><span class="h-num">§ 5.2</span>Exercice RIP des notes</h2>
+  <div class="box box-method">
+    <span class="box-label">Règles de mise à jour (à appliquer à chaque tᵢ)</span>
+    <ol class="method-steps">
+      <li>À t₀ : chaque routeur ne connaît que ses réseaux directement connectés, <strong>coût 0</strong>, prochain saut = lui-même.</li>
+      <li>À tᵢ₊₁ : chaque routeur reçoit les tables <strong>de tᵢ</strong> de ses voisins. Pour un réseau N appris du voisin V : coût = coût(V, N) + 1, prochain saut = V.</li>
+      <li><strong>Priorité au coût</strong> le plus faible ; à coût égal, <strong>priorité à l'ordre alphabétique</strong> du voisin.</li>
+      <li>On s'arrête quand plus aucune table ne change : convergence.</li>
+    </ol>
+  </div>
+
+  <!-- VIZ 4 -->
+  <div class="viz-card" id="riplab">
+    <div class="viz-header"><div class="viz-title">Simulateur RIP — topologie de l'exercice</div><div class="viz-tag">avance t₀ → t₁ → … jusqu'à convergence</div></div>
+    <svg class="viz-svg net" id="rip-svg" viewBox="0 0 860 330" style="cursor:default"></svg>
+    <div class="btn-group" style="margin:10px 0"><button class="btn" id="rip-prev">← t précédent</button><button class="btn" id="rip-next">t suivant →</button><button class="btn" id="rip-end">aller à la convergence</button><span id="rip-t" style="font-family:'JetBrains Mono',monospace;font-size:13px;align-self:center;margin-left:6px"></span></div>
+    <div class="rip" id="rip-tables"></div>
+    <p style="font-size:13.5px;color:var(--ink-faint);margin-top:8px">Colonnes : réseau · prochain saut · coût. Surligné = ligne nouvelle ou modifiée depuis l'étape précédente. Clique un routeur sur le schéma pour voir ses voisins.</p>
+  </div>
+  <div class="warn">Piège classique : à tᵢ₊₁, on utilise les tables des voisins <strong>à tᵢ</strong>, pas celles qu'ils viennent de calculer au même instant. Sinon on « saute » des étapes et on trouve la convergence trop tôt.</div>
+</section>
+
+<!-- ═══════════════════ M · MÉTHODES ═══════════════════ -->
+<section class="tab-content" id="methods">
+  <p class="intro">Les exercices de réseau sont des calculs à procédure fixe : fragmenter, découper, planifier, faire tourner un protocole. Une carte par type d'exercice, avec les pièges qui coûtent des points.</p>
+  <div class="method-index">
+    <a href="#m1"><span>M1</span>Fragmenter un datagramme IPv4</a>
+    <a href="#m2"><span>M2</span>Fragmenter en IPv6 (MTU min / PMTUD)</a>
+    <a href="#m3"><span>M3</span>Lire / remplir un en-tête</a>
+    <a href="#m4"><span>M4</span>Classe, réseau, broadcast, hôtes</a>
+    <a href="#m5"><span>M5</span>Découper en sous-réseaux</a>
+    <a href="#m6"><span>M6</span>Choisir un masque d'après un besoin</a>
+    <a href="#m7"><span>M7</span>Plan d'adressage VLSM</a>
+    <a href="#m8"><span>M8</span>Agréger en CIDR</a>
+    <a href="#m9"><span>M9</span>Table NAT / PAT</a>
+    <a href="#m10"><span>M10</span>Tables RIP jusqu'à convergence</a>
+    <a href="#m11"><span>M11</span>Comparer RIP et OSPF</a>
+  </div>
+
+  <h2><span class="h-num">Bloc A</span>Datagrammes</h2>
+
+  <div class="method-card" id="m1">
+    <div class="method-meta"><span class="pill pill-burgundy">Ch1</span><span class="pill">exercice des notes</span></div>
+    <div class="method-question">Un datagramme traverse des réseaux de MTU différentes : donner chaque fragment (taille, offset, MF, ID).</div>
+    <ol class="method-steps">
+      <li>Données utiles = taille totale − 20 (en-tête sans options). Ex. 3000 → <strong>2980 o</strong>.</li>
+      <li>Pour chaque réseau du chemin, si taille &gt; MTU : données max par fragment = <span class="fx">⌊(MTU − 20) / 8⌋ × 8</span> (multiple de 8 obligatoire, sauf le dernier).</li>
+      <li>Découper : tous les fragments pleins, le reste dans le dernier. Taille de chaque fragment = données + 20.</li>
+      <li><strong>Offset</strong> = position des données <em>dans le datagramme d'origine</em> ÷ 8. Un fragment refragmenté garde son offset de départ et on ajoute.</li>
+      <li><strong>MF = 1</strong> partout sauf sur le tout dernier morceau du datagramme d'origine (un sous-fragment hérite du MF de son parent pour son dernier morceau).</li>
+      <li><strong>ID</strong> identique pour tous ; DF = 0 (sinon le routeur jette et renvoie ICMP).</li>
+      <li>Les fragments ne sont <strong>jamais réassemblés en route</strong> : un fragment de 900 passe tel quel dans le réseau MTU 4000 ; seul le destinataire réassemble.</li>
+    </ol>
+    <div class="method-tip">Vérifie toujours : somme des données = 2980 et offset du suivant = offset + données/8 (ex. 0 + 1976/8 = 247).</div>
+  </div>
+
+  <div class="method-card" id="m2">
+    <div class="method-meta"><span class="pill pill-burgundy">Ch2</span></div>
+    <div class="method-question">Même datagramme en IPv6 : la source fragmente.</div>
+    <ol class="method-steps">
+      <li>Données = taille − 40 (en-tête fixe). Ex. 3000 → <strong>2960 o</strong>.</li>
+      <li>Choisir la MTU : <strong>méthode 1</strong> = 1280 (minimum garanti, pas de découverte) ; <strong>méthode 2</strong> = plus petite MTU du chemin, découverte par <strong>ICMPv6 Packet Too Big (type 2)</strong>.</li>
+      <li>Chaque fragment porte 40 (en-tête) + 8 (en-tête Fragment, NH = 44) = <strong>48 o de surcoût</strong>. Données max = <span class="fx">⌊(MTU − 48) / 8⌋ × 8</span>.</li>
+      <li>Payload Length = 8 + données (l'en-tête fixe n'est pas compté). Offset en unités de 8 octets, bit M = 1 sauf le dernier, même Identification (32 bits).</li>
+      <li>Les routeurs ne fragmentent jamais : un paquet trop gros est jeté + ICMPv6 type 2.</li>
+    </ol>
+    <div class="method-tip">Notes : méthode 1 → payloads 1240 / 1240 / <strong>504</strong> (données 1232/1232/<strong>496</strong> ; le « 486 » des notes est une erreur de calcul) ; méthode 2 (PMTU 1900) → 1856 / 1120, offsets 0 / 231.</div>
+  </div>
+
+  <div class="method-card" id="m3">
+    <div class="method-meta"><span class="pill pill-burgundy">Ch1–2</span></div>
+    <div class="method-question">Lire ou remplir les champs d'un en-tête.</div>
+    <ol class="method-steps">
+      <li>IPv4 : IHL en <strong>mots de 32 bits</strong> (5 → 20 o) ; Total Length en octets (en-tête compris) ; offset en <strong>blocs de 8 o</strong> ; TTL décrémenté à chaque routeur, 0 → jeté + ICMP.</li>
+      <li>Protocol : 1 ICMP, 6 TCP, 17 UDP. Checksum sur l'en-tête seul, recalculé à chaque saut (le TTL change).</li>
+      <li>IPv6 : Payload Length exclut les 40 o ; Hop Limit = TTL ; Next Header pointe la prochaine extension ou la couche transport.</li>
+      <li>Ordre conseillé des extensions : HbH (0) → Destination (60) → Routing (43) → Fragment (44) → AH (51) → ESP (50) → Destination (60) → TCP (6)/UDP (17).</li>
+    </ol>
+    <div class="method-tip">En hexadécimal, 4 bits par chiffre : le premier octet <span class="fx">0x45</span> se lit « version 4, IHL 5 ».</div>
+  </div>
+
+  <h2><span class="h-num">Bloc B</span>Adressage</h2>
+
+  <div class="method-card" id="m4">
+    <div class="method-meta"><span class="pill pill-teal">Ch3</span></div>
+    <div class="method-question">Pour une adresse donnée : classe, réseau, broadcast, plage d'hôtes.</div>
+    <ol class="method-steps">
+      <li>Classe d'après le 1<sup>er</sup> octet : A 0–127 (/8), B 128–191 (/16), C 192–223 (/24), D 224–239 (multicast), E 240–255.</li>
+      <li>Adresse réseau = IP <strong>ET</strong> masque. Seul l'octet « mixte » demande du binaire : les octets à 255 se recopient, ceux à 0 deviennent 0.</li>
+      <li>Broadcast = réseau avec tous les bits hôte à 1.</li>
+      <li>Premier hôte = réseau + 1 ; dernier = broadcast − 1 ; nombre d'hôtes = <span class="fx">2<sup>h</sup> − 2</span>.</li>
+    </ol>
+    <div class="method-tip">Raccourci : taille de bloc = 256 − valeur du masque dans l'octet mixte. Masque 192 → blocs de 64 → réseaux 0, 64, 128, 192.</div>
+  </div>
+
+  <div class="method-card" id="m5">
+    <div class="method-meta"><span class="pill pill-teal">Ch3</span></div>
+    <div class="method-question">Découper un réseau en <em>N</em> sous-réseaux.</div>
+    <ol class="method-steps">
+      <li>Bits empruntés : plus petit <span class="fx">s</span> avec <span class="fx">2<sup>s</sup> ≥ N</span>.</li>
+      <li>Nouveau préfixe = préfixe de classe + s. Bits hôte restants h = 32 − préfixe.</li>
+      <li>Lister les sous-réseaux par pas de 2<sup>h</sup> dans l'octet mixte ; donner pour chacun réseau, 1<sup>er</sup>/dernier hôte, broadcast.</li>
+      <li>Dire si on garde le sous-réseau zéro et le dernier (convention moderne : oui ; ancienne : 2<sup>s</sup> − 2).</li>
+    </ol>
+    <div class="method-tip">Exemple des notes : 148.32.10.15 /18 → classe B, 2 bits empruntés, 4 sous-réseaux, l'adresse est dans 148.32.0.0/18 (broadcast 148.32.63.255).</div>
+  </div>
+
+  <div class="method-card" id="m6">
+    <div class="method-meta"><span class="pill pill-teal">Ch3–4</span></div>
+    <div class="method-question">Trouver le masque à partir d'un nombre d'hôtes.</div>
+    <ol class="method-steps">
+      <li>Plus petit <span class="fx">h</span> avec <span class="fx">2<sup>h</sup> − 2 ≥ hôtes</span> (le routeur compte comme un hôte !).</li>
+      <li>Préfixe = 32 − h. Ex. 60 hôtes → h = 6 (62) → /26 ; 25 → /27 (30) ; 10 → /28 (14) ; 4 → /29 (6) ; lien point-à-point 2 → /30.</li>
+    </ol>
+    <div class="method-tip">Piège : 30 hôtes tient dans /27 (30 utilisables), 31 non — vérifie toujours le « − 2 ».</div>
+  </div>
+
+  <div class="method-card" id="m7">
+    <div class="method-meta"><span class="pill pill-gold">Ch4 · VLSM</span></div>
+    <div class="method-question">Établir un plan d'adressage VLSM (sites + liaisons).</div>
+    <ol class="method-steps">
+      <li>Lister les besoins : chaque LAN (hôtes + routeur) et chaque liaison série (2 adresses → /30).</li>
+      <li>Trier par taille décroissante ; à égalité, ordre alphabétique (convention du cours).</li>
+      <li>Calculer le préfixe de chacun (M6), puis allouer dans l'ordre, chaque bloc aligné sur sa taille.</li>
+      <li>Convention des notes : <strong>branche 1 d'abord</strong>, on part du haut (.192/26, .128/26, .96/27…). Les liaisons /30 prennent la fin : .36, .32, .28…</li>
+      <li>Tableau final : nom · préfixe · réseau · plage · broadcast. Vérifier qu'aucun bloc ne chevauche.</li>
+    </ol>
+    <div class="method-tip">Le planificateur de l'onglet IV refait l'exercice des notes ; le « .182 » de Tunis dans les notes doit se lire <strong>.192</strong>.</div>
+  </div>
+
+  <div class="method-card" id="m8">
+    <div class="method-meta"><span class="pill pill-gold">Ch4 · CIDR</span></div>
+    <div class="method-question">Agréger des réseaux contigus en une seule route.</div>
+    <ol class="method-steps">
+      <li>Écrire en binaire l'octet qui varie.</li>
+      <li>Compter les bits communs à gauche → nouveau préfixe.</li>
+      <li>Vérifier que le premier réseau est aligné (multiple de la taille du bloc) et que tous les réseaux du bloc sont bien à toi.</li>
+    </ol>
+    <div class="method-tip">203.24.4.0 → 203.24.7.0 (4 réseaux /24) : 4 = 000001<strong>00</strong>, 7 = 000001<strong>11</strong> → 22 bits communs → <strong>203.24.4.0/22</strong>.</div>
+  </div>
+
+  <div class="method-card" id="m9">
+    <div class="method-meta"><span class="pill pill-gold">Ch4 · NAT</span></div>
+    <div class="method-question">Remplir une table de traduction NAT / PAT.</div>
+    <ol class="method-steps">
+      <li>NAT statique : une IP privée ↔ une IP publique fixe (serveur joignable de l'extérieur).</li>
+      <li>NAT dynamique : un pool d'IP publiques, attribuées à la demande.</li>
+      <li>PAT (surcharge) : <strong>une seule IP publique</strong>, on distingue les sessions par le <strong>port</strong> → colonnes IP privée:port ↔ IP publique:port.</li>
+      <li>Le retour suit la table : paquet entrant vers IP publique:port → réécrit vers IP privée:port.</li>
+    </ol>
+    <div class="method-tip">La « définition du NAT » des notes (plusieurs machines derrière une seule IP grâce aux ports) est en fait celle du <strong>PAT</strong>.</div>
+  </div>
+
+  <h2><span class="h-num">Bloc C</span>Routage</h2>
+
+  <div class="method-card" id="m10">
+    <div class="method-meta"><span class="pill pill-burgundy">Ch5 · RIP</span><span class="pill">exercice des notes</span></div>
+    <div class="method-question">Faire tourner RIP (vecteur de distances) de t₀ à la convergence.</div>
+    <ol class="method-steps">
+      <li><strong>t₀</strong> : chaque routeur ne connaît que ses réseaux directs, coût 0.</li>
+      <li><strong>tᵢ₊₁</strong> : chaque routeur reçoit les tables de ses voisins <strong>à tᵢ</strong>. Pour chaque réseau annoncé à coût c par le voisin V : candidat = c + 1 via V.</li>
+      <li>Garder le candidat s'il est inconnu ou strictement meilleur ; à égalité, le voisin le plus petit dans l'ordre alphabétique.</li>
+      <li>Ne recopier que les lignes nouvelles ou modifiées (c'est ce qu'on surligne).</li>
+      <li>Arrêt quand une étape ne change plus aucune table. Nombre d'étapes ≈ diamètre du réseau.</li>
+    </ol>
+    <div class="method-tip">Contrôle avec les notes : à t₁, A apprend N5 et N6 via B, N7 et N9 via C, N8 via D, tous à coût 1.</div>
+  </div>
+
+  <div class="method-card" id="m11">
+    <div class="method-meta"><span class="pill pill-burgundy">Ch5</span></div>
+    <div class="method-question">Question de cours : comparer RIP et OSPF.</div>
+    <ol class="method-steps">
+      <li>Type : RIP = vecteur de distances (« routage par rumeur ») ; OSPF = état des liens (chaque routeur a la carte complète, Dijkstra).</li>
+      <li>Métrique : RIP = nombre de sauts (max 15, 16 = infini) ; OSPF = coût lié au débit.</li>
+      <li>Échanges : RIP = toute la table aux voisins toutes les 30 s ; OSPF = LSA seulement en cas de changement, inondés à toute la zone.</li>
+      <li>Convergence : RIP lente (boucles, comptage à l'infini → split horizon, poison reverse) ; OSPF rapide.</li>
+      <li>Usage : RIP pour petits réseaux simples ; OSPF pour grands réseaux hiérarchisés en zones (area 0 = backbone).</li>
+    </ol>
+    <div class="method-tip">Toujours finir par un critère de choix : taille du réseau + vitesse de convergence + charge CPU/mémoire.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S · SYNTHÈSE ═══════════════════ -->
+<section class="tab-content" id="synth">
+  <p class="intro">Couche 3 en une phrase : IP <em>transporte</em> (en-têtes, fragmentation), l'adressage <em>désigne</em> (classes, masques, VLSM), le routage <em>choisit le chemin</em> (RIP, OSPF).</p>
+
+  <h2><span class="h-num">S · 1</span>Vue d'ensemble</h2>
+  <div class="flow-grid">
+    <div class="flow-node"><div class="flow-node-tag">I · IPv4</div><div class="flow-node-title">Datagramme</div><span class="pill">20 o min</span><span class="pill">TTL</span><span class="pill">ID · DF · MF</span><span class="pill">offset ×8</span></div>
+    <div class="flow-node"><div class="flow-node-tag">II · IPv6</div><div class="flow-node-title">128 bits</div><span class="pill">40 o fixe</span><span class="pill">Next Header</span><span class="pill">frag. source</span><span class="pill">MTU ≥ 1280</span></div>
+    <div class="flow-node"><div class="flow-node-tag">III · Adressage</div><div class="flow-node-title">Masques</div><span class="pill">A · B · C</span><span class="pill">ET logique</span><span class="pill">2ʰ − 2</span><span class="pill">sous-réseaux</span></div>
+    <div class="flow-node"><div class="flow-node-tag">IV · Pénurie</div><div class="flow-node-title">Économiser</div><span class="pill">RFC 1918</span><span class="pill">NAT · PAT</span><span class="pill">CIDR</span><span class="pill">VLSM</span></div>
+    <div class="flow-node"><div class="flow-node-tag">V · Routage</div><div class="flow-node-title">Chemins</div><span class="pill">statique</span><span class="pill">RIP</span><span class="pill">OSPF</span><span class="pill">convergence</span></div>
+  </div>
+
+  <h2><span class="h-num">S · 2</span>IPv4 face à IPv6</h2>
+  <div class="tt-wrap"><table class="tt">
+    <tr><th>critère</th><th>IPv4</th><th>IPv6</th></tr>
+    <tr><td>adresse</td><td>32 bits, décimal pointé</td><td>128 bits, hexa par groupes de 16, « :: »</td></tr>
+    <tr><td>en-tête</td><td>20–60 o, 12 champs + options</td><td>40 o fixes, 8 champs + extensions</td></tr>
+    <tr><td>durée de vie</td><td>TTL</td><td>Hop Limit</td></tr>
+    <tr><td>checksum</td><td>oui (en-tête)</td><td>supprimé (laissé aux couches 2 et 4)</td></tr>
+    <tr><td>fragmentation</td><td>routeurs + source</td><td>source seule (en-tête 44)</td></tr>
+    <tr><td>MTU</td><td>≥ 68 (576 réassemblable)</td><td>≥ 1280, PMTUD via ICMPv6 type 2</td></tr>
+    <tr><td>diffusion</td><td>broadcast</td><td>multicast / anycast, plus de broadcast</td></tr>
+    <tr><td>configuration</td><td>manuelle / DHCP</td><td>auto-configuration sans état + DHCPv6</td></tr>
+  </table></div>
+
+  <h2><span class="h-num">S · 3</span>Les ponts</h2>
+  <div class="two-col">
+    <div class="box box-prop" style="margin:0"><span class="box-label">Pénurie → IPv6</span><p>Classes gaspilleuses → sous-réseaux → CIDR / VLSM / NAT pour tenir ; la vraie solution est l'espace 128 bits.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">Masque → routage</span><p>Un routeur applique le masque à la destination pour trouver la route ; préfixe le plus long gagne. CIDR réduit la taille des tables.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">MTU → fragmentation</span><p>IPv4 fragmente partout (coûteux) ; IPv6 déplace le travail vers la source et ICMPv6.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">NAT ↔ bout-en-bout</span><p>NAT casse l'adressage de bout en bout (serveurs internes, IPsec) ; IPv6 le rend inutile.</p></div>
+  </div>
+
+  <h2><span class="h-num">S · 4</span>Formules à connaître</h2>
+  <dl class="kv">
+    <dt>Fragment IPv4</dt><dd>données max = ⌊(MTU − 20)/8⌋·8 · offset = octets précédents / 8</dd>
+    <dt>Fragment IPv6</dt><dd>données max = ⌊(MTU − 48)/8⌋·8 · payload = données + 8</dd>
+    <dt>Hôtes</dt><dd>2<sup>h</sup> − 2 avec h = 32 − préfixe</dd>
+    <dt>Sous-réseaux</dt><dd>2<sup>s</sup> avec s = bits empruntés</dd>
+    <dt>Bloc</dt><dd>256 − octet mixte du masque</dd>
+    <dt>Privé</dt><dd>10.0.0.0/8 · 172.16.0.0/12 · 192.168.0.0/16</dd>
+  </dl>
+
+  <h2><span class="h-num">S · 5</span>Auto-test express</h2>
+  <p style="text-align:center;font-style:italic">Clique sur une carte pour la retourner.</p>
+  <div class="flash-grid" id="flash"></div>
+
+  <h2><span class="h-num">S · 6</span>Check-list avant le DS</h2>
+  <dl class="kv">
+    <dt>À savoir dessiner</dt><dd>En-tête IPv4 (32 bits par ligne) · en-tête IPv6 · chaîne Next Header · topologie avec tables RIP.</dd>
+    <dt>À savoir faire</dt><dd>Fragmentation IPv4 en plusieurs sauts · fragmentation IPv6 méthodes 1 et 2 · réseau / broadcast / plage · découpage en sous-réseaux · VLSM complet · agrégation CIDR · table PAT · RIP de t₀ à convergence.</dd>
+    <dt>À savoir expliquer</dt><dd>Rôle de chaque champ · pourquoi IPv6 · NAT statique / dynamique / PAT · statique vs dynamique · RIP vs OSPF · problèmes de convergence et remèdes.</dd>
+    <dt>Pièges classiques</dt><dd>Oublier le multiple de 8 · offset en octets au lieu de blocs · réassembler en route · Payload Length avec les 40 o · oublier le −2 · VLSM non trié · utiliser les tables de tᵢ₊₁ au lieu de tᵢ.</dd>
+  </dl>
+</section>
+</main>
+
+<footer>
+  <div class="footer-ornament">◆ ◆ ◆</div>
+  v1 · 28 octobre 2026 · Sources : Ingénierie des protocoles et réseaux GL3 — 1. IPv4, 2. IPv6, 3. Adressage, 4. Adresses privées · NAT · CIDR · VLSM, 5. Routage. Chapitre 6 (ingénierie des protocoles) hors périmètre.<br>
+  Fait par Adam Bhouri avec Claude · INSAT GL3
+</footer>
+
+<script>
+(function(){
+/* ─── Tabs ─── */
+const btns=document.querySelectorAll('.tab-btn'),tabs=document.querySelectorAll('.tab-content');
+function show(id,scroll){btns.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));tabs.forEach(t=>t.classList.toggle('active',t.id===id));
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+  if(scroll!==false)window.scrollTo({top:document.querySelector('.tabs-wrapper').offsetTop-4,behavior:'smooth'})}
+btns.forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
+const h=(location.hash||'').slice(1);
+if(h){if(document.getElementById(h)&&document.getElementById(h).classList.contains('tab-content'))show(h,false);
+  else if(/^m\d+$/.test(h)){show('methods',false);setTimeout(()=>document.getElementById(h)&&document.getElementById(h).scrollIntoView(),50)}}
+document.querySelectorAll('.method-index a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth',block:'start'})}));
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ─── Fragmentation ─── */
+(function(){
+ if(!$('fraglab'))return;
+ function run(){
+  const mode=$('fr-mode').value,size=Math.max(60,parseInt($('fr-size').value)||0),id=parseInt($('fr-id').value)||0;
+  const mtus=$('fr-mtus').value.split(/[,;\s]+/).map(x=>parseInt(x)).filter(x=>x>0);
+  let rows=[],calc=[];
+  if(mode==='v4'){
+   const data=size-20;calc.push('Données = '+size+' − 20 = <strong>'+data+' o</strong>.');
+   let pieces=[{n:'f1',data:data,off:0,mf:0,hop:'source'}];const stages=[];
+   mtus.forEach((m,k)=>{
+    const chunk=Math.floor((m-20)/8)*8,out=[];let cut=false;
+    pieces.forEach(p=>{
+     if(p.data+20<=m){out.push(p);return}
+     cut=true;let done=0,i=1;
+     while(done<p.data){const d=Math.min(chunk,p.data-done),last=done+d>=p.data;
+      out.push({n:p.n+i,data:d,off:p.off+done/8,mf:last?p.mf:1,hop:'R'+(k+1)+' (MTU '+m+')'});done+=d;i++}
+    });
+    calc.push('Réseau '+(k+1)+' · MTU '+m+' : '+(cut?'max ⌊('+m+'−20)/8⌋·8 = <strong>'+chunk+'</strong> o de données par fragment.':'rien à découper (les fragments ne sont pas réassemblés).'));
+    pieces=out;if(cut)stages.push({m:m,k:k+1,p:out.slice()});
+   });
+   const row=p=>'<tr><td>'+p.n+'</td><td>'+p.data+'</td><td>'+(p.data+20)+'</td><td>'+p.off+'</td><td class="'+(p.mf?'T':'F')+'">'+p.mf+'</td><td>'+id+'</td></tr>';
+   $('fr-out').innerHTML='<table class="tt"><tr><th>fragment</th><th>données</th><th>taille</th><th>offset</th><th>MF</th><th>ID</th></tr>'+
+    (stages.length?stages.map(st=>'<tr><td colspan="6" style="text-align:left;font-style:italic;color:var(--burgundy);background:var(--bg-deep)">après le réseau '+st.k+' (MTU '+st.m+')</td></tr>'+st.p.map(row).join('')).join(''):row(pieces[0]))+'</table>';
+   calc.push('Contrôle : somme des données = '+pieces.reduce((s,p)=>s+p.data,0)+'.');
+  }else{
+   const data=size-40;let mtu;
+   calc.push('Données = '+size+' − 40 = <strong>'+data+' o</strong> (en-tête fixe).');
+   if(mode==='v6min'){mtu=1280;calc.push('Méthode 1 : la source prend la MTU minimale garantie <strong>1280</strong>, sans découverte.')}
+   else{
+    let cur=size,steps=[];
+    mtus.forEach(m=>{if(cur>m){steps.push('paquet de '+cur+' &gt; '+m+' → jeté, ICMPv6 <em>Packet Too Big</em> (type 2, MTU='+m+')');cur=m}});
+    mtu=Math.min(size,...mtus);
+    calc.push('Méthode 2 (PMTUD) : '+(steps.length?steps.join(' ; ')+'.':'aucun ICMPv6 : le paquet passe.')+' PMTU = <strong>'+mtu+'</strong>.');
+   }
+   if(size<=mtu){$('fr-out').innerHTML='<p>Le paquet ('+size+' o) tient dans la MTU '+mtu+' : pas de fragmentation.</p>';$('fr-calc').innerHTML=calc.join('<br>');return}
+   const chunk=Math.floor((mtu-48)/8)*8;
+   calc.push('Surcoût 40 + 8 (en-tête Fragment) = 48 → max ⌊('+mtu+'−48)/8⌋·8 = <strong>'+chunk+'</strong> o de données.');
+   let done=0,i=1,out=[];
+   while(done<data){const d=Math.min(chunk,data-done);out.push({n:'f'+i,data:d,off:done/8,m:done+d<data?1:0});done+=d;i++}
+   $('fr-out').innerHTML='<table class="tt"><tr><th>fragment</th><th>données</th><th>Payload Length</th><th>taille</th><th>offset</th><th>M</th><th>ID</th></tr>'+
+    out.map(p=>'<tr><td>'+p.n+'</td><td>'+p.data+'</td><td>'+(p.data+8)+'</td><td>'+(p.data+48)+'</td><td>'+p.off+'</td><td class="'+(p.m?'T':'F')+'">'+p.m+'</td><td>'+id+'</td></tr>').join('')+'</table>';
+   calc.push('Les routeurs ne refragmentent jamais en IPv6.');
+  }
+  $('fr-calc').innerHTML=calc.join('<br>');
+ }
+ ['fr-mode','fr-size','fr-mtus','fr-id'].forEach(k=>$(k).addEventListener('input',run));
+ document.querySelectorAll('#fraglab [data-ex]').forEach(b=>b.addEventListener('click',()=>{const [m,s,t]=b.dataset.ex.split('|');$('fr-mode').value=m;$('fr-size').value=s;$('fr-mtus').value=t;run()}));
+ run();
+})();
+
+/* ─── IPv4 helpers ─── */
+const ip2n=s=>{const p=s.trim().split('.').map(Number);if(p.length!==4||p.some(x=>!(x>=0&&x<=255)||isNaN(x)))return null;return((p[0]<<24)>>>0)+(p[1]<<16)+(p[2]<<8)+p[3]};
+const n2ip=n=>[n>>>24,(n>>>16)&255,(n>>>8)&255,n&255].join('.');
+const maskOf=p=>p===0?0:(0xFFFFFFFF<<(32-p))>>>0;
+function parsePrefix(s){s=s.trim();if(/^\/?\d{1,2}$/.test(s)){const p=parseInt(s.replace('/',''));return p>=0&&p<=32?p:null}
+ const m=ip2n(s);if(m===null)return null;const b=m.toString(2).padStart(32,'0');if(/01/.test(b))return null;return b.indexOf('0')<0?32:b.indexOf('0')}
+const clsOf=n=>{const a=n>>>24;return a<128?['A',8]:a<192?['B',16]:a<224?['C',24]:a<240?['D',0]:['E',0]};
+
+/* ─── Sous-réseaux ─── */
+(function(){
+ if(!$('sublab'))return;
+ function run(){
+  const ip=ip2n($('sb-ip').value),p=parsePrefix($('sb-mask').value);
+  if(ip===null||p===null){$('sb-out').innerHTML='<span style="color:var(--burgundy)">Adresse ou masque invalide.</span>';$('sb-bin').innerHTML='';$('sb-subs').innerHTML='';return}
+  const [cl,cp]=clsOf(ip),mask=maskOf(p),net=(ip&mask)>>>0,bc=(net|(~mask>>>0))>>>0,hb=32-p;
+  const bits=ip.toString(2).padStart(32,'0');let html='';
+  for(let i=0;i<32;i++){const c=i<p?(i<cp?'n':'s'):'h';html+='<span class="'+c+'">'+bits[i]+'</span>';if(i%8===7&&i<31)html+='.'}
+  $('sb-bin').innerHTML=html+'  <span style="color:var(--ink-faint)">/'+p+'</span>';
+  const hosts=hb>=2?Math.pow(2,hb)-2:(hb===1?2:1);
+  const kv=[['Classe',cl+(cp?' (/'+cp+')':' — pas de masque de classe')],['Masque',n2ip(mask)+' (/'+p+')'],['Réseau',n2ip(net)],['Broadcast',n2ip(bc)],
+   ['1er hôte',hb>=2?n2ip(net+1):'—'],['Dernier hôte',hb>=2?n2ip(bc-1):'—'],['Hôtes',hosts.toLocaleString('fr-FR')+(hb>=2?' = 2<sup>'+hb+'</sup> − 2':'')]];
+  if(cp&&p>cp)kv.push(['Sous-réseaux','2<sup>'+(p-cp)+'</sup> = '+Math.pow(2,p-cp).toLocaleString('fr-FR')+' ('+(p-cp)+' bits empruntés)']);
+  if(cp&&p<cp)kv.push(['Note','préfixe plus court que la classe → super-réseau CIDR']);
+  if(((ip>>>24)===10)||((ip>>>20)===0xAC1)||((ip>>>16)===0xC0A8))kv.push(['Plage','privée (RFC 1918)']);
+  $('sb-out').innerHTML='<table class="kvt">'+kv.map(r=>'<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>').join('')+'</table>';
+  if(cp&&p>cp){const s=p-cp,N=Math.pow(2,s),step=Math.pow(2,hb),base=(ip&maskOf(cp))>>>0,show=Math.min(N,16);let mine=Math.floor((net-base)/step);
+   let idx=[];for(let k=0;k<show;k++)idx.push(k);if(N>16&&mine>=16){idx[15]=mine}
+   $('sb-subs').innerHTML='<div class="tt-wrap" style="margin:0"><table class="tt"><tr><th>#</th><th>réseau</th><th>plage d\'hôtes</th><th>broadcast</th></tr>'+
+    idx.map(k=>{const a=(base+k*step)>>>0,b=(a+step-1)>>>0;return'<tr'+(k===mine?' class="hit"':'')+'><td>'+k+'</td><td>'+n2ip(a)+'/'+p+'</td><td>'+(hb>=2?n2ip(a+1)+' – '+n2ip(b-1):'—')+'</td><td>'+n2ip(b)+'</td></tr>'}).join('')+
+    (N>16?'<tr><td colspan="4" style="color:var(--ink-faint)">… '+(N-16)+' autres sous-réseaux</td></tr>':'')+'</table></div>';
+  }else $('sb-subs').innerHTML='<p style="color:var(--ink-faint);font-size:14px">Pas de bits empruntés : le masque est celui de la classe (ou plus court).</p>';
+ }
+ ['sb-ip','sb-mask'].forEach(k=>$(k).addEventListener('input',run));
+ document.querySelectorAll('#sublab [data-ex]').forEach(b=>b.addEventListener('click',()=>{const [a,m]=b.dataset.ex.split('|');$('sb-ip').value=a;$('sb-mask').value=m;run()}));
+ run();
+})();
+
+/* ─── VLSM ─── */
+(function(){
+ if(!$('vlsmlab'))return;
+ function run(){
+  const m=$('vl-net').value.trim().match(/^([\d.]+)\s*\/\s*(\d+)$/);const out=$('vl-out'),sum=$('vl-sum');
+  const base=m?ip2n(m[1]):null,bp=m?parseInt(m[2]):null;
+  if(base===null||!(bp>=0&&bp<=30)){out.innerHTML='<p style="color:var(--burgundy)">Réseau invalide (ex. 192.124.16.0/24).</p>';sum.innerHTML='';return}
+  const start=(base&maskOf(bp))>>>0,total=Math.pow(2,32-bp);
+  const needs=$('vl-needs').value.split(',').map(s=>s.split(':')).filter(x=>x.length===2&&x[0].trim()&&parseInt(x[1])>0).map(x=>{const n=parseInt(x[1]);let hb=2;while(Math.pow(2,hb)-2<n)hb++;return{name:x[0].trim(),n:n,hb:hb,size:Math.pow(2,hb)}});
+  needs.sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name,'fr'));
+  needs.sort((a,b)=>b.size-a.size);// stable: même bloc → ordre hôtes↓ puis alpha conservé
+  const hi=$('vl-dir').value==='hi';let cur=hi?total:0,used=0,fail=false;
+  const rows=needs.map(r=>{if(used+r.size>total){fail=true;return Object.assign(r,{off:null})}
+   if(hi){cur-=r.size;r.off=cur}else{r.off=cur;cur+=r.size}used+=r.size;return r});
+  out.innerHTML='<table class="tt"><tr><th>nom</th><th>hôtes</th><th>préfixe</th><th>réseau</th><th>plage</th><th>broadcast</th></tr>'+rows.map(r=>{
+   if(r.off===null)return'<tr><td>'+esc(r.name)+'</td><td>'+r.n+'</td><td>/'+(32-r.hb)+'</td><td colspan="3" style="color:var(--burgundy)">plus de place</td></tr>';
+   const a=(start+r.off)>>>0,b=(a+r.size-1)>>>0;
+   return'<tr><td>'+esc(r.name)+'</td><td>'+r.n+' / '+(r.size-2)+'</td><td>/'+(32-r.hb)+'</td><td>'+n2ip(a)+'</td><td>'+n2ip(a+1)+' – '+n2ip(b-1)+'</td><td>'+n2ip(b)+'</td></tr>'}).join('')+'</table>';
+  sum.innerHTML='Bloc de départ : <strong>'+total+'</strong> adresses.<br>Utilisées : <strong>'+used+'</strong> ('+Math.round(used*100/total)+' %).<br>Libres : <strong>'+(total-used)+'</strong>'+
+   (total-used>0?' — '+(hi?'de '+n2ip(start)+' à '+n2ip(start+cur-1):'de '+n2ip(start+cur)+' à '+n2ip(start+total-1)):'')+'.'+
+   (fail?'<br><span style="color:var(--burgundy)">Le réseau de départ est trop petit.</span>':'')+
+   '<br><br>Ordre : taille de bloc ↓, puis hôtes ↓, puis alphabétique.';
+ }
+ ['vl-net','vl-needs','vl-dir'].forEach(k=>$(k).addEventListener('input',run));
+ run();
+})();
+
+/* ─── RIP ─── */
+(function(){
+ if(!$('riplab'))return;
+ const R={A:{n:[1,2,3,4],v:'BCD',x:90,y:165},B:{n:[2,5,6],v:'ADE',x:280,y:60},C:{n:[3,7,9],v:'ADF',x:280,y:270},D:{n:[4,5,7,8],v:'ABCF',x:420,y:165},
+          E:{n:[6,10,11],v:'BFG',x:600,y:60},F:{n:[8,9,10,12],v:'CDEG',x:600,y:270},G:{n:[11,12,13],v:'EF',x:780,y:165}};
+ const L=Object.keys(R);
+ /* étapes */
+ const T=[{}];L.forEach(r=>{T[0][r]={};R[r].n.forEach(n=>T[0][r][n]={h:r,c:0})});
+ for(let s=0;s<20;s++){const prev=T[T.length-1],nx={};let ch=false;
+  L.forEach(r=>{const t={};R[r].n.forEach(n=>t[n]={h:r,c:0});
+   R[r].v.split('').sort().forEach(v=>{Object.keys(prev[v]).forEach(n=>{const c=prev[v][n].c+1;if(!t[n]||c<t[n].c)t[n]={h:v,c:c}})});
+   nx[r]=t;Object.keys(t).forEach(n=>{const o=prev[r][n];if(!o||o.c!==t[n].c||o.h!==t[n].h)ch=true})});
+  if(!ch)break;T.push(nx)}
+ let step=0,sel=null;
+ /* SVG */
+ const svg=$('rip-svg'),NS='http://www.w3.org/2000/svg';
+ const links={};L.forEach(a=>R[a].n.forEach(n=>{(links[n]=links[n]||[]).push(a)}));
+ let g='';
+ Object.keys(links).forEach(n=>{const rs=links[n];let x1,y1,x2,y2;
+  if(rs.length===2){const a=R[rs[0]],b=R[rs[1]];x1=a.x;y1=a.y;x2=b.x;y2=b.y}else{const a=R[rs[0]];x1=a.x;y1=a.y;x2=a.x+(a.x<400?-70:70);y2=a.y}
+  const mx=(x1+x2)/2,my=(y1+y2)/2;
+  g+='<g class="lk" data-r="'+rs.join('')+'"><line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#9C8E74" stroke-width="2"/>'+
+   '<rect x="'+(mx-17)+'" y="'+(my-10)+'" width="34" height="20" rx="10" fill="#F6F0E2" stroke="#2C5664"/><text x="'+mx+'" y="'+(my+4)+'" text-anchor="middle" fill="#2C5664">N'+n+'</text></g>'});
+ L.forEach(r=>{g+='<g class="rt" data-r="'+r+'" style="cursor:pointer"><circle cx="'+R[r].x+'" cy="'+R[r].y+'" r="22" fill="#7B2D26" stroke="#5A1F1A" stroke-width="2"/><text x="'+R[r].x+'" y="'+(R[r].y+6)+'" text-anchor="middle" fill="#FCFAF3" font-size="17" font-family="Instrument Serif, serif">'+r+'</text></g>'});
+ svg.innerHTML=g;
+ function paint(){svg.querySelectorAll('.lk').forEach(e=>{const on=sel&&e.dataset.r.indexOf(sel)>=0;e.querySelector('line').setAttribute('stroke',on?'#B8924A':'#9C8E74');e.querySelector('line').setAttribute('stroke-width',on?4:2)});
+  svg.querySelectorAll('.rt circle').forEach(c=>c.setAttribute('fill',c.parentNode.dataset.r===sel?'#B8924A':(sel&&R[sel].v.indexOf(c.parentNode.dataset.r)>=0?'#A0473E':'#7B2D26')))}
+ svg.querySelectorAll('.rt').forEach(e=>e.addEventListener('click',()=>{sel=sel===e.dataset.r?null:e.dataset.r;paint();render()}));
+ function render(){const t=T[step],p=step?T[step-1]:null;
+  $('rip-t').innerHTML='t<sub>'+step+'</sub>'+(step===T.length-1?' · <strong>convergé</strong>':' / '+(T.length-1));
+  $('rip-tables').innerHTML=L.filter(r=>!sel||r===sel||R[sel].v.indexOf(r)>=0).map(r=>{const rows=Object.keys(t[r]).map(Number).sort((a,b)=>a-b).map(n=>{const e=t[r][n],o=p&&p[r][n],c=p&&(!o||o.c!==e.c||o.h!==e.h)?' class="ch"':'';
+    return'<tr><td'+c+'>N'+n+'</td><td'+c+'>'+e.h+'</td><td'+c+'>'+e.c+'</td></tr>'}).join('');
+   return'<div><h6>'+r+'</h6><table class="tt"><tr><th>rés.</th><th>via</th><th>coût</th></tr>'+rows+'</table></div>'}).join('');
+  $('rip-prev').disabled=step===0;$('rip-next').disabled=step===T.length-1}
+ $('rip-prev').onclick=()=>{if(step>0){step--;render()}};$('rip-next').onclick=()=>{if(step<T.length-1){step++;render()}};$('rip-end').onclick=()=>{step=T.length-1;render()};
+ render();
+})();
+
+/* ─── Flashcards ─── */
+const CARDS=[
+ ['Taille minimale de l\'en-tête IPv4 ?','20 octets (IHL = 5 mots de 32 bits) ; 60 au maximum avec options.'],
+ ['En quelle unité est l\'offset de fragment ?','En blocs de <strong>8 octets</strong> (IPv4 et IPv6).'],
+ ['Qui fragmente en IPv6 ?','La <strong>source</strong> seulement, avec l\'en-tête d\'extension Fragment (NH 44).'],
+ ['MTU minimale garantie en IPv6 ?','<strong>1280</strong> octets.'],
+ ['Message envoyé quand un paquet IPv6 est trop gros ?','ICMPv6 <strong>Packet Too Big</strong>, type 2, avec la MTU du lien.'],
+ ['Taille de l\'en-tête IPv6 ?','40 octets fixes, 8 champs.'],
+ ['Next Header de TCP, UDP, ICMPv6 ?','6, 17, 58.'],
+ ['Plages privées IPv4 ?','10.0.0.0/8 · 172.16.0.0/12 · 192.168.0.0/16'],
+ ['Hôtes dans un /27 ?','2⁵ − 2 = <strong>30</strong>.'],
+ ['Masque d\'un lien point-à-point ?','/30 (255.255.255.252) : 2 hôtes.'],
+ ['Différence NAT / PAT ?','NAT : IP ↔ IP. PAT : plusieurs IP privées derrière <strong>une</strong> IP publique, distinguées par le port.'],
+ ['Infini pour RIP ?','16 sauts (max utile 15). Mises à jour toutes les 30 s.'],
+ ['Algorithme d\'OSPF ?','Dijkstra (plus court chemin) sur la carte des états de liens.'],
+ ['À quoi sert split horizon ?','Ne pas annoncer une route au voisin par lequel on l\'a apprise → évite les boucles à deux routeurs.'],
+ ['Agréger 203.24.4.0 à 203.24.7.0 ?','203.24.4.0<strong>/22</strong>.'],
+ ['Pourquoi TTL ?','Éviter qu\'un datagramme boucle sans fin : décrémenté à chaque saut, jeté à 0 (+ ICMP Time Exceeded).']
+];
+const fg=$('flash');
+if(fg){fg.innerHTML=CARDS.map(c=>'<div class="flash" tabindex="0"><div class="flash-in"><div class="flash-f">'+c[0]+'</div><div class="flash-b">'+c[1]+'</div></div></div>').join('');
+fg.querySelectorAll('.flash').forEach(f=>{f.onclick=()=>f.classList.toggle('flip');f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f.classList.toggle('flip')}}})}
+})();
+</script>
+</body>
+</html>

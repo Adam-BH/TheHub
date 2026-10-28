@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="version" content="v1">
+<title>Révision Conception des Logiciels · Design Patterns · INSAT GL3</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4EFE4;--bg-deep:#ECE5D5;--bg-card:#FBF8F0;--ink:#1F1A14;--ink-soft:#4A3F32;--ink-faint:#8A7D6B;
+  --burgundy:#7B2D26;--burgundy-light:#A04438;--teal:#2C5664;--teal-light:#4A7A88;--gold:#B8924A;--gold-light:#E8C77B;
+  --rule:#C9BFAC;--rule-soft:#DDD3BF;--highlight:#F7E8B8;--shadow:rgba(80,60,30,.08);
+  --math:'Newsreader','Cambria Math','STIX Two Math',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);background-image:radial-gradient(circle at 20% 10%,rgba(184,146,74,.04) 0%,transparent 50%),radial-gradient(circle at 80% 90%,rgba(123,45,38,.04) 0%,transparent 50%);color:var(--ink);font-family:'Newsreader',Georgia,serif;font-size:17px;line-height:1.65;min-height:100vh;padding:0 0 80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+main,header,footer{position:relative;z-index:1}
+
+/* hub back */
+.hub-back{position:absolute;top:16px;left:16px;z-index:80;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 12px;border:1px solid var(--rule);border-radius:6px;background:rgba(251,248,240,.88);color:var(--ink);box-shadow:0 10px 28px -22px rgba(31,26,20,.42);font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:500;line-height:1;text-decoration:none;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(8px);transition:transform .15s,border-color .15s}
+.hub-back:hover{transform:translateY(-1px);border-color:var(--burgundy)}
+@media(max-width:560px){.hub-back{top:10px;left:10px;min-height:34px;padding:6px 10px;font-size:.66rem}}
+
+header{padding:64px 32px 24px;max-width:1200px;margin:0 auto;text-align:center;border-bottom:1px solid var(--rule)}
+header::after{content:'◆ ◆ ◆';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 14px;font-size:10px;color:var(--gold);letter-spacing:8px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--burgundy);margin-bottom:12px;font-weight:500}
+h1{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(40px,6vw,68px);line-height:1;letter-spacing:-.01em;margin-bottom:8px}
+h1 em{font-style:italic;color:var(--burgundy)}
+.subtitle{font-style:italic;font-size:19px;color:var(--ink-soft);font-weight:300;margin-top:8px}
+.ds-strip{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+
+.tabs-wrapper{max-width:1200px;margin:32px auto 0;padding:0 32px;position:sticky;top:0;z-index:50;background:var(--bg)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:32px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{font-family:'Newsreader',serif;font-size:16px;font-weight:500;padding:14px 20px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--ink-faint);cursor:pointer;transition:all .25s;margin-bottom:-1px;white-space:nowrap}
+.tab-btn .tab-num{font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;opacity:.6}
+.tab-btn:hover{color:var(--ink);background:rgba(184,146,74,.08)}
+.tab-btn.active{color:var(--burgundy);border-bottom-color:var(--burgundy)}
+.tab-btn.active .tab-num{opacity:1}
+
+.tab-content{display:none;max-width:1200px;margin:0 auto;padding:0 32px;animation:fadeIn .4s ease}
+.tab-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){header{padding:64px 16px 24px}.tabs-wrapper,.tab-content{padding:0 16px}.tab-btn{padding:12px 12px;font-size:15px}}
+
+h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:38px;margin:48px 0 8px;letter-spacing:-.01em;line-height:1.1}
+h2 .h-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);letter-spacing:.15em;display:block;margin-bottom:6px;text-transform:uppercase}
+h2::after{content:'';display:block;width:60px;height:1px;background:var(--burgundy);margin-top:12px}
+h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:26px;color:var(--burgundy);margin:32px 0 12px;font-style:italic}
+h4{font-weight:600;font-size:18px;color:var(--teal);margin:20px 0 8px}
+p{margin-bottom:14px;color:var(--ink-soft)}
+p strong,li strong,td strong{color:var(--ink);font-weight:600}
+ul,ol{padding-left:24px;margin-bottom:14px;color:var(--ink-soft)}
+li{margin-bottom:6px}
+
+.box{background:var(--bg-card);border-left:3px solid var(--rule);padding:18px 22px;margin:16px 0;border-radius:0 4px 4px 0;box-shadow:0 1px 2px var(--shadow)}
+.box>*:last-child{margin-bottom:0}
+.box-def{border-left-color:var(--teal)}.box-thm{border-left-color:var(--burgundy)}.box-prop{border-left-color:var(--gold)}
+.box-remark{border-left-color:var(--ink-faint);background:rgba(138,125,107,.05)}
+.box-method{border-left-color:var(--burgundy);background:linear-gradient(180deg,rgba(123,45,38,.04),transparent)}
+.box-ex{border-left-color:var(--teal-light);background:linear-gradient(180deg,rgba(44,86,100,.04),transparent)}
+.box-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;display:inline-block;margin-bottom:8px;font-weight:500;padding:2px 8px;border-radius:2px}
+.box-def .box-label{background:var(--teal);color:var(--bg-card)}.box-thm .box-label{background:var(--burgundy);color:var(--bg-card)}
+.box-prop .box-label{background:var(--gold);color:var(--ink)}.box-remark .box-label{background:var(--ink-faint);color:var(--bg-card)}
+.box-method .box-label{background:var(--burgundy);color:var(--bg-card)}.box-ex .box-label{background:var(--teal-light);color:var(--bg-card)}
+.src{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--ink-faint);float:right;margin-left:12px}
+
+/* formulas */
+.fx{font-family:var(--math);font-style:italic;color:var(--ink);white-space:nowrap}
+.formula{font-family:var(--math);font-size:20px;text-align:center;margin:14px 0;color:var(--ink);overflow-x:auto;padding:4px 0}
+.formula .c{font-style:normal;color:var(--burgundy)}
+.steps-eq{font-family:var(--math);font-size:17px;margin:10px 0 14px;overflow-x:auto}
+.steps-eq div{display:grid;grid-template-columns:28px 1fr auto;gap:10px;padding:5px 0;border-bottom:1px dashed var(--rule-soft);align-items:baseline}
+.steps-eq div:last-child{border-bottom:none}
+.steps-eq .eq{color:var(--gold);font-weight:600}
+.steps-eq .why{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;white-space:nowrap}
+@media(max-width:600px){.steps-eq div{grid-template-columns:20px 1fr}.steps-eq .why{grid-column:2}}
+
+/* tables */
+.tt-wrap{overflow-x:auto;margin:14px 0}
+table.tt{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--bg-card);margin:0 auto;min-width:240px}
+table.tt th,table.tt td{border:1px solid var(--rule-soft);padding:6px 12px;text-align:center}
+table.tt th{background:var(--bg-deep);color:var(--ink);font-weight:600;font-family:var(--math);font-size:15px;font-style:italic;white-space:nowrap}
+table.tt td.T{color:var(--teal);font-weight:600}table.tt td.F{color:var(--burgundy-light)}
+table.tt tr.hit td{background:rgba(247,232,184,.55)}
+table.tt th.res,table.tt td.res{border-left:2px solid var(--burgundy)}
+.recap-wrap{overflow-x:auto;margin:14px 0 28px;border:1px solid var(--rule);border-radius:6px;background:var(--bg-card)}
+table.recap{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+table.recap th{background:var(--bg-deep);font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--ink-soft);text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule)}
+table.recap td{padding:9px 12px;border-bottom:1px dashed var(--rule-soft);vertical-align:top;line-height:1.5}
+table.recap td:first-child{width:170px;color:var(--burgundy)}
+table.recap td:first-child b{font-weight:600}
+table.recap td small{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);letter-spacing:.04em}
+table.recap tr.grp td{background:rgba(184,146,74,.10);color:var(--ink);font-style:italic;padding:7px 12px;border-bottom:1px solid var(--rule)}
+table.recap tbody tr:not(.grp):hover td{background:rgba(247,232,184,.35)}
+table.recap.diff td:first-child{width:190px}table.recap.diff td:last-child{font-style:italic;color:var(--ink-soft)}
+table.recap .fx{white-space:normal}
+table.law{border-collapse:collapse;width:100%;font-size:15px;background:var(--bg-card)}
+table.law td{border-bottom:1px dashed var(--rule-soft);padding:8px 10px;vertical-align:top}
+table.law td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);width:150px}
+table.law td.fx{white-space:normal}
+
+.kv{display:grid;grid-template-columns:minmax(180px,auto) 1fr;gap:10px 24px;margin:16px 0;padding:16px 0;border-top:1px solid var(--rule-soft);border-bottom:1px solid var(--rule-soft)}
+.kv dt{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;padding-top:2px}
+.kv dd{color:var(--ink)}
+@media(max-width:700px){.kv{grid-template-columns:1fr}.kv dd{margin-bottom:10px}}
+
+/* viz */
+.viz-card{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:24px;margin:28px 0;box-shadow:0 2px 8px var(--shadow)}
+.viz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--rule-soft);gap:16px;flex-wrap:wrap}
+.viz-title{font-family:'Instrument Serif',serif;font-size:24px;color:var(--burgundy);font-style:italic}
+.viz-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);background:rgba(184,146,74,.12);padding:4px 10px;border-radius:2px}
+.viz-body{display:grid;grid-template-columns:1fr 290px;gap:24px;align-items:start}
+@media(max-width:860px){.viz-body{grid-template-columns:1fr}.viz-card{padding:16px}}
+.viz-controls{background:var(--bg-deep);padding:16px;border-radius:4px;font-size:14px}
+.viz-controls h5{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;font-weight:500}
+.viz-controls h5:not(:first-child){margin-top:16px}
+.viz-stat{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--rule-soft);font-family:'JetBrains Mono',monospace;font-size:12.5px}
+.viz-stat:last-child{border-bottom:none}.viz-stat-key{color:var(--ink-soft)}.viz-stat-val{color:var(--burgundy);font-weight:600;text-align:right}
+.viz-svg{width:100%;height:auto;background:#FCFAF3;border:1px solid var(--rule-soft);border-radius:4px;display:block}
+.viz-svg text:not([font-family]){font-family:'JetBrains Mono',monospace}.viz-svg text:not([font-size]){font-size:12px}.viz-svg text:not([fill]){fill:var(--ink-soft)}
+.fx-input{width:100%;font-family:var(--math);font-size:20px;padding:10px 12px;border:1px solid var(--rule);background:#FCFAF3;color:var(--ink);border-radius:4px;outline:none}
+.fx-input:focus{border-color:var(--burgundy)}
+.fx-err{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--burgundy-light);min-height:18px;margin-top:6px}
+.btn-group{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;padding:7px 12px;border:1px solid var(--rule);background:var(--bg-card);color:var(--ink-soft);cursor:pointer;border-radius:3px;transition:all .15s;font-weight:500}
+.btn:hover,.btn-active{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
+.btn:disabled{opacity:.4;cursor:default;background:var(--bg-card);color:var(--ink-soft);border-color:var(--rule)}
+.btn-sym{font-family:var(--math);font-size:16px;min-width:38px;text-transform:none}
+.verdict{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;margin:2px 0 6px}
+.verdict.v-valid{color:var(--teal)}.verdict.v-sat{color:var(--gold)}.verdict.v-unsat{color:var(--burgundy)}
+.canon{font-family:var(--math);font-size:15px;color:var(--ink);word-break:break-word;background:var(--bg-card);border:1px solid var(--rule-soft);border-radius:3px;padding:8px 10px;margin-top:4px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:10px}
+.legend-item{display:flex;align-items:center;gap:6px}.legend-swatch{width:14px;height:14px;border-radius:3px;border:1px solid var(--rule)}
+
+/* grid toggles (LP1 lab) */
+.pgrid{border-collapse:separate;border-spacing:6px;margin:6px auto}
+.pgrid th{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);font-weight:500;padding:2px 6px}
+.pgrid td button{width:54px;height:44px;border-radius:5px;border:1px solid var(--rule);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.pgrid td button.on{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
+.pgrid td button.off{background:#FCFAF3;color:var(--burgundy-light)}
+.pgrid td button.wit{box-shadow:0 0 0 3px var(--gold-light)}
+.q-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;margin:6px 0;background:var(--bg-card);border:1px solid var(--rule-soft);border-radius:4px;cursor:pointer;transition:border-color .15s}
+.q-row:hover,.q-row.sel{border-color:var(--burgundy)}
+.q-row .fx{font-size:16px}
+.badge{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px}
+.badge.T{background:var(--teal);color:var(--bg-card)}.badge.F{background:var(--burgundy);color:var(--bg-card)}
+.explain{font-size:14.5px;color:var(--ink-soft);margin-top:10px;padding:10px 12px;border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(247,232,184,.5),transparent)}
+
+/* stepper */
+.stepper .st-step{background:var(--bg-card);border-left:3px solid var(--rule);padding:10px 16px;margin:8px 0;border-radius:0 4px 4px 0;transition:all .3s;opacity:.35}
+.stepper .st-step.active{border-left-color:var(--burgundy);opacity:1;background:linear-gradient(90deg,rgba(123,45,38,.06),transparent)}
+.stepper .st-step.done{opacity:.8;border-left-color:var(--teal)}
+.st-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--ink-faint);text-transform:uppercase}
+.st-f{font-family:var(--math);font-size:18px;color:var(--ink);overflow-x:auto;white-space:nowrap;padding:2px 0}
+.st-why{font-size:14px;color:var(--ink-soft);font-style:italic}
+
+/* method cards */
+.method-card{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:24px;margin:20px 0;box-shadow:0 2px 6px var(--shadow);position:relative;overflow:hidden}
+.method-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--burgundy),var(--gold))}
+.method-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.method-question{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;color:var(--ink);margin-bottom:16px;line-height:1.3}
+.method-question::before{content:'Q.';font-family:'JetBrains Mono',monospace;font-size:12px;font-style:normal;color:var(--burgundy);margin-right:10px;letter-spacing:.1em;vertical-align:super}
+.method-steps{counter-reset:step;list-style:none;padding:0;margin-bottom:0}
+.method-steps>li{counter-increment:step;padding:10px 0 10px 44px;border-bottom:1px dashed var(--rule-soft);position:relative;color:var(--ink-soft)}
+.method-steps>li:last-child{border-bottom:none}
+.method-steps>li::before{content:counter(step,decimal-leading-zero);position:absolute;left:0;top:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);font-weight:600;width:32px;text-align:right;padding-right:8px;border-right:1px solid var(--rule-soft)}
+.method-tip{background:linear-gradient(90deg,var(--highlight),transparent);padding:10px 14px;margin-top:14px;border-radius:3px;font-size:14.5px;font-style:italic;color:var(--ink-soft);border-left:2px solid var(--gold)}
+.method-tip::before{content:'✦ Astuce  ';font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;letter-spacing:.15em;color:var(--gold);font-weight:600}
+details.sol{margin-top:12px;border:1px solid var(--rule-soft);border-radius:4px;background:#FCFAF3}
+details.sol summary{cursor:pointer;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);list-style:none}
+details.sol summary::before{content:'▸ ';}
+details.sol[open] summary::before{content:'▾ ';}
+details.sol>div{padding:4px 14px 12px}
+.method-index{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin:20px 0 8px}
+.method-index a{display:block;padding:10px 12px;border:1px solid var(--rule-soft);border-radius:4px;background:var(--bg-card);color:var(--ink-soft);text-decoration:none;font-size:14.5px;transition:border-color .15s}
+.method-index a:hover{border-color:var(--burgundy);color:var(--ink)}
+.method-index a span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);margin-right:6px}
+
+/* flow / synth */
+.flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
+.flow-node{background:var(--bg-card);border:1px solid var(--rule);padding:18px;border-radius:4px}
+.flow-node.future{border-style:dashed;opacity:.75}
+.flow-node-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--burgundy);margin-bottom:8px;font-style:italic}
+.flow-node-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 9px;border-radius:99px;background:var(--bg-deep);color:var(--ink-soft);margin:2px 4px 2px 0;letter-spacing:.04em;border:1px solid var(--rule-soft)}
+.pill-burgundy{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
+.pill-teal{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
+.pill-gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.pattern-card{background:linear-gradient(135deg,var(--bg-card),var(--bg-deep));border:1px solid var(--rule);border-radius:6px;padding:22px;margin:16px 0}
+.pattern-card-title{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:4px}
+.pattern-card-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--burgundy);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14.5px}
+.chain span.k{background:var(--bg-card);border:1px solid var(--rule-soft);padding:4px 10px;border-radius:3px}
+.chain span.ar{color:var(--gold)}
+.intro{font-size:19px;font-style:italic;color:var(--ink-soft);max-width:760px;margin:0 auto 32px;text-align:center;line-height:1.5}
+.hl{background:linear-gradient(180deg,transparent 60%,var(--highlight) 60%);padding:0 2px}
+.warn{background:rgba(184,146,74,.12);border-left:3px solid var(--gold);padding:12px 16px;margin:14px 0;border-radius:0 3px 3px 0;font-size:15.5px;color:var(--ink-soft)}
+.warn::before{content:'⚠ Piège  ';color:var(--gold);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em}
+.warn.amb::before{content:'⚑ Ambiguïté du cours  ';color:var(--burgundy)}
+.warn.amb{border-left-color:var(--burgundy);background:rgba(123,45,38,.06)}
+code{font-family:'JetBrains Mono',monospace;font-size:.86em;background:var(--bg-deep);padding:1px 6px;border-radius:3px;color:var(--burgundy)}
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.timeline div{border-top:2px solid var(--gold);padding-top:10px}
+.timeline b{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.1em;display:block}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:16px 0}
+.flash{perspective:900px;height:150px;cursor:pointer}
+.flash-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flash.flip .flash-in{transform:rotateY(180deg)}
+.flash-f,.flash-b{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--rule);border-radius:6px;padding:14px 16px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:15.5px}
+.flash-f{background:var(--bg-card);font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;color:var(--ink)}
+.flash-b{background:var(--bg-deep);transform:rotateY(180deg);color:var(--ink-soft)}
+footer{max-width:1200px;margin:64px auto 0;padding:32px;text-align:center;color:var(--ink-faint);font-size:13px;border-top:1px solid var(--rule);font-style:italic}
+footer .footer-ornament{color:var(--gold);font-size:10px;letter-spacing:.5em;margin-bottom:12px}
+@media print{.hub-back,.tabs-wrapper,.viz-card{display:none}.tab-content{display:block!important}body::before{display:none}}
+</style>
+<style>
+pre.code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;background:#1F1A14;color:#ECE5D5;padding:14px 16px;border-radius:5px;overflow-x:auto;margin:12px 0}
+pre.code .k{color:#E8C77B}pre.code .c{color:#8A7D6B;font-style:italic}pre.code .n{color:#9FC4CF}pre.code .s{color:#E9A79C}
+.pat{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:22px 24px;margin:22px 0;box-shadow:0 2px 6px var(--shadow);position:relative;overflow:hidden}
+.pat::before{content:'';position:absolute;left:0;top:0;width:4px;height:100%;background:var(--teal)}
+.pat.str::before{background:var(--gold)}
+.pat-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.pat-name{font-family:'Instrument Serif',serif;font-size:30px;font-style:italic;color:var(--ink)}
+.pat-name small{font-family:'JetBrains Mono',monospace;font-style:normal;font-size:11px;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase;margin-left:10px}
+.pat-grid{display:grid;grid-template-columns:150px 1fr;gap:6px 18px;font-size:15.5px}
+.pat-grid dt{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--burgundy);padding-top:4px}
+.pat-grid dd{color:var(--ink-soft);margin:0}
+@media(max-width:700px){.pat-grid{grid-template-columns:1fr}.pat-grid dd{margin-bottom:8px}}
+.uml text{font-family:'JetBrains Mono',monospace;font-size:11px;fill:#1F1A14}
+.uml .bx{fill:#FBF8F0;stroke:#4A3F32;stroke-width:1.3}
+.uml .bx.if{fill:#EEF3F4;stroke:#2C5664}
+.uml .bx.ab{fill:#F6EFE3;stroke:#B8924A}
+.uml .hd{font-weight:600;font-size:12px}
+.uml .st{font-size:10px;fill:#2C5664}
+.uml .ln{stroke:#4A3F32;stroke-width:1.2;fill:none}
+.uml .ln.d{stroke-dasharray:5 4}
+.uml .lbl{font-size:10px;fill:#8A7D6B}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 10px;border:1px solid var(--rule);border-radius:99px;background:var(--bg-card);cursor:pointer;margin:3px;transition:all .15s;user-select:none}
+.chip.on{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
+.nest{font-family:'JetBrains Mono',monospace;font-size:13px;margin:8px 0}
+.nest .lyr{border:1px solid var(--rule);border-radius:6px;padding:6px 8px 6px 10px;margin:4px 0 0;background:rgba(184,146,74,.06)}
+.nest .lyr .lyr{background:rgba(123,45,38,.05)}
+.nest b{color:var(--burgundy)}
+.scn{border:1px solid var(--rule-soft);border-radius:6px;background:var(--bg-card);padding:14px 16px;margin:10px 0}
+.scn p{margin-bottom:8px}
+.scn .opts{display:flex;flex-wrap:wrap;gap:6px}
+.scn .fb{font-size:14.5px;margin-top:8px;min-height:20px}
+.scn .fb.ok{color:var(--teal)}.scn .fb.ko{color:var(--burgundy)}
+</style>
+</head>
+<body>
+
+<a class="hub-back" href="../../../index.html" aria-label="Retourner au Hub"><span aria-hidden="true">&larr;</span> Retour au Hub</a>
+
+<header>
+  <div class="eyebrow">INSAT · GL3 · Semestre 1 · Pré-DS 2026</div>
+  <h1>Conception des logiciels &amp; <em>design patterns</em></h1>
+  <p class="subtitle">Révision interactive — Génie logiciel · SOLID · 5 patrons de création · 7 patrons de structure</p>
+  <div class="ds-strip">
+    <span class="pill pill-burgundy">SRP · OCP · LSP · ISP · DIP</span>
+    <span class="pill pill-teal">Singleton · Factory · Abstract Factory · Builder · Prototype</span>
+    <span class="pill pill-gold">Adapter · Bridge · Composite · Decorator · Facade · Flyweight · Proxy</span>
+  </div>
+</header>
+
+<main>
+<div class="tabs-wrapper">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="ch1"><span class="tab-num">I</span>Génie logiciel</button>
+    <button class="tab-btn" data-tab="ch2"><span class="tab-num">II</span>SOLID</button>
+    <button class="tab-btn" data-tab="ch3"><span class="tab-num">III</span>Création</button>
+    <button class="tab-btn" data-tab="ch4"><span class="tab-num">IV</span>Structure</button>
+    <button class="tab-btn" data-tab="methods"><span class="tab-num">M</span>Méthodes</button>
+    <button class="tab-btn" data-tab="synth"><span class="tab-num">S</span>Synthèse</button>
+  </nav>
+</div>
+
+<!-- ═══════════════════ I · GÉNIE LOGICIEL ═══════════════════ -->
+<section class="tab-content active" id="ch1">
+  <p class="intro">Pourquoi faut-il des principes et des patrons ? Parce qu'un logiciel vit longtemps, grossit et change. Ce chapitre pose le vocabulaire : qualité, cohésion, couplage.</p>
+
+  <h2><span class="h-num">§ 1.1</span>Définitions clés</h2>
+  <table class="law">
+    <tr><td>Génie logiciel</td><td>Domaine des sciences de l'ingénieur qui étudie la <strong>conception, la fabrication et la maintenance</strong> des systèmes informatiques complexes.</td></tr>
+    <tr><td>Système</td><td>Ensemble d'éléments qui interagissent selon des principes et des règles pour réaliser un objectif.</td></tr>
+    <tr><td>Logiciel</td><td>Code exécutable + bibliothèques associées + <strong>documentation</strong>.</td></tr>
+    <tr><td>Modèle</td><td>Représentation schématique de la réalité.</td></tr>
+    <tr><td>Analyse / Conception</td><td>Analyse = examen de l'existant ; conception = définition de la future application.</td></tr>
+  </table>
+
+  <h2><span class="h-num">§ 1.2</span>Les tâches du génie logiciel</h2>
+  <div class="flow-grid">
+    <div class="flow-node"><div class="flow-node-tag">1–2</div><div class="flow-node-title">Spécifier · Concevoir</div><p style="font-size:14.5px">Besoins, cahier des charges, spécifications ; architecture, modules, interfaces, algorithmes.</p></div>
+    <div class="flow-node"><div class="flow-node-tag">3–5</div><div class="flow-node-title">Implanter · Intégrer · Documenter</div><p style="font-size:14.5px">Codage, assemblage des parties, manuel et aide en ligne.</p></div>
+    <div class="flow-node"><div class="flow-node-tag">6–7</div><div class="flow-node-title">Vérifier · Valider</div><p style="font-size:14.5px">Tests (fonctionnels, fiabilité, sûreté) ; recette, conformité au cahier des charges.</p></div>
+    <div class="flow-node"><div class="flow-node-tag">8–9</div><div class="flow-node-title">Déployer · Maintenir</div><p style="font-size:14.5px">Livraison, installation, formation ; corrections et évolutions.</p></div>
+  </div>
+  <div class="box box-remark"><span class="box-label">Pourquoi le génie logiciel</span><p>Logiciels <strong>volumineux</strong> · <strong>évolutivité</strong> (sinon on recrée au lieu de mettre à jour) · <strong>prix</strong> · <strong>nature dynamique</strong> (améliorations continues) · <strong>gestion de la qualité</strong>.</p></div>
+
+  <h2><span class="h-num">§ 1.3</span>Qualité d'un logiciel</h2>
+  <div class="two-col">
+    <div class="box box-def" style="margin:0">
+      <span class="box-label">Critères généraux</span>
+      <ul>
+        <li><strong>Opérationnel</strong> : budget, utilisabilité, efficacité, exactitude, fiabilité, sécurité.</li>
+        <li><strong>Transitionnel</strong> (changement de plateforme) : portabilité, interopérabilité, réutilisation, adaptabilité.</li>
+        <li><strong>Maintenance</strong> : maintenabilité, modularité, flexibilité, évolutivité.</li>
+      </ul>
+    </div>
+    <div class="box box-def" style="margin:0">
+      <span class="box-label">Externes (utilisateur) vs internes (développeur)</span>
+      <p><strong>Externes</strong> : fiabilité, robustesse/sûreté, efficacité, convivialité, documentation, ergonomie, sécurité, adéquation, intégrité.</p>
+      <p><strong>Internes</strong> : documenté, lisible, portable, extensible, réutilisable, interopérable, traçable, testable.</p>
+    </div>
+  </div>
+  <div class="box box-prop">
+    <span class="box-label">8 principes du génie logiciel</span>
+    <p>Rigueur · Généralisation (généricité, héritage) · Structuration (décomposition en sous-problèmes) · <strong>Modularité</strong> (modules cohérents, interface indépendante de l'implémentation) · Abstraction · Construction incrémentale · Documentation · Vérification.</p>
+  </div>
+
+  <h2><span class="h-num">§ 1.4</span>Cohésion &amp; couplage</h2>
+  <div class="box box-thm">
+    <span class="box-label">La règle d'or</span>
+    <div class="formula">Bonne conception = <span class="c">cohésion maximale</span> + <span class="c">couplage minimal</span></div>
+    <div class="two-col" style="margin:0">
+      <div><h4 style="margin-top:0">Cohésion forte</h4><p>Les éléments d'un module ont un <strong>objectif commun</strong> bien défini. Une classe = une responsabilité. <em>Boîte à outils rangée par tiroirs.</em></p></div>
+      <div><h4 style="margin-top:0">Couplage faible</h4><p>Une classe dépend <strong>le moins possible</strong> des autres : changer A ne force pas à changer B. <em>Wagons d'un train qu'on ajoute ou retire.</em></p></div>
+    </div>
+  </div>
+
+  <h2><span class="h-num">§ 1.5</span>Qu'est-ce qu'un design pattern ?</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition</span>
+    <p>Une <strong>bonne pratique</strong> face à un problème courant : une structure commune et répétitive de composants en interaction (la solution) qui résout un <strong>problème récurrent</strong> de conception <strong>dans un contexte particulier</strong>. C'est une capitalisation de l'expérience, partagée sous forme <strong>conceptuelle</strong> (ce n'est <strong>pas</strong> du code prêt à l'emploi).</p>
+    <p style="font-size:15px">Niveaux : <em>analysis</em> pattern · <em>architectural</em> pattern · <strong>design</strong> pattern · idiomes (programmation).</p>
+  </div>
+  <div class="two-col">
+    <div class="box box-prop" style="margin:0"><span class="box-label">Un bon patron</span><ul><li>résout un problème</li><li>est un concept éprouvé</li><li>la solution n'est pas évidente</li><li>décrit une collaboration entre objets</li></ul></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">Le catalogue GoF</span><p><strong>Gang of Four</strong> : Gamma, Helm, Johnson, Vlissides. <strong>23 patterns</strong> en 3 catégories : <strong>création (5)</strong>, <strong>structure (7)</strong>, comportement (11).</p></div>
+  </div>
+  <table class="law" style="margin-top:12px">
+    <tr><td>Création</td><td>Comment un objet ou un ensemble d'objets est <strong>créé, initialisé, configuré</strong>. Abstraire et encapsuler la création.</td></tr>
+    <tr><td>Structure</td><td>Comment <strong>connecter</strong> les objets pour que ces connexions résistent aux évolutions. Découpler interface et implémentation.</td></tr>
+    <tr><td>Comportement</td><td>Interactions dynamiques entre objets (Observer, Strategy, State… — hors programme du DS).</td></tr>
+  </table>
+</section>
+
+<!-- ═══════════════════ II · SOLID ═══════════════════ -->
+<section class="tab-content" id="ch2">
+  <p class="intro">Cinq principes de Robert C. Martin (« Uncle Bob ») pour obtenir faible couplage et forte cohésion. Pour chacun : la définition, une violation typique et sa correction. Les cinq sont du même format en DS.</p>
+
+  <h2><span class="h-num">§ 2.1</span>Les symptômes d'une mauvaise conception</h2>
+  <table class="law">
+    <tr><td>Rigidité</td><td>Difficile à changer : un changement en entraîne d'autres. <em>Château de cartes.</em></td></tr>
+    <tr><td>Fragilité</td><td>Casse facilement, souvent à des endroits sans lien apparent. <em>Vase fissuré.</em></td></tr>
+    <tr><td>Immobilité</td><td>Impossible de réutiliser un module ailleurs. <em>Meuble collé au mur.</em></td></tr>
+    <tr><td>Viscosité</td><td>Faire « bien » est plus dur que faire un hack. <em>Avancer dans la boue.</em></td></tr>
+    <tr><td>Opacité</td><td>Illisible, n'exprime pas son intention. <em>Roman aux chapitres mélangés.</em></td></tr>
+  </table>
+  <div class="box box-ex"><span class="box-label">Le code spaghetti du cours</span><p><span class="fx">FacturationService.java</span> : 2000 lignes qui calculent les prix, appliquent les taxes, génèrent des PDF, envoient des emails, interrogent la base. On ajoute <span class="fx">if (client.isFidele()) total *= 0.95;</span>, la facture s'affiche… et le lendemain les PDF ne partent plus. Couplage invisible = <strong>fragilité</strong>. Argument économique : dans un projet mal conçu, le coût d'un changement croît <strong>exponentiellement</strong>.</p></div>
+
+  <h2><span class="h-num">§ 2.2</span>S — Single Responsibility</h2>
+  <div class="box box-thm"><span class="box-label">Définition</span><p>« Une classe devrait avoir <strong>une et une seule raison de changer</strong>. »</p></div>
+  <div class="two-col">
+    <pre class="code"><span class="c">// ✗ 3 raisons de changer</span>
+<span class="k">class</span> Facture {
+  <span class="k">void</span> calculerTotal()    { … } <span class="c">// métier</span>
+  <span class="k">void</span> imprimerFacture()  { … } <span class="c">// format</span>
+  <span class="k">void</span> sauvegarderEnBase(){ … } <span class="c">// persistance</span>
+}</pre>
+    <pre class="code"><span class="c">// ✓ une classe par responsabilité</span>
+<span class="k">class</span> Facture           { <span class="k">void</span> calculerTotal() { … } }
+<span class="k">class</span> FacturePrinter    { <span class="k">void</span> imprimer(Facture f) { … } }
+<span class="k">class</span> FactureRepository { <span class="k">void</span> sauvegarder(Facture f) { … } }</pre>
+  </div>
+  <p style="font-size:15px">Bénéfice : moins de régressions, code plus clair, plus facile à tester.</p>
+
+  <h2><span class="h-num">§ 2.3</span>O — Open / Closed</h2>
+  <div class="box box-thm"><span class="box-label">Définition</span><p>« Les entités logicielles doivent être <strong>ouvertes à l'extension</strong> mais <strong>fermées à la modification</strong>. » <em>Une multiprise : on ne refait pas le mur pour brancher un appareil.</em></p></div>
+  <div class="two-col">
+    <pre class="code"><span class="c">// ✗ chaque nouvelle forme = modifier la méthode</span>
+<span class="k">double</span> calculerArea(Object forme) {
+  <span class="k">if</span> (forme <span class="k">instanceof</span> Cercle) { … }
+  <span class="k">else if</span> (forme <span class="k">instanceof</span> Carre) { … }
+}</pre>
+    <pre class="code"><span class="c">// ✓ abstraction + polymorphisme</span>
+<span class="k">interface</span> Forme { <span class="k">double</span> calculerArea(); }
+<span class="k">class</span> Cercle <span class="k">implements</span> Forme { … }
+<span class="k">class</span> Triangle <span class="k">implements</span> Forme { … } <span class="c">// ajout libre</span>
+<span class="k">double</span> calculerArea(Forme f) { <span class="k">return</span> f.calculerArea(); }</pre>
+  </div>
+  <div class="warn">Signal d'alarme OCP en DS : une chaîne de <span class="fx">if … instanceof</span> ou un <span class="fx">switch</span> sur un type.</div>
+
+  <h2><span class="h-num">§ 2.4</span>L — Liskov Substitution</h2>
+  <div class="box box-thm"><span class="box-label">Définition</span><p>« Les objets doivent pouvoir être <strong>remplacés par des instances de leurs sous-types</strong> sans altérer la correction du programme. »</p></div>
+  <pre class="code"><span class="k">class</span> Carre <span class="k">extends</span> Rectangle {
+  @Override <span class="k">void</span> setLargeur(<span class="k">int</span> l) { <span class="k">super</span>.setLargeur(l); <span class="k">super</span>.setHauteur(l); } <span class="c">// ✗ effet de bord</span>
+}
+<span class="k">void</span> agrandir(Rectangle r) { r.setLargeur(r.getLargeur() + 1); }  <span class="c">// sur un Carre, la hauteur change aussi !</span></pre>
+  <p style="font-size:15px">Correction : revoir l'héritage (ici, Carre et Rectangle ne devraient pas être en relation d'héritage ; par ex. deux implémentations d'une interface <span class="fx">Forme</span>). Bénéfice : on respecte les contrats implicites.</p>
+
+  <h2><span class="h-num">§ 2.5</span>I — Interface Segregation</h2>
+  <div class="box box-thm"><span class="box-label">Définition</span><p>« Aucun client ne devrait être forcé de dépendre de méthodes qu'il n'utilise pas. » <em>Menu à la carte plutôt que buffet.</em></p></div>
+  <div class="two-col">
+    <pre class="code"><span class="c">// ✗ interface « grosse »</span>
+<span class="k">interface</span> Machine { <span class="k">void</span> imprimer(); <span class="k">void</span> faxer(); <span class="k">void</span> scanner(); }
+<span class="k">class</span> ImprimanteAncienne <span class="k">implements</span> Machine {
+  <span class="k">public void</span> faxer() { <span class="k">throw new</span> UnsupportedOperationException(); }
+}</pre>
+    <pre class="code"><span class="c">// ✓ petites interfaces spécifiques</span>
+<span class="k">interface</span> Imprimante { <span class="k">void</span> imprimer(); }
+<span class="k">interface</span> Faxeuse    { <span class="k">void</span> faxer(); }
+<span class="k">interface</span> Scanneuse  { <span class="k">void</span> scanner(); }
+<span class="k">class</span> MachineModerne <span class="k">implements</span> Imprimante, Faxeuse, Scanneuse { … }</pre>
+  </div>
+
+  <h2><span class="h-num">§ 2.6</span>D — Dependency Inversion</h2>
+  <div class="box box-thm"><span class="box-label">Définition</span><p>(A) Les modules de <strong>haut niveau</strong> ne doivent pas dépendre des modules de <strong>bas niveau</strong> : les deux dépendent d'<strong>abstractions</strong>. (B) Les abstractions ne dépendent pas des détails ; les détails dépendent des abstractions. ⇒ <span class="hl">dépendre d'interfaces, pas d'implémentations</span>.</p></div>
+  <div class="two-col">
+    <pre class="code"><span class="c">// ✗ couplage fort au détail</span>
+<span class="k">class</span> ServiceClient {
+  <span class="k">private</span> MySQLDatabase db = <span class="k">new</span> MySQLDatabase();
+}</pre>
+    <pre class="code"><span class="c">// ✓ injection de dépendance</span>
+<span class="k">interface</span> Database { <span class="k">void</span> sauvegarder(Object d); }
+<span class="k">class</span> ServiceClient {
+  <span class="k">private</span> Database db;
+  ServiceClient(Database db) { <span class="k">this</span>.db = db; }
+}</pre>
+  </div>
+  <div class="warn">DIP ≠ « injection de dépendance ». L'injection (passer l'objet par le constructeur) est la <strong>technique</strong> qui permet de respecter le <strong>principe</strong> (dépendre d'une abstraction).</div>
+</section>
+
+<!-- ═══════════════════ III · CRÉATION ═══════════════════ -->
+<section class="tab-content" id="ch3">
+  <p class="intro">Les patrons de création abstraient le <code>new</code> : le client ne sait plus (et n'a plus besoin de savoir) quelle classe concrète est instanciée, ni comment.</p>
+
+  <div class="box box-def"><span class="box-label">Idée commune</span><p>Abstraction du processus de création · encapsulation de la logique de création · on ne sait pas à l'avance <strong>ce qui</strong> sera créé ni <strong>comment</strong>. Le <span class="fx">new</span> partout crée un <strong>couplage fort</strong> entre le créateur et la classe créée.</p></div>
+
+  <div class="viz-card uml-viewer" data-set="crea">
+    <div class="viz-header"><div class="viz-title">Diagrammes de classes — création</div><div class="viz-tag">Clique un patron</div></div>
+    <div class="btn-group uv-btns" style="margin:0 0 10px"></div>
+    <svg class="viz-svg uml" viewBox="0 0 760 380" style="cursor:default"></svg>
+    <div class="legend"><div class="legend-item"><span class="legend-swatch" style="background:#EEF3F4;border-color:#2C5664"></span>interface</div><div class="legend-item"><span class="legend-swatch" style="background:#F6EFE3;border-color:#B8924A"></span>classe abstraite</div><div class="legend-item">─▷ hérite · ┄▷ implémente · ◇─ contient · ┄&gt; crée/utilise</div></div>
+  </div>
+
+  <div class="pat" id="p-singleton">
+    <div class="pat-head"><div class="pat-name">Singleton<small>création · 1/5</small></div><span class="pill pill-teal">une seule instance</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>S'assurer qu'une classe n'a <strong>qu'une seule instance</strong> et fournir un <strong>point d'accès global</strong> à celle-ci.</dd>
+      <dt>Exemples</dt><dd>Un seul window manager, un seul pilote de périphérique, un seul point d'accès à une base de données (plusieurs instances = surcharge inutile ou comportement incohérent).</dd>
+      <dt>Solution</dt><dd>Constructeur <strong>privé</strong> + attribut <strong>statique</strong> qui garde l'instance + méthode <strong>statique</strong> <span class="fx">getInstance()</span> qui la crée au premier appel et la retourne ensuite.</dd>
+    </dl>
+    <pre class="code"><span class="k">public class</span> Singleton {
+  <span class="k">private static</span> Singleton INSTANCE = <span class="k">null</span>;
+  <span class="k">private</span> Singleton() {}                       <span class="c">// interdit new Singleton() à l'extérieur</span>
+  <span class="k">public static</span> Singleton getInstance() {
+    <span class="k">if</span> (INSTANCE == <span class="k">null</span>) INSTANCE = <span class="k">new</span> Singleton();   <span class="c">// création paresseuse (lazy)</span>
+    <span class="k">return</span> INSTANCE;
+  }
+}</pre>
+    <div class="warn">Version du cours non <strong>thread-safe</strong> : deux threads peuvent créer deux instances. Solutions : <span class="fx">synchronized</span> sur getInstance, ou initialisation directe <span class="fx">private static final Singleton INSTANCE = new Singleton();</span>. Bon point bonus en DS.</div>
+  </div>
+
+  <div class="pat" id="p-factory">
+    <div class="pat-head"><div class="pat-name">Factory Method<small>Fabrication · création · 2/5</small></div><span class="pill pill-teal">déléguer l'instanciation aux sous-classes</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Définir une interface de création d'un objet, mais <strong>laisser aux sous-classes le choix</strong> de la classe à instancier.</dd>
+      <dt>Quand</dt><dd>Une classe ne peut pas anticiper la classe des objets qu'elle doit créer ; elle délègue cette responsabilité à ses sous-classes. Ex. framework qui gère plusieurs types de documents.</dd>
+      <dt>Participants</dt><dd><strong>Product</strong> (interface des objets créés) · <strong>ConcreteProduct</strong> · <strong>Creator</strong> (déclare <span class="fx">abstract Product factoryMethod()</span>, peut l'utiliser dans ses autres méthodes) · <strong>ConcreteCreator</strong> (redéfinit factoryMethod pour renvoyer un ConcreteProduct).</dd>
+      <dt>Conséquences</dt><dd>Le code ne connaît que <span class="fx">Product</span> → marche avec n'importe quel ConcreteProduct ; plus flexible que <span class="fx">new</span> direct. Variante : <strong>fabrication paramétrée</strong> (un paramètre choisit le produit). Creator abstrait ou avec implémentation par défaut.</dd>
+    </dl>
+    <pre class="code"><span class="k">abstract class</span> Application {                          <span class="c">// Creator</span>
+  <span class="k">abstract</span> Document creerDocument();                  <span class="c">// factory method</span>
+  <span class="k">void</span> nouveau() { Document d = creerDocument(); d.ouvrir(); }
+}
+<span class="k">class</span> AppTexte <span class="k">extends</span> Application {                   <span class="c">// ConcreteCreator</span>
+  Document creerDocument() { <span class="k">return new</span> DocTexte(); }   <span class="c">// ConcreteProduct</span>
+}</pre>
+  </div>
+
+  <div class="pat" id="p-absfactory">
+    <div class="pat-head"><div class="pat-name">Abstract Factory<small>Fabrique abstraite · création · 3/5</small></div><span class="pill pill-teal">familles d'objets</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Fournir une interface pour créer des <strong>familles d'objets apparentés</strong> sans spécifier leurs classes concrètes.</dd>
+      <dt>Exemple</dt><dd>Boîte à outils graphique avec plusieurs <strong>look-and-feel</strong> (Motif, Presentation Manager) : les widgets ne doivent pas être codés en dur. Une fabrique par apparence crée boutons, fenêtres, menus cohérents entre eux.</dd>
+      <dt>Participants</dt><dd><strong>AbstractFactory</strong> (opérations createProduitA(), createProduitB()…) · <strong>ConcreteFactory</strong> (une par famille) · <strong>AbstractProduct</strong> (une interface par type de produit) · <strong>ConcreteProduct</strong> · <strong>Client</strong> (ne connaît que les interfaces).</dd>
+      <dt>Collaboration</dt><dd>Normalement <strong>une seule</strong> fabrique concrète à l'exécution ; changer de famille = changer de fabrique. La fabrique abstraite défère la création à ses sous-classes.</dd>
+      <dt>Conséquences</dt><dd>✓ isole les classes concrètes · ✓ échange facile de familles · ✓ cohérence entre produits · ✗ <strong>ajouter un nouveau type de produit est difficile</strong> (il faut modifier l'interface et toutes les fabriques).</dd>
+      <dt>Implémentation</dt><dd>Les fabriques sont souvent des <strong>Singletons</strong> ; chaque create…() est souvent une <strong>Factory Method</strong>.</dd>
+    </dl>
+  </div>
+  <div class="warn">Factory Method vs Abstract Factory : FM = <strong>une méthode</strong> redéfinie par héritage pour créer <strong>un</strong> produit. AF = <strong>un objet</strong> fabrique (composition) qui crée <strong>une famille</strong> de produits. Question de cours fréquente.</div>
+
+  <div class="pat" id="p-builder">
+    <div class="pat-head"><div class="pat-name">Builder<small>Monteur · création · 4/5</small></div><span class="pill pill-teal">construction étape par étape</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Séparer la <strong>construction</strong> d'un objet complexe de sa <strong>représentation</strong>, pour que le même processus de construction produise des représentations différentes.</dd>
+      <dt>Participants</dt><dd><strong>Produit</strong> (objet complexe) · <strong>Monteur</strong> (interface : construire chaque partie) · <strong>MonteurConcret</strong> (construit les parties, garde l'objet, fournit <span class="fx">getResultat()</span>) · <strong>Directeur</strong> (appelle les étapes dans l'ordre) · le <strong>Client</strong> crée un monteur, le donne au directeur, lance la construction puis récupère le résultat auprès du monteur.</dd>
+      <dt>Exemples</dt><dd>Pizza (Serveur = directeur, MonteurPizzaHawaii) ; convertisseur RTF (RTFReader = directeur, TextConverter = monteur, ASCIIConverter = monteur concret, ASCIIText = produit).</dd>
+      <dt>Conséquences</dt><dd>La représentation interne peut varier ; les monteurs sont indépendants (modularité) ; contrôle fin de chaque étape.</dd>
+    </dl>
+    <pre class="code"><span class="k">abstract class</span> MonteurPizza {                                     <span class="c">// Monteur</span>
+  <span class="k">protected</span> Pizza pizza;
+  <span class="k">public</span> Pizza getPizza() { <span class="k">return</span> pizza; }
+  <span class="k">public void</span> creerNouvellePizza() { pizza = <span class="k">new</span> Pizza(); }
+  <span class="k">public abstract void</span> monterPate(); <span class="k">public abstract void</span> monterSauce(); <span class="k">public abstract void</span> monterGarniture();
+}
+<span class="k">class</span> MonteurPizzaHawaii <span class="k">extends</span> MonteurPizza {                      <span class="c">// MonteurConcret</span>
+  <span class="k">public void</span> monterPate()      { pizza.setPate(<span class="s">"croisée"</span>); }
+  <span class="k">public void</span> monterSauce()     { pizza.setSauce(<span class="s">"douce"</span>); }
+  <span class="k">public void</span> monterGarniture() { pizza.setGarniture(<span class="s">"jambon+ananas"</span>); }
+}
+<span class="k">class</span> Serveur {                                                       <span class="c">// Directeur</span>
+  <span class="k">private</span> MonteurPizza monteur;
+  <span class="k">public void</span> setMonteurPizza(MonteurPizza m) { monteur = m; }
+  <span class="k">public void</span> construirePizza() { monteur.creerNouvellePizza(); monteur.monterPate(); monteur.monterSauce(); monteur.monterGarniture(); }
+  <span class="k">public</span> Pizza getPizza() { <span class="k">return</span> monteur.getPizza(); }
+}</pre>
+    <div class="warn">Dans le code RTFReader du cours, le <span class="fx">switch</span> n'a pas de <span class="fx">break</span> : un token CHAR exécuterait aussi convertParagraph(). Ajoute-les si tu le réécris.</div>
+  </div>
+
+  <div class="pat" id="p-prototype">
+    <div class="pat-head"><div class="pat-name">Prototype<small>création · 5/5</small></div><span class="pill pill-teal">cloner</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Créer de nouveaux objets en <strong>dupliquant (clonant)</strong> une instance modèle, quand l'objet est coûteux à créer ou que sa classe exacte est inconnue.</dd>
+      <dt>Exemple</dt><dd>Logiciel de DAO avec copier-coller : la classe qui gère la copie ne connaît pas la classe exacte de l'élément (cercle, rectangle…) ; elle appelle <span class="fx">clone()</span>. Dupliquer est aussi plus rapide qu'instancier.</dd>
+      <dt>Participants</dt><dd><strong>Prototype</strong> (interface <span class="fx">clone()</span>) · <strong>ConcretePrototypeA/B</strong> (implémentent la duplication) · <strong>Client</strong> (appelle clone()).</dd>
+      <dt>Conséquences</dt><dd>Créer des instances « différentes » <strong>sans créer de classes</strong> ; attention à la copie <strong>superficielle</strong> vs <strong>profonde</strong> (attributs objets partagés ou dupliqués).</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- ═══════════════════ IV · STRUCTURE ═══════════════════ -->
+<section class="tab-content" id="ch4">
+  <p class="intro">Les patrons de structure décrivent comment assembler classes et objets : envelopper, déléguer, composer, partager. Presque tous reposent sur la <em>composition</em> plutôt que l'héritage.</p>
+
+  <h2><span class="h-num">§ 4.0</span>Héritage vs composition</h2>
+  <div class="two-col">
+    <div class="box box-def" style="margin:0"><span class="box-label">Héritage = boîte blanche</span><ul><li>Défini <strong>statiquement</strong> (compilation), réutilisation immédiate.</li><li>La sous-classe voit l'intérieur du parent et en <strong>dépend</strong> : l'héritage <strong>rompt l'encapsulation</strong>.</li><li>Impossible de changer le code hérité à l'exécution.</li></ul></div>
+    <div class="box box-def" style="margin:0"><span class="box-label">Composition = boîte noire</span><ul><li>Définie <strong>dynamiquement</strong> (exécution) : l'objet composé contient une référence et <strong>délègue</strong>.</li><li>Accès via les <strong>interfaces</strong> : encapsulation respectée.</li><li>Un composant peut être <strong>remplacé à l'exécution</strong> par un autre de même interface.</li></ul></div>
+  </div>
+
+  <div class="viz-card uml-viewer" data-set="stru">
+    <div class="viz-header"><div class="viz-title">Diagrammes de classes — structure</div><div class="viz-tag">Clique un patron</div></div>
+    <div class="btn-group uv-btns" style="margin:0 0 10px"></div>
+    <svg class="viz-svg uml" viewBox="0 0 760 380" style="cursor:default"></svg>
+    <div class="legend"><div class="legend-item"><span class="legend-swatch" style="background:#EEF3F4;border-color:#2C5664"></span>interface</div><div class="legend-item"><span class="legend-swatch" style="background:#F6EFE3;border-color:#B8924A"></span>classe abstraite</div><div class="legend-item">─▷ hérite · ┄▷ implémente · ◇─ contient · ┄&gt; crée/utilise</div></div>
+  </div>
+
+  <div class="pat str" id="p-adapter">
+    <div class="pat-head"><div class="pat-name">Adapter<small>Adaptateur · structure · 1/7</small></div><span class="pill pill-gold">convertir une interface</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Convertir l'interface d'une classe en <strong>une autre interface attendue</strong> par le client, pour faire collaborer des classes aux interfaces incompatibles.</dd>
+      <dt>Problème</dt><dd>Réutiliser un « servant » existant dont l'interface n'est pas conforme à celle que les clients appellent.</dd>
+      <dt>Participants</dt><dd><strong>Target</strong> (interface utilisée par le client) · <strong>Client</strong> · <strong>Adaptee</strong> (classe existante à adapter) · <strong>Adapter</strong> (implémente Target en appelant Adaptee).</dd>
+      <dt>2 variantes</dt><dd><strong>Par héritage</strong> (adaptateur de classe) : Adapter hérite d'Adaptee et implémente Target. <strong>Par composition</strong> (adaptateur d'objet) : Adapter contient une référence vers Adaptee et lui délègue.</dd>
+      <dt>Usage</dt><dd>Garder plusieurs <strong>versions</strong> d'une classe quand son contrat change : une classe adaptateur par version, sans modifier les classes utilisatrices.</dd>
+    </dl>
+  </div>
+
+  <div class="pat str" id="p-bridge">
+    <div class="pat-head"><div class="pat-name">Bridge<small>Pont · structure · 2/7</small></div><span class="pill pill-gold">deux hiérarchies indépendantes</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd><strong>Découpler une abstraction de son implémentation</strong> pour que les deux puissent varier indépendamment ; partager une implémentation entre plusieurs objets.</dd>
+      <dt>Structure</dt><dd>Programmation par <strong>deux interfaces</strong> : l'Abstraction contient une référence vers l'Implementor. Ex. MVC (découplage des facettes), représentations interchangeables.</dd>
+      <dt>Exemple du cours</dt><dd><span class="fx">abstract class Shape { Color color; Shape(Color c){…} abstract void colorIt(); }</span> avec <span class="fx">RedColor</span>, <span class="fx">BlueColor</span>… : 3 formes × 3 couleurs = 3 + 3 classes au lieu de 9.</dd>
+      <dt>Conséquences</dt><dd>Modularité, indépendance, réutilisation ; chaque côté cache ses détails à l'autre.</dd>
+    </dl>
+  </div>
+
+  <div class="pat str" id="p-composite">
+    <div class="pat-head"><div class="pat-name">Composite<small>structure · 3/7</small></div><span class="pill pill-gold">arbres partie/tout</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Composer des objets en <strong>structures arborescentes</strong> (hiérarchies composants/composés) et permettre au client de traiter <strong>uniformément</strong> objets simples et compositions.</dd>
+      <dt>Participants</dt><dd><strong>Component</strong> (interface commune, gestion des fils, accès au parent optionnel) · <strong>Leaf</strong> (feuille, ex. Button) · <strong>Composite</strong> (stocke les fils, implémente les opérations en les <strong>déléguant à ses fils</strong>, ex. Container) · <strong>Client</strong> (n'utilise que Component).</dd>
+      <dt>Exemples</dt><dd>AWT/Swing : <span class="fx">Component / Container / Button</span> ; expression <span class="fx">new Addition(new Nombre(1), new Nombre(3))</span> ; système de fichiers (répertoire contient fichiers et répertoires).</dd>
+    </dl>
+  </div>
+
+  <div class="pat str" id="p-decorator">
+    <div class="pat-head"><div class="pat-name">Decorator<small>Décorateur · structure · 4/7</small></div><span class="pill pill-gold">ajouter dynamiquement</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd><strong>Attacher dynamiquement</strong> des responsabilités supplémentaires à un objet : alternative flexible à l'héritage pour étendre des fonctionnalités.</dd>
+      <dt>Quand</dt><dd>Ajouter des capacités de façon transparente, pouvoir les <strong>retirer</strong>, quand l'héritage produirait une <strong>explosion de sous-classes</strong> (combinaisons), ou quand l'héritage est interdit.</dd>
+      <dt>Structure</dt><dd><strong>Composant</strong> (abstrait) · <strong>ComposantConcret</strong> · <strong>Décorateur</strong> (abstrait, <strong>hérite</strong> de Composant <strong>et contient</strong> un Composant) · <strong>DécorateurConcret</strong> (redéfinit la méthode : appelle celle du composant enveloppé puis ajoute son traitement). C'est l'<strong>alliance héritage + composition</strong>.</dd>
+    </dl>
+    <pre class="code"><span class="k">public abstract class</span> TexteDecore <span class="k">implements</span> TexteI {
+  <span class="k">private</span> TexteI unTexte;
+  <span class="k">public</span> TexteDecore(TexteI t) { unTexte = t; }
+  <span class="k">public</span> String toHTML() { <span class="k">return</span> unTexte.toHTML(); }
+}
+<span class="k">public class</span> B <span class="k">extends</span> TexteDecore {
+  <span class="k">public</span> B(TexteI t) { <span class="k">super</span>(t); }
+  <span class="k">public</span> String toHTML() { <span class="k">return</span> <span class="s">"&lt;B&gt;"</span> + <span class="k">super</span>.toHTML() + <span class="s">"&lt;/B&gt;"</span>; }
+}
+TexteI t = <span class="k">new</span> B(<span class="k">new</span> I(<span class="k">new</span> Texte(<span class="s">"Exemple"</span>)));   <span class="c">// "&lt;B&gt;&lt;I&gt;Exemple&lt;/I&gt;&lt;/B&gt;"</span></pre>
+  </div>
+
+  <!-- VIZ : café décorateur -->
+  <div class="viz-card" id="coffee">
+    <div class="viz-header"><div class="viz-title">Exercice du cours : le distributeur de café</div><div class="viz-tag">Décorateur en action</div></div>
+    <p style="margin:0 0 6px;font-size:15px">Cafés : Colombia 1 D · Expresso 1,2 D · Deca 0,8 D. Suppléments : Lait 0,2 · Sucre 0,2 · Caramel 0,4 · Chantilly 0,8. Choisis une base puis empile des suppléments (l'ordre compte pour l'objet, pas pour le prix).</p>
+    <div id="cf-base"></div>
+    <div id="cf-sup" style="margin-top:6px"></div>
+    <div class="btn-group"><button class="btn" id="cf-undo">↶ retirer le dernier</button><button class="btn" id="cf-reset">↺ vider</button><button class="btn" data-ex="Expresso|Sucre">Expresso + sucre</button><button class="btn" data-ex="Colombia|Chantilly|Caramel">Colombia chantilly caramel</button></div>
+    <div class="viz-body" style="margin-top:12px">
+      <div><div class="nest" id="cf-nest"></div><pre class="code" id="cf-code" style="margin-top:10px"></pre></div>
+      <div class="viz-controls"><h5>Calcul de cout()</h5><div id="cf-calc"></div></div>
+    </div>
+  </div>
+
+  <div class="pat str" id="p-facade">
+    <div class="pat-head"><div class="pat-name">Facade<small>Façade · structure · 5/7</small></div><span class="pill pill-gold">une entrée simple</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Fournir une <strong>interface unique, simplifiée</strong> pour accéder à l'ensemble des interfaces d'un <strong>sous-système complexe</strong>.</dd>
+      <dt>Usage</dt><dd>Interface unique pour un système complexe · séparer un sous-système de ses clients · découper en <strong>couches</strong> (une façade par point d'entrée de couche) · ex. entrepôts de données.</dd>
+      <dt>Structure</dt><dd>La façade sait quelles classes du sous-système traitent quelle requête et <strong>délègue</strong> (avec transformation si besoin) ; nombre de classes du sous-système illimité.</dd>
+      <dt>Conséquences</dt><dd>✓ simplifie l'usage · ✓ diminue le couplage client/sous-système · ✓ on peut modifier le sous-système sans toucher au client · ne masque pas forcément le sous-système (accès direct possible) · ✗ l'interface unifiée peut être trop restrictive.</dd>
+    </dl>
+  </div>
+  <div class="box box-thm">
+    <span class="box-label">Façade vs Adaptateur</span>
+    <p>Les deux enveloppent des classes existantes qui n'ont pas l'interface voulue. Mais : <strong>la façade simplifie</strong> une interface (souvent plusieurs classes) sans interface cible imposée et sans polymorphisme ; <strong>l'adaptateur convertit</strong> vers une interface <strong>préexistante</strong> (Target), polymorphisme utile.</p>
+  </div>
+
+  <div class="pat str" id="p-flyweight">
+    <div class="pat-head"><div class="pat-name">Flyweight<small>Poids-mouche · structure · 6/7</small></div><span class="pill pill-gold">partager l'état commun</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Mettre en œuvre efficacement un <strong>très grand nombre d'objets de granularité fine</strong> en <strong>partageant</strong> leur état commun au lieu de le stocker dans chaque objet.</dd>
+      <dt>Clé</dt><dd>État <strong>intrinsèque</strong> (indépendant du contexte, partagé : couleur + sprite d'une balle, style de trait) vs état <strong>extrinsèque</strong> (dépend du contexte, passé en paramètre ou gardé à part : position, vitesse, coordonnées).</dd>
+      <dt>Participants</dt><dd><strong>PoidsMouche</strong> (interface qui reçoit l'état extrinsèque) · <strong>ConcretePoidsMouche</strong> (intrinsèque seulement, <strong>partagé</strong>) · <strong>PoidsMoucheNonPartagé</strong> (intrinsèque + extrinsèque) · <strong>Fabrique</strong> (retourne l'instance existante si elle existe, sinon la crée) · <strong>Client</strong> (demande à la fabrique).</dd>
+      <dt>Exemples</dt><dd>Jeu vidéo qui plante faute de RAM (balles, missiles, shrapnels) ; logiciel de DAO (styles de trait partagés, traits avec coordonnées non partagés).</dd>
+    </dl>
+  </div>
+
+  <div class="pat str" id="p-proxy">
+    <div class="pat-head"><div class="pat-name">Proxy<small>structure · 7/7</small></div><span class="pill pill-gold">représentant</span></div>
+    <dl class="pat-grid">
+      <dt>Intention</dt><dd>Fournir un <strong>représentant</strong> d'un objet qui en contrôle l'accès : le client parle au proxy, qui offre la <strong>même interface</strong> et exécute des traitements avant/après l'appel à l'original.</dd>
+      <dt>Problèmes</dt><dd>Objet <strong>distant</strong> (RMI, SOAP…) · accès <strong>contrôlé</strong> (sécurité, autorisations) · objet <strong>coûteux</strong> à instancier.</dd>
+      <dt>Participants</dt><dd><strong>AbstractOriginal / Subject</strong> (interface commune, le proxy peut remplacer l'original partout) · <strong>Original / RealSubject</strong> · <strong>Proxy</strong> (même interface, référence vers l'original) · <strong>Client</strong>.</dd>
+      <dt>Types</dt><dd><strong>Cache</strong> (résultats fréquents) · <strong>Counting</strong> (audit, comptage, journalisation avant/après) · <strong>Firewall</strong> · <strong>Protection</strong> (droits différents) · <strong>Remote</strong> (objet distant) · <strong>Smart reference</strong> (compte de références) · <strong>Synchronisation</strong> (accès concurrent) · <strong>Virtual</strong> (création à la demande).</dd>
+    </dl>
+  </div>
+  <div class="warn">Proxy, Decorator, Adapter ont la même forme (un objet qui en enveloppe un autre). Différence : <strong>Adapter change</strong> l'interface · <strong>Decorator ajoute</strong> des responsabilités (et s'empile) · <strong>Proxy contrôle l'accès</strong> avec la même interface.</div>
+</section>
+
+<!-- ═══════════════════ M · MÉTHODES ═══════════════════ -->
+<section class="tab-content" id="methods">
+  <p class="intro">Les DS de conception posent trois sortes de questions : repérer la violation d'un principe, choisir le bon patron, puis le modéliser (diagramme de classes + code). Une carte par cas.</p>
+  <div class="method-index">
+    <a href="#m1"><span>M1</span>Diagnostiquer un mauvais code</a>
+    <a href="#m2"><span>M2</span>Corriger une violation SOLID</a>
+    <a href="#m3"><span>M3</span>Choisir le bon patron</a>
+    <a href="#m4"><span>M4</span>Dessiner le diagramme de classes</a>
+    <a href="#m5"><span>M5</span>Implémenter un Singleton</a>
+    <a href="#m6"><span>M6</span>Factory Method ou Abstract Factory</a>
+    <a href="#m7"><span>M7</span>Écrire un Builder</a>
+    <a href="#m8"><span>M8</span>Exercice Adaptateur (IRépertoire / File)</a>
+    <a href="#m9"><span>M9</span>Exercice Décorateur (café)</a>
+    <a href="#m10"><span>M10</span>Exercice Composite (répertoires)</a>
+    <a href="#m11"><span>M11</span>Flyweight : intrinsèque / extrinsèque</a>
+    <a href="#m12"><span>M12</span>Comparer deux patrons voisins</a>
+  </div>
+
+  <h2><span class="h-num">Bloc A</span>Principes</h2>
+  <div class="method-card" id="m1">
+    <div class="method-meta"><span class="pill pill-burgundy">Ch2</span></div>
+    <div class="method-question">Comment diagnostiquer ce qui ne va pas dans un code donné ?</div>
+    <ol class="method-steps">
+      <li>Lister les <strong>raisons de changer</strong> de chaque classe (métier, affichage, persistance, réseau…). Plus d'une → SRP.</li>
+      <li>Chercher les <span class="fx">if instanceof</span> / <span class="fx">switch</span> sur un type → OCP.</li>
+      <li>Une sous-classe qui <strong>change le comportement attendu</strong> (exception, effet de bord) → LSP.</li>
+      <li>Des méthodes implémentées avec <span class="fx">throw new UnsupportedOperationException()</span> → ISP.</li>
+      <li>Un <span class="fx">new ClasseConcrete()</span> dans une classe de haut niveau → DIP.</li>
+      <li>Nommer le <strong>symptôme</strong> (rigidité, fragilité, immobilité, viscosité, opacité) et le <strong>principe</strong> violé.</li>
+    </ol>
+    <div class="method-tip">Une réponse complète = principe violé + ligne de code en cause + conséquence concrète + correction.</div>
+  </div>
+  <div class="method-card" id="m2">
+    <div class="method-meta"><span class="pill pill-burgundy">Ch2</span></div>
+    <div class="method-question">Comment corriger une violation de chaque principe SOLID ?</div>
+    <table class="law">
+      <tr><td>SRP</td><td>Extraire chaque responsabilité dans sa classe (Facture / FacturePrinter / FactureRepository).</td></tr>
+      <tr><td>OCP</td><td>Introduire une interface et déplacer le comportement variable dans les sous-classes (polymorphisme).</td></tr>
+      <tr><td>LSP</td><td>Revoir la hiérarchie : supprimer l'héritage abusif, faire une interface commune plus abstraite.</td></tr>
+      <tr><td>ISP</td><td>Découper la grosse interface en interfaces de rôle ; chaque classe implémente seulement les siennes.</td></tr>
+      <tr><td>DIP</td><td>Créer une interface pour le détail, faire dépendre le haut niveau de l'interface, injecter l'implémentation (constructeur).</td></tr>
+    </table>
+    <div class="method-tip">Plusieurs patrons sont des applications directes : Strategy/Decorator → OCP, Adapter → DIP + ISP, Factory → DIP (le client ne fait plus <span class="fx">new</span>).</div>
+  </div>
+
+  <h2><span class="h-num">Bloc B</span>Choisir &amp; modéliser</h2>
+  <div class="method-card" id="m3">
+    <div class="method-meta"><span class="pill pill-teal">Ch3–4</span></div>
+    <div class="method-question">Comment choisir le bon patron à partir d'un énoncé ?</div>
+    <table class="law">
+      <tr><td>« une seule instance », « point d'accès global »</td><td><strong>Singleton</strong></td></tr>
+      <tr><td>« les sous-classes décident quel objet créer »</td><td><strong>Factory Method</strong></td></tr>
+      <tr><td>« familles de produits », « thèmes / look-and-feel », « cohérence entre produits »</td><td><strong>Abstract Factory</strong></td></tr>
+      <tr><td>« objet complexe construit étape par étape », « même processus, représentations différentes »</td><td><strong>Builder</strong></td></tr>
+      <tr><td>« copier / dupliquer », « création coûteuse », « classe inconnue »</td><td><strong>Prototype</strong></td></tr>
+      <tr><td>« interface incompatible », « intégrer une classe existante / une librairie »</td><td><strong>Adapter</strong></td></tr>
+      <tr><td>« deux dimensions qui varient indépendamment » (forme × couleur, plateforme × fonctionnalité)</td><td><strong>Bridge</strong></td></tr>
+      <tr><td>« arborescence », « contient des éléments du même type », « traiter pareil simple et composé »</td><td><strong>Composite</strong></td></tr>
+      <tr><td>« options / suppléments combinables », « ajouter à l'exécution », « explosion de sous-classes »</td><td><strong>Decorator</strong></td></tr>
+      <tr><td>« simplifier l'accès à un sous-système complexe »</td><td><strong>Facade</strong></td></tr>
+      <tr><td>« des milliers / millions de petits objets », « mémoire »</td><td><strong>Flyweight</strong></td></tr>
+      <tr><td>« accès distant / contrôlé / différé / mis en cache », « même interface »</td><td><strong>Proxy</strong></td></tr>
+    </table>
+    <div class="method-tip">Entraîne-toi avec le quiz « Quel patron ? » de l'onglet Synthèse.</div>
+  </div>
+  <div class="method-card" id="m4">
+    <div class="method-meta"><span class="pill pill-teal">Ch3–4</span></div>
+    <div class="method-question">Comment dessiner proprement le diagramme de classes d'un patron appliqué ?</div>
+    <ol class="method-steps">
+      <li>Partir de la <strong>structure générique</strong> du patron (rôles : Target, Adaptee… ou Component, Leaf, Composite…).</li>
+      <li>Remplacer chaque rôle par la classe <strong>de l'énoncé</strong> et noter le rôle en stéréotype ou en commentaire.</li>
+      <li>Distinguer <strong>interface</strong> (&lt;&lt;interface&gt;&gt;, en italique), <strong>classe abstraite</strong> et classe concrète.</li>
+      <li>Bonnes flèches : héritage (trait plein, triangle vide), réalisation (pointillé, triangle vide), agrégation/composition (losange), dépendance (pointillé, flèche).</li>
+      <li>Mettre les <strong>méthodes clés</strong> (celles du patron) et les <strong>multiplicités</strong> (0..* pour les fils d'un Composite).</li>
+    </ol>
+    <div class="method-tip">Les visionneuses des onglets III et IV montrent la structure générique des 12 patrons : copie la forme, change les noms.</div>
+  </div>
+
+  <h2><span class="h-num">Bloc C</span>Création</h2>
+  <div class="method-card" id="m5">
+    <div class="method-meta"><span class="pill pill-teal">Singleton</span></div>
+    <div class="method-question">Comment écrire un Singleton correct ?</div>
+    <ol class="method-steps">
+      <li>Attribut <span class="fx">private static</span> du type de la classe.</li>
+      <li>Constructeur <span class="fx">private</span>.</li>
+      <li>Méthode <span class="fx">public static getInstance()</span> : crée si null, retourne.</li>
+      <li>Mentionner le problème multithread et la solution (<span class="fx">synchronized</span> ou initialisation statique).</li>
+    </ol>
+    <div class="method-tip">Si le DS demande « une seule fabrique » dans une Abstract Factory, rends la fabrique Singleton : deux patrons combinés = points en plus.</div>
+  </div>
+  <div class="method-card" id="m6">
+    <div class="method-meta"><span class="pill pill-teal">Factory · Abstract Factory</span></div>
+    <div class="method-question">Comment savoir s'il faut une Factory Method ou une Abstract Factory, et l'écrire ?</div>
+    <ol class="method-steps">
+      <li><strong>Un</strong> type de produit, le choix dépend de la sous-classe → Factory Method (méthode abstraite <span class="fx">creerX()</span> dans un Creator).</li>
+      <li><strong>Plusieurs</strong> types de produits qui doivent aller <strong>ensemble</strong> → Abstract Factory (une interface avec <span class="fx">creerA()</span>, <span class="fx">creerB()</span> ; une fabrique concrète par famille).</li>
+      <li>Écrire les interfaces produits, puis les produits concrets, puis la ou les fabriques.</li>
+      <li>Montrer le client : il ne manipule que des interfaces, la fabrique concrète est choisie une fois (config).</li>
+    </ol>
+    <div class="method-tip">Limite à citer pour Abstract Factory : ajouter un <strong>nouveau type</strong> de produit oblige à modifier toutes les fabriques (alors qu'ajouter une <strong>nouvelle famille</strong> est facile).</div>
+  </div>
+  <div class="method-card" id="m7">
+    <div class="method-meta"><span class="pill pill-teal">Builder</span></div>
+    <div class="method-question">Comment écrire un Builder (Directeur / Monteur) ?</div>
+    <ol class="method-steps">
+      <li><strong>Produit</strong> avec des setters pour chaque partie.</li>
+      <li><strong>Monteur</strong> abstrait : <span class="fx">creerNouveauProduit()</span>, une méthode abstraite par partie, <span class="fx">getProduit()</span>.</li>
+      <li><strong>Monteurs concrets</strong> : implémentent les parties.</li>
+      <li><strong>Directeur</strong> : reçoit un monteur, appelle les étapes <strong>dans l'ordre</strong>.</li>
+      <li><strong>Client</strong> : crée le monteur, le passe au directeur, <span class="fx">construire()</span>, récupère le produit.</li>
+    </ol>
+    <div class="method-tip">Builder vs Abstract Factory : Builder construit <strong>un</strong> objet complexe <strong>pas à pas</strong> et le rend à la fin ; Abstract Factory rend <strong>immédiatement</strong> des objets d'une famille.</div>
+  </div>
+
+  <h2><span class="h-num">Bloc D</span>Structure — exercices du cours</h2>
+  <div class="method-card" id="m8">
+    <div class="method-meta"><span class="pill pill-gold">Exercice Adapter</span></div>
+    <div class="method-question">« Une application utilise IRépertoire ; intégrer des répertoires manipulés via File »</div>
+    <ol class="method-steps">
+      <li>Target = <span class="fx">IRépertoire</span> ; Adaptee = <span class="fx">java.io.File</span> ; Client = l'application.</li>
+      <li>Choisir la variante : <strong>composition</strong> (File n'est pas à nous, et on veut pouvoir changer le fichier enveloppé).</li>
+      <li>Créer <span class="fx">RepertoireAdapter implements IRépertoire</span> avec un attribut <span class="fx">File</span>.</li>
+      <li>Implémenter chaque méthode de IRépertoire en déléguant à File.</li>
+    </ol>
+    <details class="sol"><summary>Corrigé proposé (l'énoncé ne donne pas les méthodes de IRépertoire, on en suppose 3)</summary><div>
+      <pre class="code"><span class="k">interface</span> IRepertoire { String[] lister(); <span class="k">boolean</span> creer(String nom); <span class="k">boolean</span> supprimer(String nom); }
+<span class="k">class</span> RepertoireAdapter <span class="k">implements</span> IRepertoire {
+  <span class="k">private final</span> File dossier;                                 <span class="c">// Adaptee (composition)</span>
+  RepertoireAdapter(File dossier) { <span class="k">this</span>.dossier = dossier; }
+  <span class="k">public</span> String[] lister()       { <span class="k">return</span> dossier.list(); }
+  <span class="k">public boolean</span> creer(String n)  { <span class="k">return new</span> File(dossier, n).mkdir(); }
+  <span class="k">public boolean</span> supprimer(String n) { <span class="k">return new</span> File(dossier, n).delete(); }
+}</pre>
+    </div></details>
+  </div>
+  <div class="method-card" id="m9">
+    <div class="method-meta"><span class="pill pill-gold">Exercice Decorator</span><span class="pill">Ch4 · Exemple 3</span></div>
+    <div class="method-question">« Distributeur de café : 3 cafés, 4 suppléments, ajout futur facile, afficher le prix »</div>
+    <ol class="method-steps">
+      <li>Composant abstrait <span class="fx">Boisson</span> avec <span class="fx">getDescription()</span> et <span class="fx">abstract double cout()</span>.</li>
+      <li>Composants concrets : <span class="fx">Colombia (1)</span>, <span class="fx">Expresso (1,2)</span>, <span class="fx">Deca (0,8)</span>.</li>
+      <li>Décorateur abstrait <span class="fx">Supplement extends Boisson</span> avec un attribut <span class="fx">Boisson boisson</span>.</li>
+      <li>Décorateurs concrets : <span class="fx">cout() = boisson.cout() + prix</span>.</li>
+      <li>Client : envelopper — <span class="fx">new Caramel(new Chantilly(new Colombia()))</span>.</li>
+    </ol>
+    <details class="sol"><summary>Corrigé complet</summary><div>
+      <pre class="code"><span class="k">abstract class</span> Boisson { <span class="k">abstract</span> String getDescription(); <span class="k">abstract double</span> cout(); }
+<span class="k">class</span> Expresso <span class="k">extends</span> Boisson { String getDescription(){ <span class="k">return</span> <span class="s">"Expresso"</span>; } <span class="k">double</span> cout(){ <span class="k">return</span> 1.2; } }
+<span class="k">class</span> Colombia <span class="k">extends</span> Boisson { String getDescription(){ <span class="k">return</span> <span class="s">"Colombia"</span>; } <span class="k">double</span> cout(){ <span class="k">return</span> 1.0; } }
+<span class="k">abstract class</span> Supplement <span class="k">extends</span> Boisson {
+  <span class="k">protected</span> Boisson boisson;
+  Supplement(Boisson b) { boisson = b; }
+}
+<span class="k">class</span> Sucre <span class="k">extends</span> Supplement {
+  Sucre(Boisson b) { <span class="k">super</span>(b); }
+  String getDescription() { <span class="k">return</span> boisson.getDescription() + <span class="s">", sucre"</span>; }
+  <span class="k">double</span> cout() { <span class="k">return</span> boisson.cout() + 0.2; }
+}
+<span class="c">// Lait (0.2), Caramel (0.4), Chantilly (0.8) : même schéma</span>
+Boisson b1 = <span class="k">new</span> Sucre(<span class="k">new</span> Expresso());                       <span class="c">// 1.4 D</span>
+Boisson b2 = <span class="k">new</span> Caramel(<span class="k">new</span> Chantilly(<span class="k">new</span> Colombia()));      <span class="c">// 2.2 D</span>
+System.out.println(b1.getDescription() + <span class="s">" : "</span> + b1.cout());</pre>
+      <p style="font-size:14.5px">Sans décorateur : une sous-classe par combinaison (3 cafés × 2⁴ combinaisons de suppléments = 48 classes, et plus encore avec les doubles doses). Avec : 3 + 1 + 4 classes, et un nouveau supplément = <strong>une</strong> classe (OCP).</p>
+    </div></details>
+  </div>
+  <div class="method-card" id="m10">
+    <div class="method-meta"><span class="pill pill-gold">Exercice Composite</span></div>
+    <div class="method-question">« Répertoires et fichiers : nom, droits, effacer, renommer ; parent(), ls(), cd() »</div>
+    <ol class="method-steps">
+      <li>Component : <span class="fx">abstract class ElementFS</span> (nom, droits lecture/écriture/exécution, <span class="fx">effacer()</span>, <span class="fx">renommer(n)</span>, référence vers le parent).</li>
+      <li>Leaf : <span class="fx">Fichier extends ElementFS</span>.</li>
+      <li>Composite : <span class="fx">Repertoire extends ElementFS</span> avec <span class="fx">List&lt;ElementFS&gt; contenu</span> (0..*), <span class="fx">parent()</span>, <span class="fx">ls()</span>, <span class="fx">cd(nom)</span>.</li>
+      <li><span class="fx">Repertoire.effacer()</span> efface d'abord chaque élément du contenu (récursion), puis lui-même.</li>
+    </ol>
+    <details class="sol"><summary>Diagrammes de séquence (à dessiner)</summary><div>
+      <p><strong>Effacer un fichier</strong> : Client → f : Fichier : <span class="fx">effacer()</span> → (f se retire de son parent : parent.retirer(f)) → fin.</p>
+      <p><strong>Effacer un répertoire</strong> : Client → r : Repertoire : <span class="fx">effacer()</span> → boucle [pour chaque e de contenu] r → e : <span class="fx">effacer()</span> (si e est un répertoire, la même séquence se répète récursivement) → puis r → parent : <span class="fx">retirer(r)</span>.</p>
+    </div></details>
+    <div class="method-tip">C'est la récursion qui montre que tu as compris Composite : l'opération du composite = <strong>délégation à tous ses fils</strong> + son propre traitement.</div>
+  </div>
+  <div class="method-card" id="m11">
+    <div class="method-meta"><span class="pill pill-gold">Flyweight</span></div>
+    <div class="method-question">Comment appliquer Poids-mouche à un énoncé ?</div>
+    <ol class="method-steps">
+      <li>Lister les attributs de l'objet nombreux.</li>
+      <li>Séparer <strong>intrinsèques</strong> (identiques pour beaucoup d'objets : couleur, sprite, style) et <strong>extrinsèques</strong> (propres à chaque objet : position, vitesse, coordonnées).</li>
+      <li>Classe partagée = intrinsèques ; contexte = extrinsèques + référence vers le partagé.</li>
+      <li><strong>Fabrique</strong> avec une table (Map) : retourne l'instance existante pour une clé, sinon la crée.</li>
+      <li>Calculer le gain mémoire (n objets × taille intrinsèque → k styles × taille intrinsèque).</li>
+    </ol>
+    <div class="method-tip">Exemple chiffré à donner : 1 000 000 de balles avec un sprite de 20 Ko → 20 Go ; avec un seul sprite partagé → 20 Ko + 1 000 000 × (petit contexte).</div>
+  </div>
+  <div class="method-card" id="m12">
+    <div class="method-meta"><span class="pill pill-gold">Comparaisons</span></div>
+    <div class="method-question">Comment comparer deux patrons qui se ressemblent ?</div>
+    <table class="law">
+      <tr><td>Adapter vs Facade</td><td>Adapter <strong>convertit</strong> vers une interface existante (Target) ; Facade <strong>simplifie</strong> un sous-système, sans interface imposée.</td></tr>
+      <tr><td>Adapter vs Decorator vs Proxy</td><td>Tous enveloppent. Adapter <strong>change</strong> l'interface ; Decorator <strong>garde</strong> l'interface et <strong>ajoute</strong> (empilable) ; Proxy <strong>garde</strong> l'interface et <strong>contrôle l'accès</strong>.</td></tr>
+      <tr><td>Bridge vs Adapter</td><td>Bridge est prévu <strong>dès la conception</strong> (deux hiérarchies) ; Adapter <strong>après coup</strong> (classes existantes incompatibles).</td></tr>
+      <tr><td>Composite vs Decorator</td><td>Composite : un nœud a <strong>plusieurs</strong> fils (arbre) ; Decorator : enveloppe <strong>un seul</strong> composant (chaîne).</td></tr>
+      <tr><td>Factory Method vs Abstract Factory</td><td>Méthode héritée pour un produit vs objet fabrique pour une famille.</td></tr>
+      <tr><td>Prototype vs Factory</td><td>Prototype crée par <strong>copie</strong> d'une instance ; Factory par <strong>instanciation</strong> d'une classe.</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════ S · SYNTHÈSE ═══════════════════ -->
+<section class="tab-content" id="synth">
+  <p class="intro">SOLID dit <em>quoi</em> viser (faible couplage, forte cohésion) ; les patrons disent <em>comment</em> y arriver dans des situations qui reviennent toujours.</p>
+
+  <h2><span class="h-num">S · 1</span>Vue d'ensemble</h2>
+  <div class="flow-grid">
+    <div class="flow-node"><div class="flow-node-tag">I · Génie logiciel</div><div class="flow-node-title">Qualité</div><span class="pill">tâches</span><span class="pill">critères</span><span class="pill">cohésion ↑</span><span class="pill">couplage ↓</span><span class="pill">GoF : 23</span></div>
+    <div class="flow-node"><div class="flow-node-tag">II · SOLID</div><div class="flow-node-title">Principes</div><span class="pill">SRP</span><span class="pill">OCP</span><span class="pill">LSP</span><span class="pill">ISP</span><span class="pill">DIP</span></div>
+    <div class="flow-node"><div class="flow-node-tag">III · Création</div><div class="flow-node-title">Abstraire le new</div><span class="pill">Singleton</span><span class="pill">Factory Method</span><span class="pill">Abstract Factory</span><span class="pill">Builder</span><span class="pill">Prototype</span></div>
+    <div class="flow-node"><div class="flow-node-tag">IV · Structure</div><div class="flow-node-title">Assembler</div><span class="pill">Adapter</span><span class="pill">Bridge</span><span class="pill">Composite</span><span class="pill">Decorator</span><span class="pill">Facade</span><span class="pill">Flyweight</span><span class="pill">Proxy</span></div>
+  </div>
+
+  <h2><span class="h-num">S · 2</span>Tableau récapitulatif</h2>
+  <p style="text-align:center;font-style:italic">Une ligne par principe ou patron : ce qu'il dit en une phrase, et quand on le sort.</p>
+  <div class="recap-wrap"><table class="recap">
+    <thead><tr><th>Principe / patron</th><th>En une phrase</th><th>Usage (quand / exemple)</th></tr></thead>
+    <tbody>
+    <tr class="grp"><td colspan="3"><span class="pill pill-burgundy">SOLID</span> principes</td></tr>
+    <tr><td><b>SRP</b><small>Single Responsibility</small></td><td>Une classe n'a qu'<strong>une seule raison de changer</strong> (une seule responsabilité).</td><td>Une classe mélange métier, affichage et persistance → la découper (<em>Facture</em> / <em>FacturePDF</em> / <em>FactureRepository</em>).</td></tr>
+    <tr><td><b>OCP</b><small>Open / Closed</small></td><td>Ouvert à l'<strong>extension</strong>, fermé à la <strong>modification</strong> : on ajoute du code, on ne touche pas l'existant.</td><td>Un <span class="fx">switch</span> / <span class="fx">instanceof</span> sur un type → abstraction + une sous-classe par cas.</td></tr>
+    <tr><td><b>LSP</b><small>Liskov Substitution</small></td><td>Une sous-classe doit pouvoir <strong>remplacer</strong> sa classe mère sans casser le comportement attendu.</td><td>Une sous-classe lève une exception ou change le contrat (Carré qui hérite de Rectangle) → revoir l'héritage.</td></tr>
+    <tr><td><b>ISP</b><small>Interface Segregation</small></td><td>Plusieurs <strong>petites interfaces</strong> spécifiques valent mieux qu'une grosse interface générale.</td><td>Des classes implémentent des méthodes vides ou <span class="fx">UnsupportedOperationException</span> → scinder l'interface.</td></tr>
+    <tr><td><b>DIP</b><small>Dependency Inversion</small></td><td>Les modules de haut niveau dépendent d'<strong>abstractions</strong>, pas de classes concrètes.</td><td>Un <span class="fx">new ClasseConcrete()</span> dans une classe métier → injecter une interface (constructeur / fabrique).</td></tr>
+    <tr class="grp"><td colspan="3"><span class="pill pill-teal">Création</span> abstraire le <em>new</em></td></tr>
+    <tr><td><b>Singleton</b></td><td>Garantit qu'une classe n'a qu'<strong>une seule instance</strong> et fournit un point d'accès global.</td><td>Configuration, journal (logger), connexion BD, fabrique unique. Constructeur privé + <span class="fx">getInstance()</span> statique.</td></tr>
+    <tr><td><b>Factory Method</b></td><td>Une méthode de création redéfinie par les <strong>sous-classes</strong>, qui choisissent quel produit instancier.</td><td>Le code connaît l'interface Produit mais pas la classe concrète ; un seul type de produit.</td></tr>
+    <tr><td><b>Abstract Factory</b></td><td>Un objet fabrique qui crée des <strong>familles d'objets liés</strong> sans nommer leurs classes concrètes.</td><td>Thèmes d'interface (bouton + fenêtre Windows / Mac), plusieurs produits qui doivent rester cohérents.</td></tr>
+    <tr><td><b>Builder</b></td><td>Construit un objet complexe <strong>pas à pas</strong> ; le même processus donne des représentations différentes.</td><td>Objet à beaucoup de parties / paramètres optionnels ; Directeur (ordre des étapes) + Monteur (représentation).</td></tr>
+    <tr><td><b>Prototype</b></td><td>Crée de nouveaux objets en <strong>clonant</strong> une instance modèle.</td><td>Création coûteuse ou configuration déjà faite à reproduire ; <span class="fx">clone()</span>.</td></tr>
+    <tr class="grp"><td colspan="3"><span class="pill pill-gold">Structure</span> assembler</td></tr>
+    <tr><td><b>Adapter</b></td><td><strong>Convertit</strong> l'interface d'une classe existante en celle qu'attend le client.</td><td>Intégrer une classe incompatible sans la modifier (exercice <em>IRépertoire</em> / <em>File</em>).</td></tr>
+    <tr><td><b>Bridge</b></td><td><strong>Sépare l'abstraction de son implémentation</strong> pour que les deux varient indépendamment.</td><td>Deux dimensions qui se multiplient (Forme × Dessin, Télécommande × Appareil) → éviter l'explosion de sous-classes.</td></tr>
+    <tr><td><b>Composite</b></td><td>Compose des objets en <strong>arbre</strong> et traite feuille et groupe de la même manière.</td><td>Hiérarchies partie-tout : répertoires / fichiers, menus, dessins groupés (exercice répertoires).</td></tr>
+    <tr><td><b>Decorator</b></td><td><strong>Ajoute dynamiquement</strong> des responsabilités à un objet en l'enveloppant, sans changer son interface.</td><td>Options combinables à l'exécution (exercice café + suppléments), flux Java (<em>BufferedReader</em>).</td></tr>
+    <tr><td><b>Facade</b></td><td>Fournit une <strong>interface simplifiée</strong> unique à un sous-système complexe.</td><td>Le client n'a besoin que de quelques opérations de haut niveau (ex. <em>HomeTheater.regarderFilm()</em>).</td></tr>
+    <tr><td><b>Flyweight</b></td><td><strong>Partage</strong> l'état commun (intrinsèque) entre de nombreux petits objets pour économiser la mémoire.</td><td>Très grand nombre d'objets similaires (caractères d'un éditeur, arbres d'une carte) ; état extrinsèque passé en paramètre.</td></tr>
+    <tr><td><b>Proxy</b></td><td>Un substitut qui <strong>contrôle l'accès</strong> à un objet réel, avec la même interface.</td><td>Chargement paresseux (image lourde), contrôle des droits, objet distant, cache.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="h-num">S · 3</span>Les ressemblants : différences</h2>
+  <p style="text-align:center;font-style:italic">Les paires qu'on confond au DS : ce qu'elles partagent, ce qui les sépare, et la question qui tranche.</p>
+  <div class="recap-wrap"><table class="recap diff">
+    <thead><tr><th>Paire</th><th>Point commun</th><th>Différence</th><th>Question qui tranche</th></tr></thead>
+    <tbody>
+    <tr><td><b>Factory Method</b> vs <b>Abstract Factory</b></td><td>Cachent la classe concrète créée.</td><td>FM = <strong>une méthode</strong> redéfinie par héritage, <strong>un</strong> produit. AF = <strong>un objet</strong> fabrique, <strong>une famille</strong> de produits.</td><td>Un seul produit ou plusieurs produits qui vont ensemble ?</td></tr>
+    <tr><td><b>Abstract Factory</b> vs <b>Builder</b></td><td>Créent des objets complexes sans exposer les classes.</td><td>AF rend <strong>immédiatement</strong> plusieurs objets d'une famille. Builder construit <strong>un seul</strong> objet <strong>par étapes</strong> et le rend à la fin.</td><td>Plusieurs objets liés, ou un objet assemblé pas à pas ?</td></tr>
+    <tr><td><b>Prototype</b> vs <b>Factory</b></td><td>Créent des objets sans <span class="fx">new</span> côté client.</td><td>Prototype <strong>copie</strong> une instance existante ; Factory <strong>instancie</strong> une classe.</td><td>On part d'un objet modèle déjà configuré ?</td></tr>
+    <tr><td><b>Singleton</b> vs <b>Flyweight</b></td><td>Partagent des instances.</td><td>Singleton : <strong>une seule</strong> instance de la classe. Flyweight : <strong>une instance par état intrinsèque</strong>, gérée par une fabrique (pool).</td><td>Une seule instance au total, ou une par valeur partagée ?</td></tr>
+    <tr><td><b>Adapter</b> vs <b>Facade</b></td><td>Enveloppent du code existant.</td><td>Adapter <strong>convertit</strong> vers une interface <strong>imposée</strong> (Target), souvent une seule classe. Facade <strong>simplifie</strong> tout un sous-système avec une interface nouvelle.</td><td>Faut-il respecter une interface déjà attendue par le client ?</td></tr>
+    <tr><td><b>Adapter</b> vs <b>Bridge</b></td><td>Délèguent à un objet « implémentation ».</td><td>Adapter : <strong>après coup</strong>, réparer une incompatibilité. Bridge : <strong>dès la conception</strong>, séparer deux hiérarchies.</td><td>Les classes existent déjà et ne collent pas ?</td></tr>
+    <tr><td><b>Decorator</b> vs <b>Proxy</b></td><td>Même interface que l'objet enveloppé, délégation.</td><td>Decorator <strong>ajoute</strong> des comportements, empilables, choisis par le client. Proxy <strong>contrôle l'accès</strong> (paresseux, droits, distant), gère souvent lui-même la création du réel.</td><td>On enrichit le résultat, ou on filtre / retarde l'accès ?</td></tr>
+    <tr><td><b>Adapter</b> vs <b>Decorator</b></td><td>Enveloppent un objet.</td><td>Adapter <strong>change</strong> l'interface ; Decorator la <strong>garde</strong> et ajoute du comportement.</td><td>L'interface vue par le client change-t-elle ?</td></tr>
+    <tr><td><b>Composite</b> vs <b>Decorator</b></td><td>Composition récursive, même interface Composant.</td><td>Composite : un nœud a <strong>plusieurs</strong> enfants (arbre), il <strong>agrège</strong>. Decorator : <strong>un seul</strong> composant enveloppé (chaîne), il <strong>enrichit</strong>.</td><td>Arbre partie-tout ou chaîne d'options ?</td></tr>
+    <tr><td><b>Facade</b> vs <b>Proxy</b></td><td>Intermédiaire entre le client et le reste.</td><td>Facade : interface <strong>différente et plus simple</strong> devant <strong>plusieurs</strong> classes. Proxy : <strong>même</strong> interface devant <strong>un</strong> objet.</td><td>Même interface que l'objet réel ?</td></tr>
+    <tr><td><b>SRP</b> vs <b>ISP</b></td><td>« Petit et ciblé ».</td><td>SRP parle des <strong>classes</strong> (une responsabilité). ISP parle des <strong>interfaces</strong>, vues du client (pas de méthodes inutiles imposées).</td><td>Le problème est dans l'implémentation ou dans le contrat ?</td></tr>
+    <tr><td><b>OCP</b> vs <b>DIP</b></td><td>Passent par des abstractions.</td><td>OCP : le <strong>but</strong> (étendre sans modifier). DIP : le <strong>moyen</strong> (dépendre d'interfaces, pas de concret).</td><td>On décrit l'objectif ou la direction des dépendances ?</td></tr>
+    <tr><td><b>Cohésion</b> vs <b>Couplage</b></td><td>Critères de qualité.</td><td>Cohésion : <strong>dans</strong> une classe, ses éléments servent un même but (on la veut <strong>forte</strong>). Couplage : <strong>entre</strong> classes, leur dépendance (on le veut <strong>faible</strong>).</td><td>On regarde l'intérieur d'une classe ou les liens entre classes ?</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="h-num">S · 4</span>Les ponts</h2>
+  <div class="two-col">
+    <div class="box box-prop" style="margin:0"><span class="box-label">DIP → création</span><p>Ne plus faire <span class="fx">new Concret()</span> dans le code de haut niveau : les fabriques sont l'outil pour respecter DIP.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">OCP → Decorator / Composite</span><p>Nouveau supplément, nouveau type de nœud : une classe de plus, zéro modification du code existant.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">Composition &gt; héritage</span><p>Adapter (objet), Bridge, Decorator, Proxy, Composite délèguent à un objet contenu : remplaçable à l'exécution, encapsulation respectée.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">Patrons combinés</span><p>Abstract Factory en Singleton, créations via Factory Method ; Flyweight + fabrique ; Composite parcouru par des Decorators.</p></div>
+  </div>
+
+  <h2><span class="h-num">S · 5</span>Quiz — quel patron ?</h2>
+  <div id="quiz"></div>
+
+  <h2><span class="h-num">S · 6</span>Auto-test express</h2>
+  <p style="text-align:center;font-style:italic">Clique sur une carte pour la retourner.</p>
+  <div class="flash-grid" id="flash"></div>
+
+  <h2><span class="h-num">S · 7</span>Check-list avant le DS</h2>
+  <dl class="kv">
+    <dt>À savoir énoncer</dt><dd>Définition de génie logiciel, design pattern, bon patron · cohésion / couplage · 5 symptômes · les 5 principes SOLID (énoncé exact) · intention de chacun des 12 patrons · participants · conséquences (avantages et limites).</dd>
+    <dt>À savoir faire</dt><dd>Repérer et corriger une violation SOLID en code Java · choisir le patron d'un énoncé · diagramme de classes avec rôles et bonnes flèches · code Java de Singleton, Builder, Decorator, Adapter, Composite · diagramme de séquence d'une opération récursive.</dd>
+    <dt>Phrases-clés</dt><dd>« une seule raison de changer » · « ouvert à l'extension, fermé à la modification » · « dépendre d'abstractions » · « laisser aux sous-classes le choix » · « familles d'objets » · « même processus, représentations différentes » · « convertir une interface » · « découpler abstraction et implémentation » · « traiter uniformément » · « attacher dynamiquement » · « interface unifiée » · « intrinsèque / extrinsèque » · « représentant ».</dd>
+    <dt>Pièges classiques</dt><dd>Confondre Factory Method / Abstract Factory · Adapter / Facade · Decorator / Proxy · oublier que le Décorateur <strong>hérite ET contient</strong> le Composant · Singleton non thread-safe · flèche d'héritage vs réalisation · oublier la multiplicité 0..* du Composite.</dd>
+  </dl>
+</section>
+</main>
+
+<footer>
+  <div class="footer-ornament">◆ ◆ ◆</div>
+  v1 · 27 octobre 2026 · Sources : Analyse &amp; conception des logiciels GL3 — 1. Introduction, 2. Principes SOLID, 3. Creational patterns, 4. Structural patterns. Comportement hors périmètre.<br>
+  Fait par Adam Bhouri avec Claude · INSAT GL3
+</footer>
+
+<script>
+(function(){
+/* ─── Tabs ─── */
+const btns=document.querySelectorAll('.tab-btn'),tabs=document.querySelectorAll('.tab-content');
+function show(id,scroll){btns.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));tabs.forEach(t=>t.classList.toggle('active',t.id===id));
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+  if(scroll!==false)window.scrollTo({top:document.querySelector('.tabs-wrapper').offsetTop-4,behavior:'smooth'})}
+btns.forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
+const h=(location.hash||'').slice(1);
+if(h){if(document.getElementById(h)&&document.getElementById(h).classList.contains('tab-content'))show(h,false);
+  else if(/^m\d+$/.test(h)){show('methods',false);setTimeout(()=>document.getElementById(h)&&document.getElementById(h).scrollIntoView(),50)}}
+document.querySelectorAll('.method-index a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth',block:'start'})}));
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ─── UML viewer ─── */
+const U={
+ crea:{
+  'Singleton':{b:[['cl','Client','c',['+ main()'],60,150],['s','Singleton','c',['- instance : Singleton','- Singleton()','+ getInstance() : Singleton','+ operation()'],330,120]],e:[['cl','s','dep','getInstance()']],
+    n:'Constructeur privé + attribut et méthode statiques : getInstance() renvoie toujours le même objet.'},
+  'Factory Method':{b:[['cr','Creator','a',['+ factoryMethod() : Product','+ operation()'],40,40],['cc','ConcreteCreator','c',['+ factoryMethod() : Product'],40,250],['p','Product','i',['+ use()'],460,40],['cp','ConcreteProduct','c',['+ use()'],460,250]],
+    e:[['cc','cr','inh'],['cp','p','impl'],['cc','cp','dep','crée'],['cr','p','dep','utilise']],n:'Le Creator utilise factoryMethod() sans savoir quelle classe sera créée : chaque ConcreteCreator choisit.'},
+  'Abstract Factory':{b:[['af','AbstractFactory','i',['+ createA() : ProductA','+ createB() : ProductB'],20,20],['f1','Factory1','c',['+ createA()','+ createB()'],20,180],['f2','Factory2','c',['+ createA()','+ createB()'],190,260],
+      ['pa','ProductA','i',[],330,20],['a1','ProductA1','c',[],280,140],['a2','ProductA2','c',[],420,140],['pb','ProductB','i',[],600,20],['b1','ProductB1','c',[],540,140],['b2','ProductB2','c',[],690,140]],
+    e:[['f1','af','impl'],['f2','af','impl'],['a1','pa','impl'],['a2','pa','impl'],['b1','pb','impl'],['b2','pb','impl'],['f1','a1','dep',''],['f1','b1','dep',''],['f2','a2','dep',''],['f2','b2','dep','']],
+    n:'Une fabrique concrète par famille (1 ou 2) ; chacune crée des produits cohérents entre eux.'},
+  'Builder':{b:[['cl','Client','c',[],20,20],['d','Directeur','c',['- monteur : Monteur','+ construire()'],20,170],['m','Monteur','a',['+ construirePartieA()','+ construirePartieB()','+ getResultat() : Produit'],300,40],['mc','MonteurConcret','c',['+ construirePartieA()','+ construirePartieB()','+ getResultat() : Produit'],300,240],['p','Produit','c',['- partieA','- partieB'],600,250]],
+    e:[['d','m','agg','monteur'],['mc','m','inh'],['mc','p','dep','construit'],['cl','d','dep','construire()'],['cl','mc','dep','crée']],n:'Le Directeur fixe l\'ordre des étapes ; le MonteurConcret fixe la représentation.'},
+  'Prototype':{b:[['cl','Client','c',['- proto : Prototype','+ operation()'],20,40],['p','Prototype','i',['+ clone() : Prototype'],330,40],['a','ConcretePrototypeA','c',['+ clone()'],210,240],['b','ConcretePrototypeB','c',['+ clone()'],470,240]],
+    e:[['cl','p','assoc','proto.clone()'],['a','p','impl'],['b','p','impl']],n:'Le client copie un modèle sans connaître sa classe concrète.'}
+ },
+ stru:{
+  'Adapter':{b:[['cl','Client','c',[],20,60],['t','Target','i',['+ request()'],260,40],['ad','Adapter','c',['- adaptee : Adaptee','+ request()'],260,230],['ae','Adaptee','c',['+ specificRequest()'],540,230]],
+    e:[['cl','t','assoc'],['ad','t','impl'],['ad','ae','assoc','adaptee.specificRequest()']],n:'Version par composition (adaptateur d\'objet). Par héritage : Adapter hérite d\'Adaptee au lieu de le contenir.'},
+  'Bridge':{b:[['a','Abstraction','a',['- impl : Implementor','+ operation()'],30,40],['r','RefinedAbstraction','c',['+ operation()'],30,250],['i','Implementor','i',['+ operationImpl()'],440,40],['ia','ConcreteImplA','c',['+ operationImpl()'],330,250],['ib','ConcreteImplB','c',['+ operationImpl()'],560,250]],
+    e:[['a','i','agg','impl'],['r','a','inh'],['ia','i','impl'],['ib','i','impl']],n:'Deux hiérarchies indépendantes reliées par une référence (le « pont »). Ex. Shape ◇─ Color.'},
+  'Composite':{b:[['cl','Client','c',[],20,40],['c','Component','a',['+ operation()','+ add(c : Component)','+ remove(c : Component)','+ getChild(i)'],280,20],['l','Leaf','c',['+ operation()'],110,260],['co','Composite','c',['- enfants : List<Component>','+ operation()','+ add(c)','+ remove(c)'],440,230]],
+    e:[['cl','c','assoc'],['l','c','inh'],['co','c','inh',null,-30],['co','c','agg','0..*',40]],n:'Composite hérite de Component ET contient des Components : operation() délègue à tous les enfants.'},
+  'Decorator':{b:[['c','Composant','a',['+ operation()'],280,20],['cc','ComposantConcret','c',['+ operation()'],50,200],['d','Decorateur','a',['- composant : Composant','+ operation()'],440,160],['da','DecorateurConcretA','c',['+ operation()'],330,300],['db','DecorateurConcretB','c',['+ operation()','+ ajout()'],560,300]],
+    e:[['cc','c','inh'],['d','c','inh',null,-30],['d','c','agg','composant',40],['da','d','inh'],['db','d','inh']],n:'Le Décorateur hérite de Composant (même interface) et en contient un (délégation) : on peut empiler.'},
+  'Facade':{b:[['cl','Client','c',[],30,40],['f','Facade','c',['+ operationSimple()'],300,40],['a','SousSystemeA','c',['+ a1()'],60,260],['b','SousSystemeB','c',['+ b1()'],300,260],['s','SousSystemeC','c',['+ c1()'],540,260]],
+    e:[['cl','f','assoc'],['f','a','assoc'],['f','b','assoc'],['f','s','assoc'],['a','b','dep','']],n:'Le client ne voit que la façade, qui délègue aux classes du sous-système.'},
+  'Flyweight':{b:[['cl','Client','c',[],20,40],['fa','FlyweightFactory','c',['- pool : Map<Cle,Flyweight>','+ getFlyweight(cle)'],20,210],['fw','Flyweight','i',['+ operation(etatExtrinseque)'],360,40],['cf','ConcreteFlyweight','c',['- etatIntrinseque','+ operation(ext)'],280,250],['uf','UnsharedFlyweight','c',['- etatComplet','+ operation(ext)'],530,250]],
+    e:[['cl','fa','assoc'],['cl','fw','assoc'],['fa','fw','agg','pool'],['cf','fw','impl'],['uf','fw','impl']],n:'La fabrique retourne l\'instance partagée existante pour une clé ; l\'état extrinsèque est passé en paramètre.'},
+  'Proxy':{b:[['cl','Client','c',[],20,40],['s','Subject','i',['+ request()'],300,40],['r','RealSubject','c',['+ request()'],140,250],['p','Proxy','c',['- real : RealSubject','+ request()'],470,250]],
+    e:[['cl','s','assoc'],['r','s','impl'],['p','s','impl'],['p','r','assoc','real.request()']],n:'Même interface que l\'original ; le proxy fait ses contrôles avant / après et délègue.'}
+ }
+};
+function boxSize(b){const lines=[b[1]+'  ',...b[3],...(b[2]!=='c'?['«interface»  ']:[])];const w=Math.max(...lines.map(l=>l.length))*6.7+22;const hh=b[2]==='c'?24:36;return{w,h:hh+b[3].length*15+(b[3].length?8:2)}}
+function ray(B,px,py,dx,dy){let t=Infinity;const L=Math.hypot(dx,dy)||1;dx/=L;dy/=L;
+  if(dx>0)t=Math.min(t,(B.x+B.w-px)/dx);if(dx<0)t=Math.min(t,(B.x-px)/dx);if(dy>0)t=Math.min(t,(B.y+B.h-py)/dy);if(dy<0)t=Math.min(t,(B.y-py)/dy);return{x:px+dx*t,y:py+dy*t}}
+function clip(B,tx,ty){const cx=B.x+B.w/2,cy=B.y+B.h/2,dx=tx-cx,dy=ty-cy;if(!dx&&!dy)return{x:cx,y:cy};const sx=Math.abs(dx)>0?(B.w/2)/Math.abs(dx):Infinity,sy=Math.abs(dy)>0?(B.h/2)/Math.abs(dy):Infinity;const s=Math.min(sx,sy);return{x:cx+dx*s,y:cy+dy*s}}
+function drawUML(svg,spec,P){
+  const B={};spec.b.forEach(b=>{const s=boxSize(b);B[b[0]]={x:b[4],y:b[5],w:s.w,h:s.h,d:b}});
+  let s=`<defs>
+  <marker id="${P}tri" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="11" markerHeight="11" orient="auto"><path d="M0,0 L12,6 L0,12z" fill="#FBF8F0" stroke="#4A3F32"/></marker>
+  <marker id="${P}arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#4A3F32"/></marker>
+  <marker id="${P}dia" viewBox="0 0 14 10" refX="1" refY="5" markerWidth="13" markerHeight="10" orient="auto"><path d="M0,5 L7,0 L14,5 L7,10z" fill="#FBF8F0" stroke="#4A3F32"/></marker></defs>`;
+  spec.e.forEach(([f,t,ty,lbl,off])=>{const A=B[f],C=B[t];off=off||0;
+    const ac={x:A.x+A.w/2+off,y:A.y+A.h/2},cc={x:C.x+C.w/2+off,y:C.y+C.h/2};
+    const p1=ray(A,ac.x,ac.y,cc.x-ac.x,cc.y-ac.y),p2=ray(C,cc.x,cc.y,ac.x-cc.x,ac.y-cc.y);
+    const dash=(ty==='impl'||ty==='dep')?' d':'';
+    const me=ty==='inh'||ty==='impl'?'url(#'+P+'tri)':(ty==='assoc'||ty==='dep')?'url(#'+P+'arr)':'';
+    const ms=ty==='agg'?'url(#'+P+'dia)':'';
+    s+=`<path class="ln${dash}" d="M${p1.x},${p1.y} L${p2.x},${p2.y}"${me?` marker-end="${me}"`:''}${ms?` marker-start="${ms}"`:''}/>`;
+    if(lbl)s+=`<text class="lbl" x="${(p1.x+p2.x)/2+6}" y="${(p1.y+p2.y)/2-4}">${esc(lbl)}</text>`;});
+  Object.values(B).forEach(o=>{const [id,name,k,mem]=o.d;const cls=k==='i'?'bx if':k==='a'?'bx ab':'bx';
+    s+=`<rect class="${cls}" x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" rx="3"/>`;
+    let y=o.y+16;if(k!=='c'){s+=`<text class="st" x="${o.x+o.w/2}" y="${y}" text-anchor="middle">${k==='i'?'«interface»':'«abstract»'}</text>`;y+=13}
+    s+=`<text class="hd" x="${o.x+o.w/2}" y="${y}" text-anchor="middle"${k!=='c'?' font-style="italic"':''}>${esc(name)}</text>`;
+    if(mem.length){s+=`<line x1="${o.x}" y1="${y+6}" x2="${o.x+o.w}" y2="${y+6}" stroke="#C9BFAC"/>`;mem.forEach((m,i)=>s+=`<text x="${o.x+8}" y="${y+21+i*15}">${esc(m)}</text>`)}});
+  const maxX=Math.max(760,...Object.values(B).map(o=>o.x+o.w+10)),maxY=Math.max(...Object.values(B).map(o=>o.y+o.h+10));
+  svg.setAttribute('viewBox',`0 0 ${maxX} ${maxY}`);svg.innerHTML=s;
+}
+document.querySelectorAll('.uml-viewer').forEach(v=>{
+  const set=U[v.dataset.set],bt=v.querySelector('.uv-btns'),svg=v.querySelector('svg');
+  const note=document.createElement('p');note.style.cssText='font-size:14.5px;margin:10px 0 0;font-style:italic;color:var(--ink-soft)';v.appendChild(note);
+  Object.keys(set).forEach((k,i)=>{const b=document.createElement('button');b.className='btn'+(i===0?' btn-active':'');b.textContent=k;b.onclick=()=>{bt.querySelectorAll('.btn').forEach(x=>x.classList.toggle('btn-active',x===b));drawUML(svg,set[k],v.dataset.set);note.textContent=set[k].n};bt.appendChild(b)});
+  const k0=Object.keys(set)[0];drawUML(svg,set[k0],v.dataset.set);note.textContent=set[k0].n;
+});
+
+/* ─── Café décorateur ─── */
+(function(){
+  const $=id=>document.getElementById(id);if(!$('coffee'))return;
+  const BASES={Colombia:1.0,Expresso:1.2,Deca:0.8},SUPS={Lait:0.2,Sucre:0.2,Caramel:0.4,Chantilly:0.8};
+  let base='Expresso',sups=['Sucre'];
+  const f=x=>x.toFixed(1).replace('.',',');
+  function render(){
+    $('cf-base').innerHTML='<span style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--ink-faint);margin-right:6px">BASE</span>'+Object.keys(BASES).map(b=>`<span class="chip${b===base?' on':''}" data-b="${b}">${b} · ${f(BASES[b])} D</span>`).join('');
+    $('cf-sup').innerHTML='<span style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--ink-faint);margin-right:6px">+ SUPPLÉMENT</span>'+Object.keys(SUPS).map(s=>`<span class="chip" data-s="${s}">+ ${s} · ${f(SUPS[s])}</span>`).join('');
+    $('cf-base').querySelectorAll('[data-b]').forEach(c=>c.onclick=()=>{base=c.dataset.b;render()});
+    $('cf-sup').querySelectorAll('[data-s]').forEach(c=>c.onclick=()=>{if(sups.length<6)sups.push(c.dataset.s);render()});
+    let html=`<div class="lyr"><b>${base}</b> <span style="color:var(--ink-faint)">— ComposantConcret, cout() = ${f(BASES[base])}</span></div>`;
+    sups.forEach(s=>{html=`<div class="lyr"><b>${s}</b> <span style="color:var(--ink-faint)">— DécorateurConcret, cout() = boisson.cout() + ${f(SUPS[s])}</span>${html}</div>`});
+    $('cf-nest').innerHTML=html;
+    let expr=`<span class="k">new</span> ${base}()`;sups.forEach(s=>expr=`<span class="k">new</span> ${s}(${expr})`);
+    $('cf-code').innerHTML=`Boisson b = ${expr};\nSystem.out.println(b.getDescription() + <span class="s">" : "</span> + b.cout());`;
+    let tot=BASES[base],lines=[`<div class="viz-stat"><span class="viz-stat-key">${base}.cout()</span><span class="viz-stat-val">${f(tot)}</span></div>`];
+    sups.forEach(s=>{tot+=SUPS[s];lines.push(`<div class="viz-stat"><span class="viz-stat-key">${s}.cout() = … + ${f(SUPS[s])}</span><span class="viz-stat-val">${f(tot)}</span></div>`)});
+    $('cf-calc').innerHTML=lines.join('')+`<p style="margin:10px 0 0;font-size:13.5px">Total <b>${f(tot)} D</b>. L'appel part du décorateur le plus <strong>extérieur</strong> et descend jusqu'au café, puis les prix s'additionnent en remontant.</p>`;
+  }
+  $('cf-undo').onclick=()=>{sups.pop();render()};$('cf-reset').onclick=()=>{sups=[];render()};
+  document.querySelectorAll('#coffee [data-ex]').forEach(b=>b.onclick=()=>{const p=b.dataset.ex.split('|');base=p[0];sups=p.slice(1);render()});
+  render();
+})();
+
+/* ─── Quiz ─── */
+const Q=[
+ ['Une application doit utiliser une librairie de paiement tierce dont les méthodes ne correspondent pas à l\'interface PaiementService déjà utilisée partout.','Adapter',['Facade','Adapter','Proxy','Bridge'],'Interface existante incompatible + interface cible imposée → Adapter.'],
+ ['Un éditeur de texte doit pouvoir ajouter bordure, ascenseur, ombre… à n\'importe quelle fenêtre, en combinant librement.','Decorator',['Composite','Decorator','Builder','Bridge'],'Responsabilités combinables ajoutées à l\'exécution → Decorator.'],
+ ['L\'accès à la base de données doit passer par un seul objet partagé dans toute l\'application.','Singleton',['Singleton','Flyweight','Facade','Prototype'],'Une seule instance + accès global → Singleton.'],
+ ['Une interface graphique doit supporter les thèmes Clair et Sombre : boutons, menus et fenêtres d\'un même thème doivent être cohérents.','Abstract Factory',['Factory Method','Builder','Abstract Factory','Prototype'],'Familles de produits cohérents → Abstract Factory.'],
+ ['Un menu contient des items et des sous-menus, qui contiennent eux-mêmes des items et des sous-menus ; on veut afficher() n\'importe quel élément de la même façon.','Composite',['Decorator','Composite','Facade','Flyweight'],'Arborescence + traitement uniforme → Composite.'],
+ ['Un jeu affiche 500 000 arbres ; le modèle 3D et la texture sont identiques pour chaque espèce, seule la position change.','Flyweight',['Prototype','Proxy','Flyweight','Singleton'],'Beaucoup d\'objets, état commun partagé (intrinsèque) → Flyweight.'],
+ ['Une image haute résolution ne doit être chargée depuis le disque que lorsqu\'on l\'affiche réellement.','Proxy',['Proxy','Decorator','Adapter','Builder'],'Création différée avec la même interface → Proxy virtuel.'],
+ ['Un rapport est construit section par section (en-tête, corps, pied) et peut être produit en PDF ou en HTML avec la même séquence d\'étapes.','Builder',['Abstract Factory','Builder','Template','Composite'],'Même processus de construction, représentations différentes → Builder.'],
+ ['Un module vidéo complexe (codec, buffer, audio, sous-titres) doit offrir au client une seule méthode lire(fichier).','Facade',['Adapter','Facade','Proxy','Bridge'],'Simplifier un sous-système → Facade.'],
+ ['Des formes (cercle, carré) doivent être dessinées avec différents moteurs (OpenGL, SVG) sans créer une classe par combinaison.','Bridge',['Bridge','Adapter','Decorator','Abstract Factory'],'Deux dimensions indépendantes → Bridge.'],
+ ['Un framework de documents laisse chaque application décider du type de document créé par nouveauDocument().','Factory Method',['Factory Method','Singleton','Prototype','Abstract Factory'],'Les sous-classes choisissent la classe à instancier → Factory Method.'],
+ ['Dans un logiciel de dessin, « dupliquer » doit copier la forme sélectionnée sans connaître sa classe exacte.','Prototype',['Builder','Prototype','Flyweight','Factory Method'],'Créer par copie d\'une instance → Prototype.']
+];
+const qz=document.getElementById('quiz');
+if(qz){qz.innerHTML=Q.map((q,i)=>`<div class="scn"><p><strong>${i+1}.</strong> ${q[0]}</p><div class="opts">${q[2].map(o=>`<span class="chip" data-q="${i}" data-o="${o}">${o}</span>`).join('')}</div><div class="fb" id="fb${i}"></div></div>`).join('');
+  qz.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{const q=Q[+c.dataset.q],ok=c.dataset.o===q[1],fb=document.getElementById('fb'+c.dataset.q);
+    c.parentNode.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.o===q[1]&&ok));
+    fb.className='fb '+(ok?'ok':'ko');fb.textContent=(ok?'✓ ':'✗ Pas tout à fait. ')+q[3]})}
+
+/* ─── Flashcards ─── */
+const CARDS=[
+ ['SRP','Une classe = une seule raison de changer.'],['OCP','Ouvert à l\'extension, fermé à la modification.'],['LSP','Un sous-type doit pouvoir remplacer son type sans casser le programme.'],
+ ['ISP','Aucun client ne dépend de méthodes qu\'il n\'utilise pas.'],['DIP','Haut et bas niveau dépendent d\'abstractions.'],['Bonne conception','Cohésion forte + couplage faible.'],
+ ['Singleton : 3 ingrédients','Constructeur privé · attribut static · getInstance() static.'],['Factory Method vs Abstract Factory','Méthode héritée, 1 produit · objet fabrique, famille de produits.'],
+ ['Builder : qui fait quoi ?','Directeur = ordre des étapes · Monteur concret = construit et rend le produit.'],['Décorateur','Hérite de Composant ET contient un Composant.'],
+ ['Façade vs Adaptateur','Façade simplifie · Adaptateur convertit vers une interface existante.'],['Poids-mouche','Partager l\'intrinsèque, passer l\'extrinsèque en paramètre.']
+];
+const fg=document.getElementById('flash');
+if(fg){fg.innerHTML=CARDS.map(c=>'<div class="flash" tabindex="0"><div class="flash-in"><div class="flash-f">'+c[0]+'</div><div class="flash-b">'+c[1]+'</div></div></div>').join('');
+fg.querySelectorAll('.flash').forEach(f=>{f.onclick=()=>f.classList.toggle('flip');f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f.classList.toggle('flip')}}})}
+})();
+</script>
+</body>
+</html>

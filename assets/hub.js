@@ -224,7 +224,7 @@
       if (page && page.path) metadata.set(normalizePath(page.path), page);
     });
 
-    return pages.map(function (page) {
+    const merged = pages.map(function (page) {
       const match = metadata.get(normalizePath(page.path));
       if (!match) return page;
       return Object.assign({}, page, {
@@ -233,6 +233,13 @@
         topics: match.topics || page.topics
       });
     });
+
+    // Always keep pages listed locally (HUB_FALLBACK_PAGES), even if GitHub doesn't have them yet.
+    const known = new Set(merged.map(function (page) { return normalizePath(page.path); }));
+    fallbackPages.forEach(function (page) {
+      if (page && page.path && !known.has(normalizePath(page.path))) merged.push(page);
+    });
+    return merged;
   }
 
   function normalizePath(path) {

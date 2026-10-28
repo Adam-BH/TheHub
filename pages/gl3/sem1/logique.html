@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="version" content="v1">
+<title>Révision Logique Formelle · INSAT GL3 · Pré-DS</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4EFE4;--bg-deep:#ECE5D5;--bg-card:#FBF8F0;--ink:#1F1A14;--ink-soft:#4A3F32;--ink-faint:#8A7D6B;
+  --burgundy:#7B2D26;--burgundy-light:#A04438;--teal:#2C5664;--teal-light:#4A7A88;--gold:#B8924A;--gold-light:#E8C77B;
+  --rule:#C9BFAC;--rule-soft:#DDD3BF;--highlight:#F7E8B8;--shadow:rgba(80,60,30,.08);
+  --math:'Newsreader','Cambria Math','STIX Two Math',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);background-image:radial-gradient(circle at 20% 10%,rgba(184,146,74,.04) 0%,transparent 50%),radial-gradient(circle at 80% 90%,rgba(123,45,38,.04) 0%,transparent 50%);color:var(--ink);font-family:'Newsreader',Georgia,serif;font-size:17px;line-height:1.65;min-height:100vh;padding:0 0 80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+main,header,footer{position:relative;z-index:1}
+
+/* hub back */
+.hub-back{position:absolute;top:16px;left:16px;z-index:80;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 12px;border:1px solid var(--rule);border-radius:6px;background:rgba(251,248,240,.88);color:var(--ink);box-shadow:0 10px 28px -22px rgba(31,26,20,.42);font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:500;line-height:1;text-decoration:none;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(8px);transition:transform .15s,border-color .15s}
+.hub-back:hover{transform:translateY(-1px);border-color:var(--burgundy)}
+@media(max-width:560px){.hub-back{top:10px;left:10px;min-height:34px;padding:6px 10px;font-size:.66rem}}
+
+header{padding:64px 32px 24px;max-width:1200px;margin:0 auto;text-align:center;border-bottom:1px solid var(--rule)}
+header::after{content:'◆ ◆ ◆';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 14px;font-size:10px;color:var(--gold);letter-spacing:8px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--burgundy);margin-bottom:12px;font-weight:500}
+h1{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(40px,6vw,68px);line-height:1;letter-spacing:-.01em;margin-bottom:8px}
+h1 em{font-style:italic;color:var(--burgundy)}
+.subtitle{font-style:italic;font-size:19px;color:var(--ink-soft);font-weight:300;margin-top:8px}
+.ds-strip{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+
+.tabs-wrapper{max-width:1200px;margin:32px auto 0;padding:0 32px;position:sticky;top:0;z-index:50;background:var(--bg)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:32px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{font-family:'Newsreader',serif;font-size:16px;font-weight:500;padding:14px 20px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--ink-faint);cursor:pointer;transition:all .25s;margin-bottom:-1px;white-space:nowrap}
+.tab-btn .tab-num{font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;opacity:.6}
+.tab-btn:hover{color:var(--ink);background:rgba(184,146,74,.08)}
+.tab-btn.active{color:var(--burgundy);border-bottom-color:var(--burgundy)}
+.tab-btn.active .tab-num{opacity:1}
+
+.tab-content{display:none;max-width:1200px;margin:0 auto;padding:0 32px;animation:fadeIn .4s ease}
+.tab-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){header{padding:64px 16px 24px}.tabs-wrapper,.tab-content{padding:0 16px}.tab-btn{padding:12px 12px;font-size:15px}}
+
+h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:38px;margin:48px 0 8px;letter-spacing:-.01em;line-height:1.1}
+h2 .h-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);letter-spacing:.15em;display:block;margin-bottom:6px;text-transform:uppercase}
+h2::after{content:'';display:block;width:60px;height:1px;background:var(--burgundy);margin-top:12px}
+h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:26px;color:var(--burgundy);margin:32px 0 12px;font-style:italic}
+h4{font-weight:600;font-size:18px;color:var(--teal);margin:20px 0 8px}
+p{margin-bottom:14px;color:var(--ink-soft)}
+p strong,li strong,td strong{color:var(--ink);font-weight:600}
+ul,ol{padding-left:24px;margin-bottom:14px;color:var(--ink-soft)}
+li{margin-bottom:6px}
+
+.box{background:var(--bg-card);border-left:3px solid var(--rule);padding:18px 22px;margin:16px 0;border-radius:0 4px 4px 0;box-shadow:0 1px 2px var(--shadow)}
+.box>*:last-child{margin-bottom:0}
+.box-def{border-left-color:var(--teal)}.box-thm{border-left-color:var(--burgundy)}.box-prop{border-left-color:var(--gold)}
+.box-remark{border-left-color:var(--ink-faint);background:rgba(138,125,107,.05)}
+.box-method{border-left-color:var(--burgundy);background:linear-gradient(180deg,rgba(123,45,38,.04),transparent)}
+.box-ex{border-left-color:var(--teal-light);background:linear-gradient(180deg,rgba(44,86,100,.04),transparent)}
+.box-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;display:inline-block;margin-bottom:8px;font-weight:500;padding:2px 8px;border-radius:2px}
+.box-def .box-label{background:var(--teal);color:var(--bg-card)}.box-thm .box-label{background:var(--burgundy);color:var(--bg-card)}
+.box-prop .box-label{background:var(--gold);color:var(--ink)}.box-remark .box-label{background:var(--ink-faint);color:var(--bg-card)}
+.box-method .box-label{background:var(--burgundy);color:var(--bg-card)}.box-ex .box-label{background:var(--teal-light);color:var(--bg-card)}
+.src{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--ink-faint);float:right;margin-left:12px}
+
+/* formulas */
+.fx{font-family:var(--math);font-style:italic;color:var(--ink);white-space:nowrap}
+.formula{font-family:var(--math);font-size:20px;text-align:center;margin:14px 0;color:var(--ink);overflow-x:auto;padding:4px 0}
+.formula .c{font-style:normal;color:var(--burgundy)}
+.steps-eq{font-family:var(--math);font-size:17px;margin:10px 0 14px;overflow-x:auto}
+.steps-eq div{display:grid;grid-template-columns:28px 1fr auto;gap:10px;padding:5px 0;border-bottom:1px dashed var(--rule-soft);align-items:baseline}
+.steps-eq div:last-child{border-bottom:none}
+.steps-eq .eq{color:var(--gold);font-weight:600}
+.steps-eq .why{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;white-space:nowrap}
+@media(max-width:600px){.steps-eq div{grid-template-columns:20px 1fr}.steps-eq .why{grid-column:2}}
+
+/* tables */
+.tt-wrap{overflow-x:auto;margin:14px 0}
+table.tt{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--bg-card);margin:0 auto;min-width:240px}
+table.tt th,table.tt td{border:1px solid var(--rule-soft);padding:6px 12px;text-align:center}
+table.tt th{background:var(--bg-deep);color:var(--ink);font-weight:600;font-family:var(--math);font-size:15px;font-style:italic;white-space:nowrap}
+table.tt td.T{color:var(--teal);font-weight:600}table.tt td.F{color:var(--burgundy-light)}
+table.tt tr.hit td{background:rgba(247,232,184,.55)}
+table.tt th.res,table.tt td.res{border-left:2px solid var(--burgundy)}
+table.law{border-collapse:collapse;width:100%;font-size:15px;background:var(--bg-card)}
+table.law td{border-bottom:1px dashed var(--rule-soft);padding:8px 10px;vertical-align:top}
+table.law td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);width:150px}
+table.law td.fx{white-space:normal}
+
+.kv{display:grid;grid-template-columns:minmax(180px,auto) 1fr;gap:10px 24px;margin:16px 0;padding:16px 0;border-top:1px solid var(--rule-soft);border-bottom:1px solid var(--rule-soft)}
+.kv dt{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;padding-top:2px}
+.kv dd{color:var(--ink)}
+@media(max-width:700px){.kv{grid-template-columns:1fr}.kv dd{margin-bottom:10px}}
+
+/* viz */
+.viz-card{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:24px;margin:28px 0;box-shadow:0 2px 8px var(--shadow)}
+.viz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--rule-soft);gap:16px;flex-wrap:wrap}
+.viz-title{font-family:'Instrument Serif',serif;font-size:24px;color:var(--burgundy);font-style:italic}
+.viz-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);background:rgba(184,146,74,.12);padding:4px 10px;border-radius:2px}
+.viz-body{display:grid;grid-template-columns:1fr 290px;gap:24px;align-items:start}
+@media(max-width:860px){.viz-body{grid-template-columns:1fr}.viz-card{padding:16px}}
+.viz-controls{background:var(--bg-deep);padding:16px;border-radius:4px;font-size:14px}
+.viz-controls h5{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;font-weight:500}
+.viz-controls h5:not(:first-child){margin-top:16px}
+.viz-stat{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--rule-soft);font-family:'JetBrains Mono',monospace;font-size:12.5px}
+.viz-stat:last-child{border-bottom:none}.viz-stat-key{color:var(--ink-soft)}.viz-stat-val{color:var(--burgundy);font-weight:600;text-align:right}
+.viz-svg{width:100%;height:auto;background:#FCFAF3;border:1px solid var(--rule-soft);border-radius:4px;display:block}
+.viz-svg text:not([font-family]){font-family:'JetBrains Mono',monospace}.viz-svg text:not([font-size]){font-size:12px}.viz-svg text:not([fill]){fill:var(--ink-soft)}
+.fx-input{width:100%;font-family:var(--math);font-size:20px;padding:10px 12px;border:1px solid var(--rule);background:#FCFAF3;color:var(--ink);border-radius:4px;outline:none}
+.fx-input:focus{border-color:var(--burgundy)}
+.fx-err{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--burgundy-light);min-height:18px;margin-top:6px}
+.btn-group{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;padding:7px 12px;border:1px solid var(--rule);background:var(--bg-card);color:var(--ink-soft);cursor:pointer;border-radius:3px;transition:all .15s;font-weight:500}
+.btn:hover,.btn-active{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
+.btn:disabled{opacity:.4;cursor:default;background:var(--bg-card);color:var(--ink-soft);border-color:var(--rule)}
+.btn-sym{font-family:var(--math);font-size:16px;min-width:38px;text-transform:none}
+.verdict{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;margin:2px 0 6px}
+.verdict.v-valid{color:var(--teal)}.verdict.v-sat{color:var(--gold)}.verdict.v-unsat{color:var(--burgundy)}
+.canon{font-family:var(--math);font-size:15px;color:var(--ink);word-break:break-word;background:var(--bg-card);border:1px solid var(--rule-soft);border-radius:3px;padding:8px 10px;margin-top:4px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:10px}
+.legend-item{display:flex;align-items:center;gap:6px}.legend-swatch{width:14px;height:14px;border-radius:3px;border:1px solid var(--rule)}
+
+/* grid toggles (LP1 lab) */
+.pgrid{border-collapse:separate;border-spacing:6px;margin:6px auto}
+.pgrid th{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);font-weight:500;padding:2px 6px}
+.pgrid td button{width:54px;height:44px;border-radius:5px;border:1px solid var(--rule);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.pgrid td button.on{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
+.pgrid td button.off{background:#FCFAF3;color:var(--burgundy-light)}
+.pgrid td button.wit{box-shadow:0 0 0 3px var(--gold-light)}
+.q-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;margin:6px 0;background:var(--bg-card);border:1px solid var(--rule-soft);border-radius:4px;cursor:pointer;transition:border-color .15s}
+.q-row:hover,.q-row.sel{border-color:var(--burgundy)}
+.q-row .fx{font-size:16px}
+.badge{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px}
+.badge.T{background:var(--teal);color:var(--bg-card)}.badge.F{background:var(--burgundy);color:var(--bg-card)}
+.explain{font-size:14.5px;color:var(--ink-soft);margin-top:10px;padding:10px 12px;border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(247,232,184,.5),transparent)}
+
+/* stepper */
+.stepper .st-step{background:var(--bg-card);border-left:3px solid var(--rule);padding:10px 16px;margin:8px 0;border-radius:0 4px 4px 0;transition:all .3s;opacity:.35}
+.stepper .st-step.active{border-left-color:var(--burgundy);opacity:1;background:linear-gradient(90deg,rgba(123,45,38,.06),transparent)}
+.stepper .st-step.done{opacity:.8;border-left-color:var(--teal)}
+.st-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--ink-faint);text-transform:uppercase}
+.st-f{font-family:var(--math);font-size:18px;color:var(--ink);overflow-x:auto;white-space:nowrap;padding:2px 0}
+.st-why{font-size:14px;color:var(--ink-soft);font-style:italic}
+
+/* method cards */
+.method-card{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:24px;margin:20px 0;box-shadow:0 2px 6px var(--shadow);position:relative;overflow:hidden}
+.method-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--burgundy),var(--gold))}
+.method-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.method-question{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;color:var(--ink);margin-bottom:16px;line-height:1.3}
+.method-question::before{content:'Q.';font-family:'JetBrains Mono',monospace;font-size:12px;font-style:normal;color:var(--burgundy);margin-right:10px;letter-spacing:.1em;vertical-align:super}
+.method-steps{counter-reset:step;list-style:none;padding:0;margin-bottom:0}
+.method-steps>li{counter-increment:step;padding:10px 0 10px 44px;border-bottom:1px dashed var(--rule-soft);position:relative;color:var(--ink-soft)}
+.method-steps>li:last-child{border-bottom:none}
+.method-steps>li::before{content:counter(step,decimal-leading-zero);position:absolute;left:0;top:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);font-weight:600;width:32px;text-align:right;padding-right:8px;border-right:1px solid var(--rule-soft)}
+.method-tip{background:linear-gradient(90deg,var(--highlight),transparent);padding:10px 14px;margin-top:14px;border-radius:3px;font-size:14.5px;font-style:italic;color:var(--ink-soft);border-left:2px solid var(--gold)}
+.method-tip::before{content:'✦ Astuce  ';font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;letter-spacing:.15em;color:var(--gold);font-weight:600}
+details.sol{margin-top:12px;border:1px solid var(--rule-soft);border-radius:4px;background:#FCFAF3}
+details.sol summary{cursor:pointer;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);list-style:none}
+details.sol summary::before{content:'▸ ';}
+details.sol[open] summary::before{content:'▾ ';}
+details.sol>div{padding:4px 14px 12px}
+.method-index{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin:20px 0 8px}
+.method-index a{display:block;padding:10px 12px;border:1px solid var(--rule-soft);border-radius:4px;background:var(--bg-card);color:var(--ink-soft);text-decoration:none;font-size:14.5px;transition:border-color .15s}
+.method-index a:hover{border-color:var(--burgundy);color:var(--ink)}
+.method-index a span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);margin-right:6px}
+
+/* flow / synth */
+.flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
+.flow-node{background:var(--bg-card);border:1px solid var(--rule);padding:18px;border-radius:4px}
+.flow-node.future{border-style:dashed;opacity:.75}
+.flow-node-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--burgundy);margin-bottom:8px;font-style:italic}
+.flow-node-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 9px;border-radius:99px;background:var(--bg-deep);color:var(--ink-soft);margin:2px 4px 2px 0;letter-spacing:.04em;border:1px solid var(--rule-soft)}
+.pill-burgundy{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
+.pill-teal{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
+.pill-gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.pattern-card{background:linear-gradient(135deg,var(--bg-card),var(--bg-deep));border:1px solid var(--rule);border-radius:6px;padding:22px;margin:16px 0}
+.pattern-card-title{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:4px}
+.pattern-card-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--burgundy);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14.5px}
+.chain span.k{background:var(--bg-card);border:1px solid var(--rule-soft);padding:4px 10px;border-radius:3px}
+.chain span.ar{color:var(--gold)}
+.intro{font-size:19px;font-style:italic;color:var(--ink-soft);max-width:760px;margin:0 auto 32px;text-align:center;line-height:1.5}
+.hl{background:linear-gradient(180deg,transparent 60%,var(--highlight) 60%);padding:0 2px}
+.warn{background:rgba(184,146,74,.12);border-left:3px solid var(--gold);padding:12px 16px;margin:14px 0;border-radius:0 3px 3px 0;font-size:15.5px;color:var(--ink-soft)}
+.warn::before{content:'⚠ Piège  ';color:var(--gold);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em}
+.warn.amb::before{content:'⚑ Ambiguïté du cours  ';color:var(--burgundy)}
+.warn.amb{border-left-color:var(--burgundy);background:rgba(123,45,38,.06)}
+code{font-family:'JetBrains Mono',monospace;font-size:.86em;background:var(--bg-deep);padding:1px 6px;border-radius:3px;color:var(--burgundy)}
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.timeline div{border-top:2px solid var(--gold);padding-top:10px}
+.timeline b{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.1em;display:block}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:16px 0}
+.flash{perspective:900px;height:150px;cursor:pointer}
+.flash-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flash.flip .flash-in{transform:rotateY(180deg)}
+.flash-f,.flash-b{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--rule);border-radius:6px;padding:14px 16px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:15.5px}
+.flash-f{background:var(--bg-card);font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;color:var(--ink)}
+.flash-b{background:var(--bg-deep);transform:rotateY(180deg);color:var(--ink-soft)}
+footer{max-width:1200px;margin:64px auto 0;padding:32px;text-align:center;color:var(--ink-faint);font-size:13px;border-top:1px solid var(--rule);font-style:italic}
+footer .footer-ornament{color:var(--gold);font-size:10px;letter-spacing:.5em;margin-bottom:12px}
+@media print{.hub-back,.tabs-wrapper,.viz-card{display:none}.tab-content{display:block!important}body::before{display:none}}
+</style>
+</head>
+<body>
+
+<a class="hub-back" href="../../../index.html" aria-label="Retourner au Hub"><span aria-hidden="true">&larr;</span> Retour au Hub</a>
+
+<header>
+  <div class="eyebrow">INSAT · GL3 · Semestre 1 · Pré-DS 2026</div>
+  <h1>Logique <em>formelle</em></h1>
+  <p class="subtitle">Révision interactive — Chapitres 1, 2, 3 · Méthodes TD1 &amp; TD2 · Synthèse</p>
+  <div class="ds-strip">
+    <span class="pill pill-burgundy">LP0 · propositions</span>
+    <span class="pill pill-teal">LP1 · prédicats</span>
+    <span class="pill pill-gold">⊨ conséquence logique</span>
+    <span class="pill">12 méthodes</span>
+  </div>
+</header>
+
+<main>
+<div class="tabs-wrapper">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="ch1"><span class="tab-num">I</span>Introduction</button>
+    <button class="tab-btn" data-tab="ch2"><span class="tab-num">II</span>Logique des propositions</button>
+    <button class="tab-btn" data-tab="ch3"><span class="tab-num">III</span>Logique des prédicats</button>
+    <button class="tab-btn" data-tab="methods"><span class="tab-num">M</span>Méthodes</button>
+    <button class="tab-btn" data-tab="synth"><span class="tab-num">S</span>Synthèse</button>
+  </nav>
+</div>
+
+<!-- ═══════════════════ I · INTRODUCTION ═══════════════════ -->
+<section class="tab-content active" id="ch1">
+  <p class="intro">Avant de calculer quoi que ce soit : à quoi sert la logique formelle, et pourquoi tout le cours tourne autour de deux mots — <em>syntaxe</em> et <em>sémantique</em>.</p>
+
+  <h2><span class="h-num">§ 1.1</span>Objet de la logique formelle</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition</span><span class="src">Ch1 · s.2</span>
+    <p>La <strong>logique mathématique</strong> est la logique du raisonnement (des déductions). Elle cherche à <strong>automatiser le raisonnement humain</strong> et à déterminer si un raisonnement est <span class="hl">valide ou non</span>.</p>
+    <p>Pour cela il faut : <strong>exprimer des énoncés</strong> (langage formel) puis <strong>déduire</strong> que quelque chose est vrai.</p>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exemple fil rouge</span>
+    <div class="two-col" style="margin:4px 0 0">
+      <div>
+        <p style="margin-bottom:6px">« S'il fait beau alors je vais sortir »<br>« Maintenant il fait beau »<br>⟹ « Je vais sortir »</p>
+      </div>
+      <div>
+        <div class="formula" style="text-align:left;margin:0">P → Q, &nbsp;P &nbsp;<span class="c">⊨</span>&nbsp; Q</div>
+        <p style="font-size:14.5px;margin:6px 0 0">C'est le <strong>modus ponens</strong> : il réapparaît partout (Ch2 conséquence logique, Ch5 seule règle d'inférence de LP0).</p>
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="h-num">§ 1.2</span>Repères historiques</h2>
+  <div class="timeline">
+    <div><b>IVᵉ s. av. J.-C.</b><strong>Aristote</strong> — premier à théoriser la logique formelle, but surtout philosophique, couvre toutes les sciences.</div>
+    <div><b>~300 av. J.-C.</b><strong>Euclide</strong> — premiers fondements de la logique mathématique dans <em>Les Éléments</em>.</div>
+    <div><b>XXᵉ siècle</b><strong>Alfred Tarski</strong> — logique formelle moderne : <em>Le concept de vérité dans les langages formalisés</em>.</div>
+  </div>
+  <div class="warn">Question de cours possible en DS (QCM / vrai-faux) : c'est <strong>Tarski</strong> qui introduit la logique formelle <em>moderne</em>, pas Aristote.</div>
+
+  <h2><span class="h-num">§ 1.3</span>Syntaxe vs sémantique</h2>
+  <p>Dans le calcul propositionnel comme dans le calcul des prédicats, deux aspects <strong>complémentaires</strong> doivent être liés :</p>
+  <div class="two-col">
+    <div class="box box-def" style="margin:0">
+      <span class="box-label">Aspect syntaxique</span><span class="src">Ch1 · s.4</span>
+      <p>Définir un <strong>système formel</strong> (symboles, règles) dans lequel les déductions mènent à des <strong>théorèmes</strong>.</p>
+      <div class="formula" style="font-size:18px">⊢ A <span style="font-size:13px;font-style:normal;color:var(--ink-faint)">« A est démontrable »</span></div>
+      <p style="font-size:14px">→ Chapitres 4, 5, 6 (après le DS)</p>
+    </div>
+    <div class="box box-thm" style="margin:0">
+      <span class="box-label">Aspect sémantique</span><span class="src">Ch1 · s.4</span>
+      <p><strong>Interpréter</strong> les formules (leur donner une valeur de vérité) et étudier les formules toujours vraies : les <strong>tautologies</strong>.</p>
+      <div class="formula" style="font-size:18px">⊨ A <span style="font-size:13px;font-style:normal;color:var(--ink-faint)">« A est toujours vraie »</span></div>
+      <p style="font-size:14px">→ Chapitres 2 et 3 (au programme du DS)</p>
+    </div>
+  </div>
+  <div class="box box-prop">
+    <span class="box-label">Le lien</span>
+    <p>Tout l'enjeu : démontrer que <span class="hl">les tautologies (sémantiquement vraies) sont exactement les théorèmes (syntaxiquement démontrables)</span>. On le retrouvera en Ch5 sous les noms <em>consistance</em> (théorème ⇒ tautologie) et <em>complétude</em> (tautologie ⇒ théorème).</p>
+  </div>
+
+  <h2><span class="h-num">§ 1.4</span>Plan du cours</h2>
+  <div class="flow-grid">
+    <div class="flow-node"><div class="flow-node-tag">Ch 1 · DS</div><div class="flow-node-title">Introduction</div><span class="pill">syntaxe / sémantique</span></div>
+    <div class="flow-node"><div class="flow-node-tag">Ch 2 · DS</div><div class="flow-node-title">Logique des propositions</div><span class="pill">LP0</span><span class="pill">tables</span><span class="pill">FNC/FND</span></div>
+    <div class="flow-node"><div class="flow-node-tag">Ch 3 · DS</div><div class="flow-node-title">Logique des prédicats</div><span class="pill">LP1</span><span class="pill">∀ ∃</span><span class="pill">FNP</span></div>
+    <div class="flow-node future"><div class="flow-node-tag">Ch 4–7 · après</div><div class="flow-node-title">Systèmes formels &amp; temporelles</div><span class="pill">⊢</span><span class="pill">SA1–SA3</span><span class="pill">modus ponens</span></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ II · LOGIQUE DES PROPOSITIONS ═══════════════════ -->
+<section class="tab-content" id="ch2">
+  <p class="intro">LP0 : des phrases vraies ou fausses, des connecteurs, des tables de vérité. Tout est <em>décidable</em> — il suffit (au pire) d'essayer les 2ⁿ interprétations.</p>
+
+  <h2><span class="h-num">§ 2.1</span>Propositions &amp; atomes</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition</span><span class="src">Ch2 · s.4</span>
+    <p>Une <strong>proposition</strong> (assertion) est un énoncé qui a <strong>une et une seule</strong> valeur : vrai (T) ou faux (F).</p>
+    <p>Les propositions élémentaires (<span class="fx">P</span> = « la neige est blanche », <span class="fx">Q</span> = « il fait beau ») sont des <strong>formules atomiques</strong> ou <strong>atomes</strong>. La valeur T/F est leur <strong>valeur de vérité</strong>.</p>
+  </div>
+
+  <h2><span class="h-num">§ 2.2</span>Syntaxe de LP0 &amp; formules bien formées</h2>
+  <div class="box box-def">
+    <span class="box-label">Vocabulaire</span><span class="src">Ch2 · s.5</span>
+    <ul>
+      <li>un ensemble dénombrable de propositions <span class="fx">p = {p₁, p₂, …}</span></li>
+      <li>les connecteurs <span class="fx">¬ &nbsp;∧ &nbsp;∨ &nbsp;→ &nbsp;↔</span></li>
+      <li>les parenthèses</li>
+      <li>les constantes de vérité : Vrai (<span class="fx">V, T</span>) et Faux (<span class="fx">F, ⊥</span>)</li>
+    </ul>
+  </div>
+  <div class="box box-def">
+    <span class="box-label">Définition — FBF (récursive)</span><span class="src">Ch2 · s.10</span>
+    <ol>
+      <li>Un atome est une FBF.</li>
+      <li>Si <span class="fx">G</span> est une FBF alors <span class="fx">¬G</span> est une FBF.</li>
+      <li>Si <span class="fx">F</span> et <span class="fx">G</span> sont des FBF alors <span class="fx">(F∧G), (F∨G), (F→G), (F↔G)</span> sont des FBF.</li>
+      <li>Toutes les FBF sont générées <strong>uniquement</strong> par les règles 1, 2, 3.</li>
+    </ol>
+    <p><span class="fx">(P→)</span> ou <span class="fx">(P∨)</span> ne sont <strong>pas</strong> des FBF.</p>
+  </div>
+  <div class="box box-remark">
+    <span class="box-label">Arbre syntaxique</span><span class="src">Ch2 · s.6</span>
+    <p>Une formule = un <strong>arbre</strong> : feuilles = atomes, nœuds = connecteurs. La racine est le <strong>connecteur principal</strong> (celui qu'on évalue en dernier). Tape une formule dans le labo ci-dessous (§ 2.4) pour voir son arbre.</p>
+  </div>
+  <div class="box box-prop">
+    <span class="box-label">Priorité des connecteurs</span><span class="src">Ch2 · s.10</span>
+    <p>Du plus « collant » au plus faible : <span class="fx">¬ &nbsp;&gt;&nbsp; ∧ &nbsp;&gt;&nbsp; ∨ &nbsp;&gt;&nbsp; → &nbsp;&gt;&nbsp; ↔</span></p>
+    <div class="formula">P → Q ∨ R &nbsp;<span class="c">≡</span>&nbsp; P → (Q ∨ R)</div>
+  </div>
+  <div class="warn amb">Le slide écrit « ordre de priorité décroissante (↔, →, ∨, ∧, ¬) » puis donne <span class="fx">P→Q∧¬R∨S ⇔ P→(Q∧((¬R)∨S))</span>, ce qui ferait passer ∨ avant ∧ — contraire à la convention habituelle (<span class="fx">(Q∧¬R)∨S</span>). <strong>En DS : mets toujours les parenthèses</strong>, ça supprime le problème.</div>
+
+  <h3>Formuler un problème (traduction)</h3>
+  <div class="box box-ex">
+    <span class="box-label">Exemples du cours</span><span class="src">Ch2 · s.16</span>
+    <ul>
+      <li>« Si un étudiant est sérieux alors il va réussir » → <span class="fx">sérieux → réussir</span></li>
+      <li>« Pour que l'étudiant réussisse, il faut qu'il soit persévérant et déterminé » → slide : <span class="fx">persévérant ∧ déterminé → réussir</span></li>
+    </ul>
+  </div>
+  <div class="warn amb">« Il faut que B pour A » = B est une condition <strong>nécessaire</strong> de A, ce qui se lit rigoureusement <span class="fx">A → B</span>, donc <span class="fx">réussir → (persévérant ∧ déterminé)</span>. Le slide donne le sens inverse. En DS : écris la version rigoureuse et précise ta lecture en une ligne. Le tableau des tournures est dans la méthode M1.</div>
+
+  <h2><span class="h-num">§ 2.3</span>Sémantique : valeurs de vérité &amp; interprétations</h2>
+  <div class="two-col">
+    <div>
+      <div class="box box-def" style="margin-top:0">
+        <span class="box-label">Règles d'évaluation</span><span class="src">Ch2 · s.12</span>
+        <ul>
+          <li><span class="fx">¬P</span> vraie ssi P fausse</li>
+          <li><span class="fx">P∧Q</span> vraie ssi P <strong>et</strong> Q vraies</li>
+          <li><span class="fx">P∨Q</span> vraie ssi P et/ou Q vraie (ou inclusif)</li>
+          <li><span class="fx">P→Q</span> <span class="hl">fausse uniquement si P vraie et Q fausse</span></li>
+          <li><span class="fx">P↔Q</span> vraie ssi P et Q ont la même valeur</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tt-wrap" style="margin-top:0">
+      <table class="tt">
+        <tr><th>P</th><th>Q</th><th>¬P</th><th>P∧Q</th><th>P∨Q</th><th>P→Q</th><th>P↔Q</th></tr>
+        <tr><td class="T">T</td><td class="T">T</td><td class="F">F</td><td class="T">T</td><td class="T">T</td><td class="T">T</td><td class="T">T</td></tr>
+        <tr><td class="T">T</td><td class="F">F</td><td class="F">F</td><td class="F">F</td><td class="T">T</td><td class="F">F</td><td class="F">F</td></tr>
+        <tr><td class="F">F</td><td class="T">T</td><td class="T">T</td><td class="F">F</td><td class="T">T</td><td class="T">T</td><td class="F">F</td></tr>
+        <tr><td class="F">F</td><td class="F">F</td><td class="T">T</td><td class="F">F</td><td class="F">F</td><td class="T">T</td><td class="T">T</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="warn">« Faux implique n'importe quoi » : si <span class="fx">P</span> est fausse, <span class="fx">P→Q</span> est <strong>vraie</strong> quelle que soit Q. C'est la source n°1 d'erreurs dans les tables.</div>
+  <div class="box box-def">
+    <span class="box-label">Interprétation</span><span class="src">Ch2 · s.13–16</span>
+    <p>Pour une FBF <span class="fx">G</span> contenant les atomes <span class="fx">A₁,…,Aₙ</span>, une <strong>interprétation</strong> de G est l'affectation de T ou F à chacun de ses atomes. <span class="hl">Il y a 2ⁿ interprétations.</span></p>
+    <p>G est <strong>vraie dans une interprétation</strong> ssi elle y est évaluée à T, sinon elle y est fausse.</p>
+    <p style="font-size:15px">Ex. <span class="fx">G = (P∧Q) → R</span> : 3 atomes → 2³ = 8 interprétations (une seule rend G fausse : P=T, Q=T, R=F).</p>
+  </div>
+
+  <h2><span class="h-num">§ 2.4</span>Validité, consistance, modèles</h2>
+  <div class="box box-def">
+    <span class="box-label">Définitions</span><span class="src">Ch2 · s.17</span>
+    <table class="law">
+      <tr><td>Valide</td><td>vraie dans <strong>toutes</strong> ses interprétations (= tautologie)</td></tr>
+      <tr><td>Invalide</td><td>pas valide (fausse dans au moins une)</td></tr>
+      <tr><td>Inconsistante</td><td>= insatisfiable : fausse dans <strong>toutes</strong> ses interprétations</td></tr>
+      <tr><td>Consistante</td><td>= satisfiable : pas inconsistante (vraie dans au moins une)</td></tr>
+    </table>
+  </div>
+  <div class="box box-thm">
+    <span class="box-label">Propriétés</span><span class="src">Ch2 · s.18</span>
+    <ul>
+      <li>valide ⇒ consistante &nbsp;(réciproque fausse)</li>
+      <li>inconsistante ⇒ invalide &nbsp;(réciproque fausse)</li>
+      <li><span class="hl"><span class="fx">F</span> valide ⟺ <span class="fx">¬F</span> inconsistante</span></li>
+      <li><span class="fx">F</span> inconsistante ⟺ <span class="fx">¬F</span> valide</li>
+    </ul>
+  </div>
+  <div class="box box-def">
+    <span class="box-label">Modèle</span><span class="src">Ch2 · s.19</span>
+    <p>Si <span class="fx">F</span> est vraie dans <span class="fx">I</span> : <span class="fx">I</span> <strong>satisfait</strong> F, <span class="fx">I</span> est un <strong>modèle</strong> de F. Sinon <span class="fx">I</span> <strong>viole</strong> F.</p>
+    <p style="font-size:15px">Ex. <span class="fx">P∧¬Q</span> est satisfaite par {P, ¬Q} et violée par {P, Q}.</p>
+  </div>
+  <div class="box box-remark">
+    <span class="box-label">Exemples du cours</span><span class="src">Ch2 · s.17–18</span>
+    <p><span class="fx">G₁ = ((P→Q) ∧ P) → Q</span> : valide (donc consistante). &nbsp; <span class="fx">G₂ = (P→Q) ∧ (P∧¬Q)</span> : inconsistante (donc invalide). Vérifie-les dans le labo ↓</p>
+  </div>
+  <div class="warn">Trois classes, pas deux : une formule peut être <strong>ni valide ni inconsistante</strong> (ex. <span class="fx">P</span>, <span class="fx">P→Q</span>). On dit « satisfiable mais non valide » (contingente). Au DS on te demande souvent de classer dans <em>la bonne</em> case — justifie toujours les deux côtés.</div>
+
+  <!-- VIZ 1 : truth table lab -->
+  <div class="viz-card" id="ttlab">
+    <div class="viz-header">
+      <div class="viz-title">Labo LP0 — table de vérité, verdict &amp; arbre</div>
+      <div class="viz-tag">Interactif · tape ta formule</div>
+    </div>
+    <div class="viz-body">
+      <div>
+        <input class="fx-input" id="tt-in" value="((P → Q) ∧ P) → Q" spellcheck="false" autocomplete="off" aria-label="Formule">
+        <div class="btn-group" id="tt-syms">
+          <button class="btn btn-sym" data-s="¬">¬</button><button class="btn btn-sym" data-s="∧">∧</button><button class="btn btn-sym" data-s="∨">∨</button><button class="btn btn-sym" data-s="→">→</button><button class="btn btn-sym" data-s="↔">↔</button><button class="btn btn-sym" data-s="(">(</button><button class="btn btn-sym" data-s=")">)</button><button class="btn" data-s="CLR">effacer</button>
+        </div>
+        <div class="fx-err" id="tt-err"></div>
+        <div class="tt-wrap" id="tt-table"></div>
+        <svg class="viz-svg" id="tt-tree" viewBox="0 0 600 240" role="img" aria-label="Arbre syntaxique"></svg>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--highlight)"></span>ligne = modèle (formule vraie)</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--burgundy)"></span>connecteur</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>atome</div>
+        </div>
+      </div>
+      <div class="viz-controls">
+        <h5>Verdict</h5>
+        <div class="verdict" id="tt-verdict">—</div>
+        <div class="viz-stat"><span class="viz-stat-key">atomes</span><span class="viz-stat-val" id="tt-n">—</span></div>
+        <div class="viz-stat"><span class="viz-stat-key">interprétations</span><span class="viz-stat-val" id="tt-i">—</span></div>
+        <div class="viz-stat"><span class="viz-stat-key">modèles</span><span class="viz-stat-val" id="tt-m">—</span></div>
+        <div class="viz-stat"><span class="viz-stat-key">connecteur principal</span><span class="viz-stat-val" id="tt-root">—</span></div>
+        <h5>Exemples</h5>
+        <div class="btn-group" id="tt-presets" style="margin-top:0">
+          <button class="btn" data-f="((P → Q) ∧ P) → Q">G₁ cours</button>
+          <button class="btn" data-f="(P → Q) ∧ (P ∧ ¬Q)">G₂ cours</button>
+          <button class="btn" data-f="(P ∧ Q) → R">(P∧Q)→R</button>
+          <button class="btn" data-f="((P → Q) ∧ ¬Q) → ¬P">modus tollens</button>
+          <button class="btn" data-f="(A → (B → C)) → (A → B)">DS 2020 ex2</button>
+          <button class="btn" data-f="(P → Q) ↔ (¬P ∨ Q)">→ ≡ ¬∨</button>
+        </div>
+        <h5>FND canonique (lignes T)</h5>
+        <div class="canon" id="tt-fnd">—</div>
+        <h5>FNC canonique (lignes F)</h5>
+        <div class="canon" id="tt-fnc">—</div>
+        <p style="font-size:12.5px;margin-top:10px;color:var(--ink-faint)">Clavier : <code>~ ! not</code> → ¬ · <code>&amp; ^ and</code> → ∧ · <code>| or</code> → ∨ · <code>-&gt; =&gt;</code> → · <code>&lt;-&gt; &lt;=&gt;</code> ↔</p>
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="h-num">§ 2.5</span>Équivalence &amp; lois de transformation</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition</span><span class="src">Ch2 · s.20</span>
+    <p><span class="fx">F</span> et <span class="fx">G</span> sont <strong>équivalentes</strong> (notée <span class="fx">F = G</span> ou <span class="fx">F ≡ G</span>) ssi elles ont la même valeur de vérité dans <strong>chaque</strong> interprétation. Remplacer F par G <strong>préserve les modèles</strong>.</p>
+    <p style="font-size:15px">Équivalent : <span class="fx">F ≡ G</span> ⟺ <span class="fx">F ↔ G</span> est valide.</p>
+  </div>
+  <div class="box box-prop">
+    <span class="box-label">Lois à connaître par cœur</span><span class="src">Ch2 · s.22</span>
+    <table class="law">
+      <tr><td>Élim. →</td><td class="fx">F → G ≡ ¬F ∨ G</td></tr>
+      <tr><td>Élim. ↔</td><td class="fx">F ↔ G ≡ (F → G) ∧ (G → F)</td></tr>
+      <tr><td>Commutativité</td><td class="fx">F ∨ G ≡ G ∨ F &nbsp;&nbsp; F ∧ G ≡ G ∧ F</td></tr>
+      <tr><td>Associativité</td><td class="fx">(F ∨ G) ∨ H ≡ F ∨ (G ∨ H) &nbsp;&nbsp; (F ∧ G) ∧ H ≡ F ∧ (G ∧ H)</td></tr>
+      <tr><td>Distributivité</td><td class="fx">F ∨ (G ∧ H) ≡ (F ∨ G) ∧ (F ∨ H) &nbsp;&nbsp; F ∧ (G ∨ H) ≡ (F ∧ G) ∨ (F ∧ H)</td></tr>
+      <tr><td>De Morgan</td><td class="fx">¬(F ∨ G) ≡ ¬F ∧ ¬G &nbsp;&nbsp; ¬(F ∧ G) ≡ ¬F ∨ ¬G</td></tr>
+      <tr><td>Double négation</td><td class="fx">¬¬F ≡ F</td></tr>
+    </table>
+  </div>
+  <div class="box box-remark">
+    <span class="box-label">Compléments utiles (vérifiables par table)</span>
+    <table class="law">
+      <tr><td>Tiers exclu</td><td class="fx">F ∨ ¬F ≡ T &nbsp;&nbsp; F ∧ ¬F ≡ ⊥</td></tr>
+      <tr><td>Éléments neutres</td><td class="fx">F ∨ ⊥ ≡ F &nbsp; F ∧ T ≡ F &nbsp; F ∨ T ≡ T &nbsp; F ∧ ⊥ ≡ ⊥</td></tr>
+      <tr><td>Idempotence</td><td class="fx">F ∨ F ≡ F &nbsp;&nbsp; F ∧ F ≡ F</td></tr>
+      <tr><td>Absorption</td><td class="fx">F ∨ (F ∧ G) ≡ F &nbsp;&nbsp; F ∧ (F ∨ G) ≡ F</td></tr>
+      <tr><td>Contraposée</td><td class="fx">F → G ≡ ¬G → ¬F</td></tr>
+      <tr><td>Exportation</td><td class="fx">F → (G → H) ≡ (F ∧ G) → H</td></tr>
+      <tr><td>Négation de →</td><td class="fx">¬(F → G) ≡ F ∧ ¬G</td></tr>
+    </table>
+  </div>
+
+  <h2><span class="h-num">§ 2.6</span>Formes normales FNC / FND</h2>
+  <div class="box box-def">
+    <span class="box-label">Définitions</span><span class="src">Ch2 · s.22–23</span>
+    <p>Un <strong>littéral</strong> = un atome ou la négation d'un atome (<span class="fx">P</span>, <span class="fx">¬Q</span>).</p>
+    <div class="two-col" style="margin:8px 0 0">
+      <div>
+        <h4 style="margin-top:0">FNC — conjonctive</h4>
+        <p><span class="fx">F₁ ∧ F₂ ∧ … ∧ Fₙ</span>, chaque <span class="fx">Fᵢ</span> = <strong>disjonction</strong> de littéraux (une « clause »). Vraie ssi <strong>chaque</strong> Fᵢ est vraie.</p>
+        <div class="formula" style="font-size:17px">(P ∨ ¬Q ∨ R) ∧ (¬P ∨ Q)</div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">FND — disjonctive</h4>
+        <p><span class="fx">F₁ ∨ F₂ ∨ … ∨ Fₙ</span>, chaque <span class="fx">Fᵢ</span> = <strong>conjonction</strong> de littéraux. Vraie ssi <strong>au moins un</strong> Fᵢ est vrai.</p>
+        <div class="formula" style="font-size:17px">(¬P ∧ Q) ∨ (P ∧ ¬Q ∧ ¬R)</div>
+      </div>
+    </div>
+  </div>
+  <div class="box box-method">
+    <span class="box-label">Algorithme de transformation</span><span class="src">Ch2 · s.24</span>
+    <ol class="method-steps">
+      <li><strong>Éliminer → et ↔</strong> : <span class="fx">F→G ≡ ¬F∨G</span>, <span class="fx">F↔G ≡ (F→G)∧(G→F)</span>.</li>
+      <li><strong>Descendre les ¬ jusqu'aux atomes</strong> : <span class="fx">¬¬F ≡ F</span> + De Morgan.</li>
+      <li><strong>Distribuer</strong> : ∨ sur ∧ pour la FNC, ∧ sur ∨ pour la FND.</li>
+    </ol>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exemples du cours</span><span class="src">Ch2 · s.25</span>
+    <p><strong>FND</strong> de <span class="fx">(P ∧ ¬Q) → R</span> :</p>
+    <div class="steps-eq">
+      <div><span class="eq">=</span><span>¬(P ∧ ¬Q) ∨ R</span><span class="why">élim. →</span></div>
+      <div><span class="eq">=</span><span>¬P ∨ Q ∨ R</span><span class="why">De Morgan · FND (et FNC !)</span></div>
+    </div>
+    <p><strong>FNC</strong> de <span class="fx">(P ∨ ¬Q) → R</span> :</p>
+    <div class="steps-eq">
+      <div><span class="eq">=</span><span>¬(P ∨ ¬Q) ∨ R</span><span class="why">élim. →</span></div>
+      <div><span class="eq">=</span><span>(¬P ∧ Q) ∨ R</span><span class="why">De Morgan · c'est une FND</span></div>
+      <div><span class="eq">=</span><span>(R ∨ ¬P) ∧ (R ∨ Q)</span><span class="why">distributivité · FNC</span></div>
+    </div>
+  </div>
+  <div class="warn">Une formule peut être <strong>à la fois</strong> FNC et FND : <span class="fx">¬P ∨ Q ∨ R</span> est une FND (3 conjonctions d'un littéral) et une FNC (1 clause). Ne perds pas de points à « continuer » inutilement.</div>
+
+  <!-- VIZ 2 : stepper FNC -->
+  <div class="viz-card stepper" id="step-fnc">
+    <div class="viz-header">
+      <div class="viz-title">Pas à pas — FNC de (P ∧ (Q → R)) → S</div>
+      <div class="viz-tag">Exemple 2 du cours · s.25</div>
+    </div>
+    <div class="st-list"></div>
+    <div class="btn-group"><button class="btn st-prev">← précédent</button><button class="btn st-next">suivant →</button><button class="btn st-all">tout afficher</button></div>
+  </div>
+
+  <h2><span class="h-num">§ 2.7</span>Conséquence logique</h2>
+  <div class="box box-def">
+    <span class="box-label">Méta-symboles</span><span class="src">Ch2 · s.26</span>
+    <p><span class="fx">⊨ P→Q</span> « il est (universellement) vrai que P→Q ». Une formule vraie indépendamment des valeurs de ses atomes est une <strong>tautologie</strong>, ex. <span class="fx">⊨ P → (P ∨ Q)</span>.</p>
+    <p style="font-size:15px">Théorème = vérité <em>démontrée</em> dans un système (⊢) ; tautologie = vérité <em>universelle</em> (⊨).</p>
+  </div>
+  <div class="box box-def">
+    <span class="box-label">Définition</span><span class="src">Ch2 · s.28–29</span>
+    <p><span class="fx">B</span> est <strong>conséquence logique</strong> (sémantique) de <span class="fx">A₁,…,Aₙ</span> ssi <span class="hl">toute interprétation qui rend vraies A₁,…,Aₙ rend aussi B vraie</span>.</p>
+    <div class="formula">A₁, …, Aₙ <span class="c">⊨</span> B &nbsp;⟺&nbsp; ∀I, &nbsp;I(A₁)=…=I(Aₙ)=T ⇒ I(B)=T</div>
+    <p>Avec <span class="fx">Σ = {A₁,…,Aₙ}</span> : <span class="fx">Σ ⊨ B</span> ssi <strong>tout modèle de Σ est un modèle de B</strong>.</p>
+  </div>
+  <div class="two-col">
+    <div class="box box-prop" style="margin:0">
+      <span class="box-label">Propriétés de ⊨</span><span class="src">s.29</span>
+      <ul>
+        <li>Réflexive : <span class="fx">A ⊨ A</span></li>
+        <li>Transitive : <span class="fx">A ⊨ B</span> et <span class="fx">B ⊨ C</span> ⇒ <span class="fx">A ⊨ C</span></li>
+        <li>Ni symétrique, ni antisymétrique</li>
+        <li>Monotone : <span class="fx">Σ ⊨ B</span> ⇒ <span class="fx">Σ, C ⊨ B</span></li>
+        <li><span class="fx">B ∈ Σ</span> ⇒ <span class="fx">Σ ⊨ B</span></li>
+        <li>Coupure : <span class="fx">Σ ⊨ B</span> et <span class="fx">Σ, B ⊨ C</span> ⇒ <span class="fx">Σ ⊨ C</span></li>
+      </ul>
+    </div>
+    <div class="box box-remark" style="margin:0">
+      <span class="box-label">Cas limites</span><span class="src">s.30</span>
+      <ul>
+        <li><span class="fx">Σ = ∅</span> : <span class="fx">⊨ A</span> ⟺ A est une <strong>tautologie</strong>.</li>
+        <li><span class="fx">B = ∅</span> (ou ⊥) : <span class="fx">Σ ⊨</span> ⟺ Σ est <strong>inconsistant</strong> (aucun modèle).</li>
+        <li>Si Σ est inconsistant, <span class="fx">Σ ⊨ B</span> pour <strong>tout</strong> B (aucun modèle à contredire).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-thm">
+    <span class="box-label">Théorèmes de la conséquence</span><span class="src">Ch2 · s.30</span>
+    <table class="law">
+      <tr><td>Négation</td><td class="fx">Σ ⊨ ¬A &nbsp;⟺&nbsp; Σ, A ⊨ ⊥ &nbsp;<span style="font-style:normal;color:var(--ink-faint)">(Σ ∪ {A} inconsistant)</span></td></tr>
+      <tr><td>Disjonction</td><td class="fx">Σ, A ⊨ C et Σ, B ⊨ C &nbsp;⟺&nbsp; Σ, A∨B ⊨ C</td></tr>
+      <tr><td>Conjonction</td><td class="fx">Σ ⊨ A et Σ ⊨ B &nbsp;⟺&nbsp; Σ ⊨ A∧B</td></tr>
+      <tr><td>Implication</td><td class="fx">Σ, A ⊨ B &nbsp;⟺&nbsp; Σ ⊨ A → B</td></tr>
+      <tr><td>Identité</td><td class="fx">Σ, A ⊨ B et Σ, B ⊨ A &nbsp;⟺&nbsp; Σ ⊨ A ↔ B</td></tr>
+    </table>
+  </div>
+  <div class="two-col">
+    <div class="box box-thm" style="margin:0">
+      <span class="box-label">Théorème 1</span><span class="src">s.31</span>
+      <div class="formula" style="font-size:17px">A₁,…,Aₙ ⊨ B &nbsp;⟺&nbsp; <span class="hl">(A₁∧…∧Aₙ) → B</span> est <strong style="font-style:normal">valide</strong></div>
+    </div>
+    <div class="box box-thm" style="margin:0">
+      <span class="box-label">Théorème 2</span><span class="src">s.31</span>
+      <div class="formula" style="font-size:17px">A₁,…,Aₙ ⊨ B &nbsp;⟺&nbsp; <span class="hl">A₁∧…∧Aₙ ∧ ¬B</span> est <strong style="font-style:normal">inconsistante</strong></div>
+    </div>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Les 6 méthodes du cours sur un seul exemple</span><span class="src">Ch2 · s.31–34</span>
+    <p>Montrer <span class="fx">P → Q, ¬Q ⊨ ¬P</span> (modus tollens).</p>
+    <table class="law">
+      <tr><td>1 · Table</td><td>Table de P, Q, P→Q, ¬Q, ¬P : sur la seule ligne où P→Q et ¬Q sont vraies (P=F, Q=F), ¬P est vraie.</td></tr>
+      <tr><td>2 · Théorème 1</td><td>Table de <span class="fx">((P→Q)∧¬Q)→¬P</span> : colonne finale tout à T ⇒ valide.</td></tr>
+      <tr><td>3 · Théorème 2</td><td>Table de <span class="fx">(P→Q)∧¬Q∧P</span> : colonne finale tout à F ⇒ inconsistante.</td></tr>
+      <tr><td>4 · FND → T</td><td><span class="fx">¬((¬P∨Q)∧¬Q) ∨ ¬P = … = Q ∨ (P ∨ ¬P) = T</span> : on réduit à T.</td></tr>
+      <tr><td>5 · FNC → ⊥</td><td><span class="fx">(¬P∨Q)∧¬Q∧P = (¬P∧P∧¬Q) ∨ (Q∧¬Q∧P) = ⊥ ∨ ⊥ = ⊥</span> : on réduit à F.</td></tr>
+      <tr><td>6 · Absurde</td><td>Supposons ∃I : I(P→Q)=T, I(¬Q)=T, I(¬P)=F. Alors I(Q)=F, I(P)=T ⇒ I(P→Q)=F. <strong>Contradiction.</strong></td></tr>
+    </table>
+  </div>
+  <div class="warn">Pour une <strong>non</strong>-conséquence, une seule interprétation suffit : prémisses vraies, conclusion fausse (contre-modèle). C'est exactement l'Ex2 du DS 2020 → méthode M7.</div>
+
+  <h2><span class="h-num">§ 2.8</span>Systèmes complets de connecteurs</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition</span><span class="src">Ch2 · s.35</span>
+    <p>Un ensemble de connecteurs est <strong>complet</strong> si toute formule est équivalente à une formule n'utilisant que ces connecteurs.</p>
+  </div>
+  <div class="box box-thm">
+    <span class="box-label">Résultats</span>
+    <ul>
+      <li><span class="fx">{¬, ∨}</span> est complet : <span class="fx">A→B ≡ ¬A∨B</span>, <span class="fx">A∧B ≡ ¬(¬A∨¬B)</span>, ↔ via → et ∧.</li>
+      <li><span class="fx">{¬, ∧}</span> est complet : <span class="fx">A∨B ≡ ¬(¬A∧¬B)</span>.</li>
+      <li><span class="fx">{¬, →}</span> est complet : <span class="fx">A∨B ≡ ¬A→B</span> (c'est le système du Ch5).</li>
+      <li><span class="fx">{∨, ∧}</span> <strong>n'est pas</strong> complet : impossible d'exprimer ¬.</li>
+    </ul>
+  </div>
+  <div class="box box-remark">
+    <span class="box-label">Pourquoi {∨, ∧} ne suffit pas</span>
+    <p>Toute formule construite seulement avec ∨ et ∧ est <strong>vraie quand tous ses atomes sont vrais</strong> (récurrence sur la formule). Or <span class="fx">¬P</span> est fausse pour P=T. Donc ¬P n'a pas d'équivalent dans {∨, ∧}.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ III · LOGIQUE DES PRÉDICATS ═══════════════════ -->
+<section class="tab-content" id="ch3">
+  <p class="intro">LP1 : on ouvre les propositions. Des objets (termes), des propriétés (prédicats), et ∀ / ∃. Plus expressif — mais on ne peut plus tout tester : il y a une infinité d'interprétations.</p>
+
+  <h2><span class="h-num">§ 3.1</span>Pourquoi aller au-delà de LP0 ?</h2>
+  <div class="box box-ex">
+    <span class="box-label">Exemple de Socrate</span><span class="src">Ch3 · s.6–7</span>
+    <div class="two-col" style="margin:0">
+      <div><p>P : tout homme est mortel<br>Q : Socrate est un homme<br>R : Socrate est mortel</p>
+      <p style="font-size:14.5px">En LP0, P, Q, R sont trois atomes <strong>sans lien</strong> : impossible de déduire R.</p></div>
+      <div>
+        <div class="formula" style="font-size:17px;text-align:left">∀x (Homme(x) → Mortel(x))<br>Homme(Socrate)<br><span class="c">⊨</span> Mortel(Socrate)</div>
+      </div>
+    </div>
+  </div>
+  <div class="box box-def">
+    <span class="box-label">LP1 = LP0 + 3 concepts</span>
+    <p><span class="pill pill-teal">termes</span><span class="pill pill-burgundy">prédicats</span><span class="pill pill-gold">quantificateurs ∀ ∃</span></p>
+    <p style="margin-top:8px">LP1 sert à <strong>représenter les connaissances</strong> d'un expert et à <strong>faire des déductions</strong> (systèmes experts, raisonnement déductif).</p>
+  </div>
+
+  <h2><span class="h-num">§ 3.2</span>Symboles de prédicat vs symboles de fonction</h2>
+  <div class="two-col">
+    <div class="box box-def" style="margin:0">
+      <span class="box-label">Prédicat</span><span class="src">s.8</span>
+      <p>Renvoie une valeur dans <strong>{T, F}</strong>.</p>
+      <p><span class="fx">plus_grand(x, y)</span> : « x est plus grand que y » (arité 2).<br><span class="fx">plus_grand(5, 3) = T</span>, <span class="fx">plus_grand(3, 5) = F</span>.</p>
+    </div>
+    <div class="box box-def" style="margin:0">
+      <span class="box-label">Fonction</span><span class="src">s.8</span>
+      <p>Renvoie un <strong>élément du domaine</strong> (un objet).</p>
+      <p><span class="fx">plus(x, y)</span> représente <span class="fx">x + y</span> (arité 2).<br>« x+1 est plus grand que x » : <span class="fx">plus_grand(plus(x, 1), x)</span>.</p>
+    </div>
+  </div>
+  <div class="warn">Une fonction s'emboîte <strong>dans</strong> un prédicat, jamais l'inverse : <span class="fx">plus(plus_grand(x,1), y)</span> n'a aucun sens (on ne peut pas additionner « vrai »).</div>
+
+  <h2><span class="h-num">§ 3.3</span>Termes, atomes, formules bien formées</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition 1 — Terme</span><span class="src">s.9</span>
+    <ol><li>Une constante est un terme.</li><li>Une variable est un terme.</li><li>Si f est un symbole de fonction n-aire et t₁,…,tₙ des termes, alors <span class="fx">f(t₁,…,tₙ)</span> est un terme.</li></ol>
+    <p style="font-size:15px">Ex. <span class="fx">Plus(Plus(x, 1), x)</span> est un terme : il représente (x+1)+x.</p>
+  </div>
+  <div class="box box-def">
+    <span class="box-label">Définition 2 — Atome</span><span class="src">s.10</span>
+    <p>Si p est un symbole de prédicat n-aire et t₁,…,tₙ des termes, <span class="fx">p(t₁,…,tₙ)</span> est un <strong>atome</strong> (formule atomique).</p>
+  </div>
+  <div class="box box-def">
+    <span class="box-label">Définition 5 — FBF de LP1</span><span class="src">s.14</span>
+    <ol><li>Un atome est une formule.</li><li>Si F, G sont des fbf : <span class="fx">¬F, F∨G, F∧G, F→G, F↔G, (F)</span> sont des fbf.</li><li>Si F est une fbf et x une variable (libre dans F) : <span class="fx">(∀x)F</span> et <span class="fx">(∃x)F</span> sont des fbf.</li></ol>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Traductions du cours</span><span class="src">s.10–11, 15</span>
+    <table class="law">
+      <tr><td>Rationnel ⇒ réel</td><td>« Chaque nombre rationnel est réel » → <span class="fx">∀x (Q(x) → R(x))</span></td></tr>
+      <tr><td>Existence</td><td>« Il existe un nombre premier » → <span class="fx">∃x P(x)</span></td></tr>
+      <tr><td>∀∃</td><td>« Pour tout x il existe y tel que x &lt; y » → <span class="fx">∀x ∃y (N(x) ∧ N(y) ∧ Plus_petit(x, y))</span></td></tr>
+      <tr><td>A1 · successeur unique</td><td class="fx">∀x ∃y (Egal(y, succ(x)) ∧ ∀z (Egal(z, succ(x)) → Egal(y, z)))</td></tr>
+      <tr><td>A2 · 0 sans préd.</td><td class="fx">¬∃x Egal(0, succ(x))</td></tr>
+      <tr><td>A3 · prédécesseur</td><td class="fx">∀x (¬Egal(x, 0) → ∃y (Egal(y, pred(x)) ∧ ∀z (Egal(z, pred(x)) → Egal(y, z))))</td></tr>
+    </table>
+    <p style="font-size:14.5px;margin-top:10px">Patron « <strong>un et un seul</strong> » : <span class="fx">∃y (Φ(y) ∧ ∀z (Φ(z) → y = z))</span> — à savoir réécrire.</p>
+  </div>
+
+  <h2><span class="h-num">§ 3.4</span>Portée, variables libres &amp; liées</h2>
+  <div class="box box-def">
+    <span class="box-label">Définitions 3 &amp; 4</span><span class="src">s.12–13</span>
+    <ul>
+      <li><strong>Portée</strong> d'un quantificateur = la formule à laquelle il s'applique. Dans <span class="fx">∀x (Q(x) → R(x))</span>, la portée de ∀ est <span class="fx">Q(x) → R(x)</span> (3 occurrences de x).</li>
+      <li>Une <strong>occurrence</strong> de x est <strong>liée</strong> ssi elle est dans la portée d'un quantificateur sur x (ou c'est l'occurrence du quantificateur). Sinon elle est <strong>libre</strong>.</li>
+      <li>Une <strong>variable</strong> est libre si <em>au moins une</em> occurrence est libre ; liée si <em>au moins une</em> occurrence est liée.</li>
+      <li><strong>Formule fermée (close)</strong> : aucune variable libre.</li>
+    </ul>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exemples</span><span class="src">s.13</span>
+    <p><span class="fx">(∀x) P(x, y)</span> : x liée (2 occurrences), y libre → formule <strong>non close</strong>.</p>
+    <p><span class="fx">(∀x) P(x, y) ∧ (∀y) Q(y)</span> : <span class="hl">y est à la fois libre et liée</span> (libre dans P, liée dans Q).</p>
+  </div>
+  <div class="warn">« Libre » et « liée » ne sont pas contraires pour une <em>variable</em> — seulement pour une <em>occurrence</em>. Réponds occurrence par occurrence (souligne/colorie) puis conclus pour la variable.</div>
+
+  <h2><span class="h-num">§ 3.5</span>Interprétation d'une formule</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition 6</span><span class="src">s.18</span>
+    <p>Une interprétation de F = un <strong>domaine D non vide</strong> + :</p>
+    <ol><li>à chaque variable (libre) → un élément de D ;</li><li>à chaque symbole de fonction n-aire → une fonction <span class="fx">Dⁿ → D</span> ;</li><li>à chaque symbole de prédicat n-aire → une fonction <span class="fx">Dⁿ → {T, F}</span>.</li></ol>
+    <p style="font-size:15px">Arité 0 : une constante désigne un élément de D ; un prédicat 0-aire est une valeur de vérité (= atome de LP0).</p>
+  </div>
+  <div class="box box-thm">
+    <span class="box-label">Règles d'évaluation</span><span class="src">s.19</span>
+    <ul>
+      <li>Connecteurs : mêmes règles que LP0.</li>
+      <li><span class="fx">(∀x) G</span> vaut T ssi G vaut T <strong>pour tout</strong> élément de D.</li>
+      <li><span class="fx">(∃x) G</span> vaut T ssi G vaut T <strong>pour au moins un</strong> élément de D.</li>
+      <li>Une formule avec une variable libre <strong>ne peut pas</strong> être évaluée (sans lui affecter une valeur).</li>
+    </ul>
+    <p style="font-size:15px">Sur un domaine fini <span class="fx">D = {d₁,…,dₖ}</span> : <span class="fx">∀x G ≡ G(d₁) ∧ … ∧ G(dₖ)</span> et <span class="fx">∃x G ≡ G(d₁) ∨ … ∨ G(dₖ)</span>.</p>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exemple 3 du cours (type TD)</span><span class="src">s.21</span>
+    <p><span class="fx">G : ∀x (p(x) → q(f(x), a))</span> avec D = {1, 2}, a = 1, f(1) = 2, f(2) = 1, p(1) = F, p(2) = T, q(1,1) = T, q(1,2) = T, q(2,1) = F, q(2,2) = T.</p>
+    <div class="steps-eq">
+      <div><span class="eq">x=1</span><span>p(1) → q(f(1), a) = p(1) → q(2, 1) = F → F = <strong>T</strong></span><span class="why">faux ⇒ tout</span></div>
+      <div><span class="eq">x=2</span><span>p(2) → q(f(2), a) = p(2) → q(1, 1) = T → T = <strong>T</strong></span><span class="why"></span></div>
+    </div>
+    <p>Vrai pour tout x ∈ D ⇒ <strong>G est vraie</strong> dans I.</p>
+  </div>
+
+  <!-- VIZ 3 : quantifier lab -->
+  <div class="viz-card" id="qlab">
+    <div class="viz-header">
+      <div class="viz-title">Labo LP1 — l'ordre des quantificateurs</div>
+      <div class="viz-tag">Clique les cases pour changer P(x, y)</div>
+    </div>
+    <div class="viz-body">
+      <div>
+        <div class="btn-group" style="margin:0 0 10px">
+          <button class="btn" data-n="2">D = {1, 2}</button><button class="btn btn-active" data-n="3">D = {1, 2, 3}</button>
+          <button class="btn" data-preset="cours">Exemple 2 du cours</button><button class="btn" data-preset="diag">diagonale</button><button class="btn" data-preset="col">une colonne pleine</button><button class="btn" data-preset="rand">aléatoire</button>
+        </div>
+        <div style="overflow-x:auto"><table class="pgrid" id="q-grid"></table></div>
+        <p style="font-size:13px;text-align:center;color:var(--ink-faint);font-family:'JetBrains Mono',monospace">lignes = x · colonnes = y · case = P(x, y)</p>
+        <div class="explain" id="q-explain">Choisis une formule à droite pour voir la justification.</div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>P(x,y) = T</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:#FCFAF3"></span>P(x,y) = F</div>
+          <div class="legend-item"><span class="legend-swatch" style="box-shadow:0 0 0 3px var(--gold-light)"></span>témoin / contre-exemple</div>
+        </div>
+      </div>
+      <div class="viz-controls">
+        <h5>Formules évaluées sur D</h5>
+        <div id="q-list"></div>
+        <h5>À retenir</h5>
+        <p style="font-size:13.5px;margin:0"><span class="fx">∃y∀x P ⊨ ∀x∃y P</span> toujours, <strong>jamais</strong> l'inverse en général. Cherche une grille où ∀x∃y est T et ∃y∀x est F.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-remark">
+    <span class="box-label">Décidabilité</span><span class="src">s.18, 22</span>
+    <table class="law">
+      <tr><td>LP0</td><td>problème de validité <strong>décidable</strong> (solvable) : on teste les 2ⁿ interprétations.</td></tr>
+      <tr><td>LP1</td><td><strong>partiellement</strong> décidable (semi-décidable) : l'algorithme répond « oui » si la formule est valide, sinon il peut boucler indéfiniment.</td></tr>
+      <tr><td>Ordre ≥ 2</td><td><strong>indécidable</strong> : pas de solution du tout.</td></tr>
+    </table>
+  </div>
+
+  <h2><span class="h-num">§ 3.6</span>Validité &amp; inconsistance en LP1</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition 7</span><span class="src">s.22</span>
+    <ul>
+      <li><strong>Consistante (satisfiable)</strong> : il existe une interprétation I où G est vraie — I est un <strong>modèle</strong> de G.</li>
+      <li><strong>Inconsistante (insatisfiable)</strong> : aucune interprétation ne satisfait G.</li>
+      <li><strong>Valide</strong> : toute interprétation satisfait G.</li>
+    </ul>
+  </div>
+  <div class="box box-method">
+    <span class="box-label">Ce qu'il faut produire selon la réponse</span>
+    <table class="law">
+      <tr><td>« satisfiable »</td><td>Donner <strong>un modèle</strong> concret (D, valeurs des prédicats) et vérifier.</td></tr>
+      <tr><td>« non valide »</td><td>Donner <strong>un contre-modèle</strong> (une I où G est fausse) — domaine minuscule.</td></tr>
+      <tr><td>« valide »</td><td>Raisonner sur une I <strong>quelconque</strong> (souvent par l'absurde) — pas d'exemple !</td></tr>
+      <tr><td>« insatisfiable »</td><td>Supposer une I qui satisfait G et arriver à une contradiction.</td></tr>
+    </table>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">DS janvier 2020 · Ex3 — corrigé</span><span class="src">logique2020.pdf</span>
+    <p><strong>F1 : <span class="fx">(∀X ¬P(X)) ∧ P(a)</span></strong> — <span class="pill pill-burgundy">insatisfiable</span><br>Supposons I modèle de F1. Alors I(P(a)) = T. Mais I(∀X ¬P(X)) = T donne, pour X = a (a ∈ D), ¬P(a) = T, donc P(a) = F. Contradiction ⇒ aucun modèle.</p>
+    <p><strong>F2 : <span class="fx">∃X (P(X) ∧ Q(X)) → ((∃X P(X)) ∧ (∃Y Q(Y)))</span></strong> — <span class="pill pill-teal">valide</span><br>Soit I quelconque. Si la prémisse est fausse, F2 est vraie. Sinon ∃d ∈ D avec P(d) = T et Q(d) = T ; d est témoin de ∃X P(X) et de ∃Y Q(Y) ⇒ conclusion vraie. Donc F2 est vraie dans toute I.</p>
+    <p><strong>F3 : <span class="fx">((∃X P(X)) ∧ (∃X Q(X))) → ∃X (P(X) ∧ Q(X))</span></strong> — <span class="pill pill-gold">satisfiable, non valide</span><br>Contre-modèle : D = {1, 2}, P(1) = T, P(2) = F, Q(1) = F, Q(2) = T. Prémisse vraie (témoins 1 et 2), conclusion fausse (aucun élément n'a P et Q). Modèle : D = {1}, P(1) = Q(1) = T.</p>
+  </div>
+
+  <h2><span class="h-num">§ 3.7</span>Conséquence logique en LP1</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition 8</span><span class="src">s.23</span>
+    <p><span class="fx">F₁, …, Fₙ ⊨ G</span> ssi pour chaque interprétation I, si <span class="fx">F₁ ∧ … ∧ Fₙ</span> est vraie dans I alors G est vraie dans I. (Théorèmes 1 et 2 du Ch2 restent valables.)</p>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exemple du cours</span><span class="src">s.23</span>
+    <p><span class="fx">F₁ : ∀x (p(x) → q(x))</span>, &nbsp;<span class="fx">F₂ : p(a)</span>. &nbsp;Montrer <span class="fx">{F₁, F₂} ⊨ q(a)</span>.</p>
+    <div class="steps-eq">
+      <div><span class="eq">1</span><span>Soit I qui satisfait F₁ et F₂ ⇒ I(p(a)) = T.</span><span class="why">hypothèse</span></div>
+      <div><span class="eq">2</span><span>Supposons I(q(a)) = F.</span><span class="why">absurde</span></div>
+      <div><span class="eq">3</span><span>Pour x = a : ¬p(a) ∨ q(a) = F, donc p(a) → q(a) = F.</span><span class="why">instancier ∀</span></div>
+      <div><span class="eq">4</span><span>Donc ∀x (p(x) → q(x)) = F dans I. Contradiction avec F₁.</span><span class="why">⇒ q(a) vraie</span></div>
+    </div>
+  </div>
+
+  <h2><span class="h-num">§ 3.8</span>Forme normale prénexe (FNP)</h2>
+  <div class="box box-def">
+    <span class="box-label">Définition 9</span><span class="src">s.24</span>
+    <p>F est en <strong>FNP</strong> si elle s'écrit <span class="fx">(Q₁x₁)(Q₂x₂)…(Qₙxₙ) M</span> où chaque <span class="fx">Qᵢ ∈ {∀, ∃}</span> et <span class="fx">M</span> est sans quantificateur.</p>
+    <p><span class="fx">(Q₁x₁)…(Qₙxₙ)</span> = le <strong>préfixe</strong> ; <span class="fx">M</span> = la <strong>matrice</strong>.</p>
+    <p style="font-size:15px">Ex. <span class="fx">(∀x)(∀y)(∃z)(Q(x, y) → R(z))</span></p>
+  </div>
+  <div class="box box-prop">
+    <span class="box-label">Lois des quantificateurs</span><span class="src">s.25–26</span>
+    <p style="font-size:14.5px">F[x] contient x libre ; G ne contient <strong>pas</strong> x ; Q ∈ {∀, ∃}.</p>
+    <table class="law">
+      <tr><td>(1a)</td><td class="fx">(Qx) F[x] ∨ G ≡ (Qx)(F[x] ∨ G)</td></tr>
+      <tr><td>(1b)</td><td class="fx">(Qx) F[x] ∧ G ≡ (Qx)(F[x] ∧ G)</td></tr>
+      <tr><td>(2a)</td><td class="fx">¬(∀x) F[x] ≡ (∃x) ¬F[x]</td></tr>
+      <tr><td>(2b)</td><td class="fx">¬(∃x) F[x] ≡ (∀x) ¬F[x]</td></tr>
+      <tr><td>(3a) ∀ sur ∧</td><td class="fx">(∀x) F[x] ∧ (∀x) H[x] ≡ (∀x)(F[x] ∧ H[x])</td></tr>
+      <tr><td>(3b) ∃ sur ∨</td><td class="fx">(∃x) F[x] ∨ (∃x) H[x] ≡ (∃x)(F[x] ∨ H[x])</td></tr>
+      <tr><td>(4a) / (4b)</td><td class="fx">(Q₁x) F[x] ∘ (Q₂x) H[x] ≡ (Q₁x)(Q₂z)(F[x] ∘ H[z]) &nbsp;<span style="font-style:normal;color:var(--ink-faint)">∘ ∈ {∧, ∨}, z nouvelle</span></td></tr>
+    </table>
+  </div>
+  <div class="warn">Les deux « fausses » distributivités : <span class="fx">∀x F ∨ ∀x H ≢ ∀x (F ∨ H)</span> et <span class="fx">∃x F ∧ ∃x H ≢ ∃x (F ∧ H)</span> (c'est exactement F3 du DS 2020). Dans ces cas : <strong>renommer</strong> puis (4a)/(4b).</div>
+  <div class="warn">(1a)/(1b) ne s'appliquent que si x <strong>n'apparaît pas libre</strong> dans G. Sinon renomme d'abord la variable liée.</div>
+  <div class="box box-method">
+    <span class="box-label">Algorithme FNP</span><span class="src">s.27</span>
+    <ol class="method-steps">
+      <li>Éliminer <span class="fx">→</span> et <span class="fx">↔</span>.</li>
+      <li>Descendre les <span class="fx">¬</span> jusqu'aux atomes : double négation, De Morgan, (2a), (2b) — <span class="hl">¬ fait basculer ∀ ↔ ∃</span>.</li>
+      <li>Renommer les variables liées si nécessaire (deux quantificateurs sur la même variable).</li>
+      <li>Sortir les quantificateurs vers la gauche avec (1a), (1b), (3a), (3b), (4a), (4b).</li>
+    </ol>
+  </div>
+  <div class="box box-ex">
+    <span class="box-label">Exemple 1 du cours (corrigé)</span><span class="src">s.28</span>
+    <p><span class="fx">(∀x) P(x) → (∃x) Q(x)</span></p>
+    <div class="steps-eq">
+      <div><span class="eq">=</span><span>¬(∀x) P(x) ∨ (∃x) Q(x)</span><span class="why">élim. →</span></div>
+      <div><span class="eq">=</span><span>(∃x) ¬P(x) ∨ (∃x) Q(x)</span><span class="why">(2a)</span></div>
+      <div><span class="eq">=</span><span>(∃x) (¬P(x) ∨ Q(x))</span><span class="why">(3b) · FNP</span></div>
+    </div>
+  </div>
+
+  <!-- VIZ 4 : stepper FNP -->
+  <div class="viz-card stepper" id="step-fnp">
+    <div class="viz-header">
+      <div class="viz-title">Pas à pas — Exemple 2 du cours</div>
+      <div class="viz-tag">(∀x)(∀y)((∃z)(P(x,z) ∧ P(y,z)) → (∃u) Q(x,y,u))</div>
+    </div>
+    <div class="st-list"></div>
+    <div class="btn-group"><button class="btn st-prev">← précédent</button><button class="btn st-next">suivant →</button><button class="btn st-all">tout afficher</button></div>
+  </div>
+  <div class="box box-remark">
+    <span class="box-label">La FNP n'est pas unique</span>
+    <p>L'ordre de sortie des quantificateurs peut changer le préfixe (<span class="fx">∀z∃u</span> ou <span class="fx">∃u∀z</span> ici, car z et u sont dans des sous-formules disjointes). Les deux sont acceptées si chaque étape cite sa loi.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ M · MÉTHODES ═══════════════════ -->
+<section class="tab-content" id="methods">
+  <p class="intro">Le livre de recettes : une carte par type de question des TD et des DS. Pour chaque carte : la procédure, l'astuce, et un exercice corrigé à déplier.</p>
+
+  <div class="method-index">
+    <a href="#m1"><span>M1</span>Traduire en LP0</a>
+    <a href="#m2"><span>M2</span>Traduire en LP1</a>
+    <a href="#m3"><span>M3</span>Valide / satisfiable / insatisfiable (LP0)</a>
+    <a href="#m4"><span>M4</span>Montrer une équivalence</a>
+    <a href="#m5"><span>M5</span>Mettre en FNC / FND</a>
+    <a href="#m6"><span>M6</span>Prouver A₁…Aₙ ⊨ B</a>
+    <a href="#m7"><span>M7</span>Réfuter une conséquence</a>
+    <a href="#m8"><span>M8</span>Système complet de connecteurs</a>
+    <a href="#m9"><span>M9</span>Variables libres / liées</a>
+    <a href="#m10"><span>M10</span>Évaluer dans une interprétation</a>
+    <a href="#m11"><span>M11</span>Classer une formule LP1</a>
+    <a href="#m12"><span>M12</span>Mettre en FNP</a>
+  </div>
+  <div class="warn amb">Les énoncés de TD1 et TD2 ne sont pas dans le Drive. Les cartes sont construites à partir du cours (exercices des slides) et du DS 2020. Les références exactes « TD1 ex.X » seront ajoutées dès que les TD seront dans <code>inbox/</code>.</div>
+
+  <h2><span class="h-num">Bloc A · TD1</span>Logique des propositions</h2>
+
+  <div class="method-card" id="m1">
+    <div class="method-meta"><span class="pill pill-burgundy">TD1 · LP0</span><span class="pill">Cours s.16</span></div>
+    <div class="method-question">Comment traduire un énoncé en français en formule de LP0 ?</div>
+    <ol class="method-steps">
+      <li>Écrire le <strong>dictionnaire</strong> : un atome par fait élémentaire, à la forme <strong>affirmative</strong> (P : « il pleut », jamais P : « il ne pleut pas »).</li>
+      <li>Repérer le <strong>connecteur principal</strong> de la phrase (souvent « si… alors », « donc », « ssi »).</li>
+      <li>Traduire chaque morceau avec le tableau des tournures ci-dessous.</li>
+      <li>Mettre <strong>toutes</strong> les parenthèses, puis relire la formule à voix haute en français.</li>
+    </ol>
+    <table class="law" style="margin-top:12px">
+      <tr><td>A mais B</td><td class="fx">A ∧ B</td></tr>
+      <tr><td>A ou B</td><td class="fx">A ∨ B <span style="font-style:normal;color:var(--ink-faint)">(inclusif par défaut)</span></td></tr>
+      <tr><td>soit A soit B</td><td class="fx">(A ∨ B) ∧ ¬(A ∧ B)</td></tr>
+      <tr><td>ni A ni B</td><td class="fx">¬A ∧ ¬B</td></tr>
+      <tr><td>si A alors B · A suffit pour B</td><td class="fx">A → B</td></tr>
+      <tr><td>A seulement si B · il faut B pour A</td><td class="fx">A → B</td></tr>
+      <tr><td>A si B</td><td class="fx">B → A</td></tr>
+      <tr><td>A ssi B</td><td class="fx">A ↔ B</td></tr>
+      <tr><td>A sauf si B · à moins que B</td><td class="fx">¬B → A &nbsp;≡&nbsp; A ∨ B</td></tr>
+    </table>
+    <div class="method-tip">« Seulement si » et « il faut » introduisent la condition <strong>nécessaire</strong> : elle va à <strong>droite</strong> de la flèche.</div>
+  </div>
+
+  <div class="method-card" id="m3">
+    <div class="method-meta"><span class="pill pill-burgundy">TD1 · LP0</span><span class="pill">Cours s.17–18</span></div>
+    <div class="method-question">Comment montrer qu'une formule est valide, satisfiable ou insatisfiable ?</div>
+    <ol class="method-steps">
+      <li>Compter les atomes. Si n ≤ 3, la <strong>table de vérité</strong> (2ⁿ lignes) est le plus sûr : une colonne par sous-formule, de l'intérieur vers l'extérieur.</li>
+      <li>Lire la colonne finale : tout T → <strong>valide</strong> · tout F → <strong>insatisfiable</strong> · mélange → <strong>satisfiable non valide</strong> (citer une ligne T et une ligne F).</li>
+      <li>Sans table (« justifier sans table ») : pour la validité, <strong>par l'absurde</strong> → supposer I(F) = F et remonter les contraintes jusqu'à une contradiction.</li>
+      <li>Ou bien transformer par les lois jusqu'à <span class="fx">⊤</span> (valide) ou <span class="fx">⊥</span> (insatisfiable).</li>
+    </ol>
+    <div class="method-tip">Pour <span class="fx">A → B</span>, l'absurde est imbattable : I(A → B) = F force <strong>I(A) = T et I(B) = F</strong>. Une seule ligne à étudier au lieu de 2ⁿ.</div>
+    <details class="sol"><summary>Corrigé — G₁ = ((P → Q) ∧ P) → Q est valide (sans table)</summary><div>
+      <div class="steps-eq">
+        <div><span class="eq">1</span><span>Supposons I(G₁) = F ⇒ I((P→Q) ∧ P) = T et I(Q) = F.</span><span class="why">→ fausse</span></div>
+        <div><span class="eq">2</span><span>Donc I(P) = T et I(P → Q) = T.</span><span class="why">∧ vraie</span></div>
+        <div><span class="eq">3</span><span>I(P) = T et I(Q) = F ⇒ I(P → Q) = F. Contradiction.</span><span class="why">⇒ G₁ valide</span></div>
+      </div>
+    </div></details>
+  </div>
+
+  <div class="method-card" id="m4">
+    <div class="method-meta"><span class="pill pill-burgundy">TD1 · LP0</span><span class="pill">Cours s.20–22</span></div>
+    <div class="method-question">Comment montrer que deux formules sont équivalentes ?</div>
+    <ol class="method-steps">
+      <li><strong>Table de vérité</strong> : mettre F et G côte à côte, les colonnes doivent être identiques ligne par ligne.</li>
+      <li><strong>Calcul</strong> : partir de la formule la plus compliquée, appliquer une loi par ligne, <strong>nommer la loi</strong> à droite.</li>
+      <li>Pour montrer la <strong>non</strong>-équivalence : exhiber <strong>une</strong> interprétation où elles diffèrent.</li>
+    </ol>
+    <div class="method-tip">Commence toujours par éliminer → et ↔ des deux côtés : la plupart des équivalences « tombent » après De Morgan.</div>
+    <details class="sol"><summary>Corrigé — P → Q ≡ ¬Q → ¬P (contraposée)</summary><div>
+      <div class="steps-eq">
+        <div><span class="eq">=</span><span>¬Q → ¬P ≡ ¬¬Q ∨ ¬P</span><span class="why">élim. →</span></div>
+        <div><span class="eq">=</span><span>Q ∨ ¬P</span><span class="why">double négation</span></div>
+        <div><span class="eq">=</span><span>¬P ∨ Q ≡ P → Q</span><span class="why">commutativité · élim. →</span></div>
+      </div>
+    </div></details>
+  </div>
+
+  <div class="method-card" id="m5">
+    <div class="method-meta"><span class="pill pill-burgundy">TD1 · LP0</span><span class="pill">Cours s.24–25</span></div>
+    <div class="method-question">Comment mettre une formule en FNC ou en FND ?</div>
+    <ol class="method-steps">
+      <li>Éliminer <span class="fx">↔</span> puis <span class="fx">→</span>.</li>
+      <li>Descendre les négations jusqu'aux atomes (De Morgan, ¬¬).</li>
+      <li>FNC : distribuer <strong>∨ sur ∧</strong> · FND : distribuer <strong>∧ sur ∨</strong>.</li>
+      <li>Simplifier : supprimer les clauses contenant <span class="fx">X ∨ ¬X</span> (= ⊤) dans une FNC, les conjonctions contenant <span class="fx">X ∧ ¬X</span> (= ⊥) dans une FND, les doublons.</li>
+      <li><em>Alternative « canonique »</em> par la table : FND = ∨ des lignes T (chaque ligne = conjonction des littéraux) ; FNC = ∧ des lignes F (chaque ligne = disjonction des littéraux <strong>inversés</strong>).</li>
+    </ol>
+    <div class="method-tip">Pour <span class="fx">↔</span> en FND, utilise directement <span class="fx">A ↔ B ≡ (A ∧ B) ∨ (¬A ∧ ¬B)</span> ; en FNC, <span class="fx">(¬A ∨ B) ∧ (A ∨ ¬B)</span>. Gain de 3 lignes de calcul. Le labo du § 2.4 donne les formes canoniques pour vérifier.</div>
+    <details class="sol"><summary>Corrigé — FNC et FND de P ↔ Q</summary><div>
+      <div class="steps-eq">
+        <div><span class="eq">=</span><span>(P → Q) ∧ (Q → P)</span><span class="why">élim. ↔</span></div>
+        <div><span class="eq">=</span><span>(¬P ∨ Q) ∧ (¬Q ∨ P)</span><span class="why">élim. → · FNC ✓</span></div>
+        <div><span class="eq">=</span><span>(¬P ∧ ¬Q) ∨ (¬P ∧ P) ∨ (Q ∧ ¬Q) ∨ (Q ∧ P)</span><span class="why">distributivité</span></div>
+        <div><span class="eq">=</span><span>(¬P ∧ ¬Q) ∨ (P ∧ Q)</span><span class="why">X ∧ ¬X = ⊥ · FND ✓</span></div>
+      </div>
+    </div></details>
+  </div>
+
+  <div class="method-card" id="m6">
+    <div class="method-meta"><span class="pill pill-burgundy">TD1 · LP0</span><span class="pill">Cours s.31–34</span></div>
+    <div class="method-question">Comment montrer que B est conséquence logique de A₁, …, Aₙ ?</div>
+    <ol class="method-steps">
+      <li>Choisir la méthode selon la consigne : <strong>table</strong> (autorisée et n ≤ 3), <strong>théorème 1</strong> (montrer <span class="fx">(A₁∧…∧Aₙ) → B</span> valide), <strong>théorème 2</strong> (montrer <span class="fx">A₁∧…∧Aₙ∧¬B</span> insatisfiable).</li>
+      <li>Table : ne garder que les lignes où <strong>toutes</strong> les prémisses sont T ; vérifier que B y est T.</li>
+      <li>Sans table : <strong>absurde</strong> → supposer I(Aᵢ) = T pour tout i et I(B) = F, propager, trouver la contradiction.</li>
+      <li>Ou par calcul : réduire <span class="fx">(A₁∧…∧Aₙ) → B</span> à <span class="fx">⊤</span>, ou <span class="fx">A₁∧…∧Aₙ∧¬B</span> à <span class="fx">⊥</span>.</li>
+      <li>Conclure avec la bonne phrase : « tout modèle de {A₁,…,Aₙ} est un modèle de B, donc A₁,…,Aₙ ⊨ B ».</li>
+    </ol>
+    <div class="method-tip">Le théorème d'implication <span class="fx">Σ, A ⊨ B ⟺ Σ ⊨ A → B</span> permet de « remonter » les hypothèses d'une conclusion en implication : pour montrer <span class="fx">⊨ A → (B → C)</span>, montre <span class="fx">A, B ⊨ C</span>.</div>
+  </div>
+
+  <div class="method-card" id="m7">
+    <div class="method-meta"><span class="pill pill-burgundy">TD1 · LP0</span><span class="pill pill-gold">DS 2020 · Ex2</span></div>
+    <div class="method-question">Comment montrer que B n'est PAS conséquence logique de A₁, …, Aₙ ?</div>
+    <ol class="method-steps">
+      <li>Chercher <strong>une</strong> interprétation I avec toutes les prémisses vraies et B <strong>fausse</strong> : partir de I(B) = F (ça fixe des atomes).</li>
+      <li>Compléter les atomes restants pour rendre les prémisses vraies.</li>
+      <li>Vérifier en évaluant chaque prémisse et B dans I (écrire les valeurs).</li>
+      <li>Conclure : « I est un modèle de Σ qui n'est pas un modèle de B, donc Σ ⊭ B ».</li>
+    </ol>
+    <div class="method-tip">Un contre-exemple bien vérifié = tous les points. Inutile (et risqué) de faire la table complète.</div>
+    <details class="sol"><summary>Corrigé — DS 2020 Ex2 : (A → (B → C)) ⊨ (A → B) ?</summary><div>
+      <p><strong>Q1.</strong> On veut I(A → B) = F ⇒ I(A) = T, I(B) = F. Alors <span class="fx">B → C</span> = F → C = T, donc <span class="fx">A → (B → C)</span> = T → T = T (pour C quelconque).</p>
+      <p>I = {A = T, B = F, C = T} rend la prémisse vraie et la conclusion fausse ⇒ <strong>(A → (B → C)) ⊭ (A → B)</strong>. Par le théorème 1, <span class="fx">(A → (B → C)) → (A → B)</span> n'est pas valide.</p>
+      <p><strong>Q2.</strong> <span class="fx">H = (A → (B → C)) → ¬(A → B)</span>. Dans l'I de Q1, la prémisse est T et <span class="fx">¬(A → B)</span> = T, donc I(H) = T : <strong>H est satisfiable</strong>. Mais avec A = B = C = T : prémisse = T, <span class="fx">¬(A → B)</span> = F, donc H = F : <strong>H n'est pas valide</strong>. Conclusion : H est satisfiable mais non valide.</p>
+    </div></details>
+  </div>
+
+  <div class="method-card" id="m8">
+    <div class="method-meta"><span class="pill pill-burgundy">TD1 · LP0</span><span class="pill">Cours s.35</span></div>
+    <div class="method-question">Comment montrer qu'un ensemble de connecteurs est complet (ou non) ?</div>
+    <ol class="method-steps">
+      <li>Partir d'un système <strong>déjà connu complet</strong> : <span class="fx">{¬, ∨}</span> ou <span class="fx">{¬, ∧}</span>.</li>
+      <li>Exprimer chacun de ses connecteurs avec le nouvel ensemble (ex. pour <span class="fx">{¬, →}</span> : <span class="fx">A ∨ B ≡ ¬A → B</span>).</li>
+      <li>Conclure : toute formule s'écrit avec {¬, ∨}, donc avec le nouvel ensemble.</li>
+      <li>Pour <strong>non complet</strong> : trouver une propriété conservée par tous les connecteurs de l'ensemble (ex. « vraie quand tous les atomes sont vrais » pour {∧, ∨, →}) que ¬P viole.</li>
+    </ol>
+    <div class="method-tip">Classique : <span class="fx">{↑}</span> (NAND : <span class="fx">A ↑ B ≡ ¬(A ∧ B)</span>) est complet à lui seul, car <span class="fx">¬A ≡ A ↑ A</span> et <span class="fx">A ∧ B ≡ (A ↑ B) ↑ (A ↑ B)</span>.</div>
+  </div>
+
+  <h2><span class="h-num">Bloc B · TD2</span>Logique des prédicats</h2>
+
+  <div class="method-card" id="m2">
+    <div class="method-meta"><span class="pill pill-teal">TD2 · LP1</span><span class="pill pill-gold">DS 2020 · Ex1</span><span class="pill">Cours s.10–15</span></div>
+    <div class="method-question">Comment traduire un énoncé en logique des prédicats ?</div>
+    <ol class="method-steps">
+      <li>Lister les prédicats imposés (ne <strong>pas</strong> en inventer d'autres si l'énoncé dit « uniquement »).</li>
+      <li>Repérer le <strong>quantificateur</strong> : tout / chaque / aucun → ∀ · certains / il existe / des → ∃.</li>
+      <li>Appliquer le patron : <strong>∀ va avec →</strong>, <strong>∃ va avec ∧</strong>.</li>
+      <li>Les mots « uniquement », « aucun », « tous les légumes » cachent un <strong>second quantificateur</strong> imbriqué.</li>
+      <li>Relire en français, quantificateur par quantificateur.</li>
+    </ol>
+    <table class="law" style="margin-top:12px">
+      <tr><td>Tout A est B</td><td class="fx">∀x (A(x) → B(x))</td></tr>
+      <tr><td>Certains A sont B</td><td class="fx">∃x (A(x) ∧ B(x))</td></tr>
+      <tr><td>Aucun A n'est B</td><td class="fx">∀x (A(x) → ¬B(x)) &nbsp;≡&nbsp; ¬∃x (A(x) ∧ B(x))</td></tr>
+      <tr><td>Seuls les A sont B</td><td class="fx">∀x (B(x) → A(x))</td></tr>
+      <tr><td>Pas tous les A sont B</td><td class="fx">¬∀x (A(x) → B(x)) &nbsp;≡&nbsp; ∃x (A(x) ∧ ¬B(x))</td></tr>
+    </table>
+    <div class="method-tip"><span class="fx">∃x (A(x) → B(x))</span> est presque toujours une erreur : elle est vraie dès qu'un seul x n'est pas A.</div>
+    <details class="sol"><summary>Corrigé — DS 2020 Ex1 (personne, mange, aime, légume, végétarien)</summary><div>
+      <p><strong>a.</strong> « Seules les personnes qui mangent uniquement des légumes sont végétariennes »</p>
+      <div class="formula" style="font-size:17px">∀X (végétarien(X) → personne(X) ∧ ∀Y (mange(X,Y) → légume(Y)))</div>
+      <p><strong>b.</strong> « Certaines personnes ne mangent pas du tout de légumes »</p>
+      <div class="formula" style="font-size:17px">∃X (personne(X) ∧ ∀Y (légume(Y) → ¬mange(X,Y)))</div>
+      <p><strong>c.</strong> « Toute personne ne peut être végétarienne sans aimer les légumes »</p>
+      <div class="formula" style="font-size:17px">∀X ((personne(X) ∧ végétarien(X)) → ∀Y (légume(Y) → aime(X,Y)))</div>
+      <p><strong>d.</strong> « Il y a des légumes qui ne sont mangés par aucune personne non végétarienne »</p>
+      <div class="formula" style="font-size:17px">∃Y (légume(Y) ∧ ∀X ((personne(X) ∧ ¬végétarien(X)) → ¬mange(X,Y)))</div>
+      <p style="font-size:14px;color:var(--ink-faint)">c. accepte aussi la lecture « aimer <em>des</em> légumes » avec ∃Y (légume(Y) ∧ aime(X,Y)) : précise ton choix.</p>
+    </div></details>
+  </div>
+
+  <div class="method-card" id="m9">
+    <div class="method-meta"><span class="pill pill-teal">TD2 · LP1</span><span class="pill">Cours s.12–13</span></div>
+    <div class="method-question">Comment déterminer les variables libres et liées et dire si une formule est close ?</div>
+    <ol class="method-steps">
+      <li>Pour chaque quantificateur, <strong>délimiter sa portée</strong> (souligner la sous-formule entre ses parenthèses).</li>
+      <li>Parcourir <strong>chaque occurrence</strong> de chaque variable : dans la portée d'un quantificateur sur la même variable → liée, sinon libre.</li>
+      <li>Variable libre = au moins une occurrence libre ; liée = au moins une occurrence liée (elle peut être les deux).</li>
+      <li>Close ⟺ aucune variable libre.</li>
+    </ol>
+    <div class="method-tip">Une constante (a, 0, Socrate) n'est <strong>ni libre ni liée</strong> : ce n'est pas une variable.</div>
+    <details class="sol"><summary>Corrigé — ∀x (P(x, y) → ∃y Q(x, y, z)) ∧ R(x)</summary><div>
+      <p>Portée de ∀x : <span class="fx">P(x,y) → ∃y Q(x,y,z)</span> · portée de ∃y : <span class="fx">Q(x,y,z)</span>.</p>
+      <ul>
+        <li><strong>x</strong> : liée dans P et Q, <strong>libre</strong> dans R(x) (hors de la portée de ∀x) → libre et liée.</li>
+        <li><strong>y</strong> : libre dans P(x, y), liée dans Q → libre et liée.</li>
+        <li><strong>z</strong> : libre seulement.</li>
+      </ul>
+      <p>Formule <strong>non close</strong>. Avant une FNP, renommer les variables liées pour les séparer des libres : <span class="fx">∀v (P(v, y) → ∃w Q(v, w, z)) ∧ R(x)</span>.</p>
+    </div></details>
+  </div>
+
+  <div class="method-card" id="m10">
+    <div class="method-meta"><span class="pill pill-teal">TD2 · LP1</span><span class="pill">Cours s.20–21</span></div>
+    <div class="method-question">Comment évaluer une formule de LP1 dans une interprétation donnée ?</div>
+    <ol class="method-steps">
+      <li>Recopier l'interprétation : D, constantes, tables des fonctions et des prédicats.</li>
+      <li>Développer les quantificateurs <strong>de l'extérieur vers l'intérieur</strong> : ∀x → « pour x = d₁, …, dₖ », ∃x → « existe-t-il un d tel que ».</li>
+      <li>Calculer d'abord les <strong>termes</strong> (f(x), a), puis les atomes, puis les connecteurs.</li>
+      <li>∀ : s'arrêter au premier contre-exemple (F) ; ∃ : s'arrêter au premier témoin (T).</li>
+      <li>Conclure en une phrase qui cite le témoin ou le contre-exemple.</li>
+    </ol>
+    <div class="method-tip">Présente un tableau « x | terme | atome | valeur » : c'est rapide à lire pour le correcteur et ça évite les oublis de cas.</div>
+    <details class="sol"><summary>Corrigé — Exemple 2 du cours : (∀x)(∃y) P(x, y) sur D = {1, 2}</summary><div>
+      <p>P(1,1) = T, P(1,2) = F, P(2,1) = F, P(2,2) = T.</p>
+      <p>x = 1 : y = 1 donne P(1,1) = T ✓ · x = 2 : y = 2 donne P(2,2) = T ✓ ⇒ <strong>vraie</strong>.</p>
+      <p>Par contre <span class="fx">(∃y)(∀x) P(x, y)</span> est <strong>fausse</strong> : y = 1 échoue en x = 2, y = 2 échoue en x = 1. (Teste-le dans le labo du § 3.5.)</p>
+    </div></details>
+  </div>
+
+  <div class="method-card" id="m11">
+    <div class="method-meta"><span class="pill pill-teal">TD2 · LP1</span><span class="pill pill-gold">DS 2020 · Ex3</span><span class="pill">Cours s.22</span></div>
+    <div class="method-question">Comment savoir si une formule de LP1 est valide, satisfiable ou insatisfiable ?</div>
+    <ol class="method-steps">
+      <li><strong>Deviner</strong> d'abord : tester sur D = {1} puis D = {1, 2} avec des prédicats simples.</li>
+      <li>Si tu trouves une I fausse → <strong>non valide</strong> (c'est ton contre-modèle). Si tu trouves une I vraie → <strong>satisfiable</strong> (c'est ton modèle).</li>
+      <li>Si tout semble vrai → prouver <strong>valide</strong> sur une I <strong>quelconque</strong>, par l'absurde.</li>
+      <li>Si tout semble faux → prouver <strong>insatisfiable</strong> : supposer un modèle, instancier les ∀ sur les constantes, trouver la contradiction.</li>
+      <li>Réponse complète : la classe + l'objet qui la justifie (modèle, contre-modèle ou preuve).</li>
+    </ol>
+    <div class="method-tip">Valide ⟹ satisfiable. Si la formule est valide, ne réponds pas seulement « satisfiable ». Donne la classe la plus forte.</div>
+    <p style="font-size:14.5px;margin:12px 0 0">Corrigé complet de F1, F2 et F3 : § 3.6 (onglet III).</p>
+  </div>
+
+  <div class="method-card" id="m12">
+    <div class="method-meta"><span class="pill pill-teal">TD2 · LP1</span><span class="pill">Cours s.24–28</span></div>
+    <div class="method-question">Comment mettre une formule sous forme normale prénexe ?</div>
+    <ol class="method-steps">
+      <li>Éliminer <span class="fx">↔</span> puis <span class="fx">→</span>.</li>
+      <li>Descendre les ¬ : De Morgan, ¬¬, et <span class="fx">¬∀ = ∃¬</span>, <span class="fx">¬∃ = ∀¬</span> (2a, 2b).</li>
+      <li>Renommer pour que chaque quantificateur ait <strong>sa propre</strong> variable, distincte des variables libres.</li>
+      <li>Sortir les quantificateurs un par un, en citant (1a)/(1b)/(3a)/(3b)/(4a)/(4b).</li>
+      <li>Écrire le résultat en séparant clairement <strong>préfixe</strong> et <strong>matrice</strong>.</li>
+    </ol>
+    <div class="method-tip">Un quantificateur à gauche d'un <span class="fx">→</span> <strong>change de nature</strong> quand il sort : <span class="fx">(∃x P(x)) → Q ≡ ∀x (P(x) → Q)</span>. C'est la conséquence directe de l'étape 1 et de (2b).</div>
+    <details class="sol"><summary>Corrigé — ∀x P(x) ∨ ∀x Q(x)</summary><div>
+      <div class="steps-eq">
+        <div><span class="eq">=</span><span>∀x P(x) ∨ ∀z Q(z)</span><span class="why">renommage (pas de 3a pour ∨ !)</span></div>
+        <div><span class="eq">=</span><span>∀x ∀z (P(x) ∨ Q(z))</span><span class="why">(4b) · FNP</span></div>
+      </div>
+    </div></details>
+  </div>
+</section>
+
+<!-- ═══════════════════ S · SYNTHÈSE ═══════════════════ -->
+<section class="tab-content" id="synth">
+  <p class="intro">Une seule idée traverse les trois chapitres : <em>une formule est jugée par ses interprétations.</em> Tout le reste (tables, formes normales, quantificateurs) sert à rendre ce jugement faisable à la main.</p>
+
+  <h2><span class="h-num">S · 1</span>Vue d'ensemble</h2>
+  <div class="flow-grid">
+    <div class="flow-node"><div class="flow-node-tag">I · Introduction</div><div class="flow-node-title">Le cadre</div><span class="pill">raisonnement valide</span><span class="pill">syntaxe ⊢</span><span class="pill">sémantique ⊨</span><span class="pill">Tarski</span></div>
+    <div class="flow-node"><div class="flow-node-tag">II · LP0</div><div class="flow-node-title">Propositions</div><span class="pill">FBF</span><span class="pill">2ⁿ interprétations</span><span class="pill">valide / sat / insat</span><span class="pill">lois</span><span class="pill">FNC · FND</span><span class="pill">⊨ · Th1 · Th2</span><span class="pill">connecteurs complets</span></div>
+    <div class="flow-node"><div class="flow-node-tag">III · LP1</div><div class="flow-node-title">Prédicats</div><span class="pill">termes</span><span class="pill">atomes</span><span class="pill">∀ ∃</span><span class="pill">libres / liées</span><span class="pill">domaine D</span><span class="pill">semi-décidable</span><span class="pill">FNP</span></div>
+  </div>
+
+  <h2><span class="h-num">S · 2</span>Les ponts entre chapitres</h2>
+  <div class="two-col">
+    <div class="box box-prop" style="margin:0"><span class="box-label">I → II</span><p>La sémantique de LP0 <strong>est</strong> la table de vérité : « tautologie » (Ch1) = « valide » (Ch2) = colonne finale toute à T.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">II → III</span><p>Les connecteurs, les lois d'équivalence et les théorèmes 1 et 2 passent tels quels en LP1. Seule nouveauté : l'interprétation choisit un <strong>domaine</strong> en plus des valeurs.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">FNC/FND ↔ FNP</span><p>Même algorithme : éliminer → ↔, descendre ¬, réorganiser. La FNP ajoute une étape (sortir les quantificateurs), et sa matrice peut ensuite être mise en FNC.</p></div>
+    <div class="box box-prop" style="margin:0"><span class="box-label">Décidabilité</span><p>LP0 : on peut toujours tout tester (2ⁿ). LP1 : infinité de domaines, d'où les preuves « sur une I quelconque » et les contre-modèles <strong>choisis</strong>.</p></div>
+  </div>
+
+  <h2><span class="h-num">S · 3</span>Carte conceptuelle</h2>
+  <div class="viz-card" style="padding:16px">
+    <svg class="viz-svg" viewBox="0 0 900 470" role="img" aria-label="Carte conceptuelle des chapitres 1 à 3" style="cursor:default">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B8924A"/></marker></defs>
+      <g stroke="#B8924A" stroke-width="1.4" fill="none" marker-end="url(#ar)">
+        <path d="M450,78 L450,168"/>
+        <path d="M250,250 L355,232"/>
+        <path d="M650,250 L545,232"/>
+        <path d="M160,290 L160,340"/>
+        <path d="M740,290 L740,340"/>
+        <path d="M250,375 Q450,425 650,375"/>
+        <path d="M450,272 L450,340" stroke-dasharray="5 4"/>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="11" fill="#8A7D6B">
+        <text x="460" y="128">interpréter</text>
+        <text x="258" y="226">tables 2ⁿ</text>
+        <text x="572" y="222">∀ I sur D</text>
+        <text x="170" y="320">simplifier</text>
+        <text x="750" y="320">normaliser</text>
+        <text x="390" y="420">même algorithme (¬ vers le bas)</text>
+        <text x="460" y="312">⊨ = ⊢ ?</text>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="11" fill="#4A3F32">
+        <rect x="320" y="24" width="260" height="54" rx="5" fill="#FBF8F0" stroke="#2C5664"/>
+        <text x="450" y="47" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#2C5664">Syntaxe</text>
+        <text x="450" y="66" text-anchor="middle" font-size="11">atomes · connecteurs · FBF · arbre</text>
+
+        <rect x="340" y="168" width="220" height="104" rx="6" fill="#7B2D26"/>
+        <text x="450" y="204" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="24" fill="#FBF8F0">Σ ⊨ B</text>
+        <text x="450" y="228" text-anchor="middle" font-size="11" fill="#F7E8B8">tout modèle de Σ</text>
+        <text x="450" y="244" text-anchor="middle" font-size="11" fill="#F7E8B8">est un modèle de B</text>
+        <text x="450" y="262" text-anchor="middle" font-size="10" fill="#E8C77B">valide · sat · insat</text>
+
+        <rect x="60" y="210" width="190" height="80" rx="5" fill="#FBF8F0" stroke="#C9BFAC"/>
+        <text x="155" y="238" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#7B2D26">LP0</text>
+        <text x="155" y="258" text-anchor="middle" font-size="11">valuation des atomes</text>
+        <text x="155" y="275" text-anchor="middle" font-size="11">décidable</text>
+
+        <rect x="650" y="210" width="190" height="80" rx="5" fill="#FBF8F0" stroke="#C9BFAC"/>
+        <text x="745" y="238" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#7B2D26">LP1</text>
+        <text x="745" y="258" text-anchor="middle" font-size="11">D · fonctions · prédicats</text>
+        <text x="745" y="275" text-anchor="middle" font-size="11">semi-décidable</text>
+
+        <rect x="60" y="340" width="200" height="60" rx="5" fill="#FBF8F0" stroke="#B8924A"/>
+        <text x="160" y="366" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="18" fill="#1F1A14">Lois · FNC · FND</text>
+        <text x="160" y="386" text-anchor="middle" font-size="11">De Morgan · distributivité</text>
+
+        <rect x="640" y="340" width="200" height="60" rx="5" fill="#FBF8F0" stroke="#B8924A"/>
+        <text x="740" y="366" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="18" fill="#1F1A14">FNP</text>
+        <text x="740" y="386" text-anchor="middle" font-size="11">préfixe · matrice</text>
+
+        <rect x="350" y="340" width="200" height="50" rx="5" fill="#FBF8F0" stroke="#8A7D6B" stroke-dasharray="5 4"/>
+        <text x="450" y="362" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="17" fill="#8A7D6B">Ch4–5 · ⊢</text>
+        <text x="450" y="380" text-anchor="middle" font-size="10.5">après le DS</text>
+      </g>
+    </svg>
+  </div>
+
+  <h2><span class="h-num">S · 4</span>Exercices qui reviennent</h2>
+  <div class="pattern-card">
+    <div class="pattern-card-title">« Traduire puis raisonner »</div>
+    <div class="pattern-card-sub">DS 2020 Ex1 · cours s.16, s.10–15 · M1 → M2</div>
+    <div class="chain"><span class="k">dictionnaire</span><span class="ar">→</span><span class="k">quantificateur + patron ∀→ / ∃∧</span><span class="ar">→</span><span class="k">quantificateur imbriqué ?</span><span class="ar">→</span><span class="k">relecture</span></div>
+  </div>
+  <div class="pattern-card">
+    <div class="pattern-card-title">« A-t-on Σ ⊨ B ? Justifier sans table »</div>
+    <div class="pattern-card-sub">DS 2020 Ex2 · cours s.31–34 · M6 / M7</div>
+    <div class="chain"><span class="k">supposer I(B) = F</span><span class="ar">→</span><span class="k">rendre Σ vraie ?</span><span class="ar">→</span><span class="k">oui : contre-modèle ⊭</span><span class="ar">·</span><span class="k">non : contradiction ⊨</span></div>
+  </div>
+  <div class="pattern-card">
+    <div class="pattern-card-title">« Valide, satisfiable ou insatisfiable ? »</div>
+    <div class="pattern-card-sub">DS 2020 Ex3 · cours s.17, s.22 · M3 / M11</div>
+    <div class="chain"><span class="k">tester D = {1}, {1,2}</span><span class="ar">→</span><span class="k">contre-modèle ?</span><span class="ar">→</span><span class="k">modèle ?</span><span class="ar">→</span><span class="k">preuve sur I quelconque</span></div>
+  </div>
+  <div class="pattern-card">
+    <div class="pattern-card-title">« Mettre sous forme normale »</div>
+    <div class="pattern-card-sub">cours s.24–25, s.27–28 · M5 / M12</div>
+    <div class="chain"><span class="k">éliminer → ↔</span><span class="ar">→</span><span class="k">¬ vers les atomes</span><span class="ar">→</span><span class="k">renommer</span><span class="ar">→</span><span class="k">distribuer / sortir ∀∃</span></div>
+  </div>
+
+  <h2><span class="h-num">S · 5</span>Auto-test express</h2>
+  <p style="text-align:center;font-style:italic">Clique sur une carte pour la retourner.</p>
+  <div class="flash-grid" id="flash"></div>
+
+  <h2><span class="h-num">S · 6</span>Check-list avant le DS</h2>
+  <dl class="kv">
+    <dt>À savoir énoncer</dt><dd>Définition récursive d'une FBF (LP0 et LP1) · valide / invalide / consistante / inconsistante · modèle · équivalence · FNC / FND · conséquence logique (Σ ⊨ B) · théorèmes 1 et 2 · système complet · terme, atome · portée, occurrence libre/liée, formule close · interprétation en LP1 (D + 3 affectations) · FNP (préfixe, matrice) · décidabilité LP0 / LP1 / ordre 2.</dd>
+    <dt>À savoir faire</dt><dd>Table de vérité propre · traduire FR → LP0 / LP1 · preuve par l'absurde d'une validité · contre-modèle · chaîne d'équivalences en citant les lois · FNC/FND · évaluer ∀∃ sur un domaine fini · repérer libres/liées · FNP avec renommage.</dd>
+    <dt>Formules clés</dt><dd><span class="fx">A→B ≡ ¬A∨B</span> · <span class="fx">A↔B ≡ (A→B)∧(B→A)</span> · <span class="fx">¬(A∧B) ≡ ¬A∨¬B</span> · <span class="fx">¬(A→B) ≡ A∧¬B</span> · <span class="fx">¬∀x F ≡ ∃x ¬F</span> · <span class="fx">¬∃x F ≡ ∀x ¬F</span> · <span class="fx">Σ ⊨ B ⟺ ⋀Σ → B valide ⟺ ⋀Σ ∧ ¬B insat</span></dd>
+    <dt>Pièges classiques</dt><dd>F → n'importe quoi = T · « seulement si / il faut » → condition à droite · ∀ avec ∧ ou ∃ avec → · ∀ ne distribue pas sur ∨, ∃ ne distribue pas sur ∧ · oublier de renommer avant de sortir un quantificateur · « satisfiable » au lieu de « valide » · une variable peut être libre <em>et</em> liée · un contre-exemple doit être <strong>vérifié</strong> par écrit.</dd>
+  </dl>
+</section>
+</main>
+
+<footer>
+  <div class="footer-ornament">◆ ◆ ◆</div>
+  v1 · 27 octobre 2026 · Sources : cours de Logique Formelle (O. Mosbahi) Ch1–3, DS janvier 2020 (N. Ben Rajeb Robbana). Références TD1/TD2 exactes à compléter.<br>
+  Fait par Adam Bhouri avec Claude · INSAT GL3
+</footer>
+
+<script>
+(function(){
+/* ─── Tabs ─── */
+const btns=document.querySelectorAll('.tab-btn'), tabs=document.querySelectorAll('.tab-content');
+function show(id,scroll){
+  btns.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+  tabs.forEach(t=>t.classList.toggle('active',t.id===id));
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+  if(scroll!==false) window.scrollTo({top:document.querySelector('.tabs-wrapper').offsetTop-4,behavior:'smooth'});
+}
+btns.forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
+const h=(location.hash||'').slice(1);
+if(h){ if(document.getElementById(h)&&document.getElementById(h).classList.contains('tab-content')) show(h,false);
+  else if(/^m\d+$/.test(h)){show('methods',false);setTimeout(()=>document.getElementById(h)&&document.getElementById(h).scrollIntoView(),50)} }
+document.querySelectorAll('.method-index a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth',block:'start'})}));
+
+/* ─── LP0 parser ─── */
+function norm(s){
+  return s.replace(/<->|<=>/g,'↔').replace(/->|=>/g,'→').replace(/\b(not|non)\b/gi,'¬').replace(/\b(and|et)\b/gi,'∧').replace(/\b(or|ou)\b/gi,'∨')
+          .replace(/[~!]/g,'¬').replace(/[&^]/g,'∧').replace(/\|/g,'∨').replace(/⇒/g,'→').replace(/⇔/g,'↔');
+}
+function tokenize(s){
+  const t=[];let i=0;
+  while(i<s.length){const c=s[i];
+    if(/\s/.test(c)){i++;continue}
+    if('¬∧∨→↔()⊤⊥'.includes(c)){t.push(c);i++;continue}
+    const m=s.slice(i).match(/^[A-Za-z][A-Za-z0-9_₀-₉']*/);
+    if(m){t.push({atom:m[0]});i+=m[0].length;continue}
+    throw new Error('symbole inconnu : « '+c+' »');
+  }return t;
+}
+function parse(str){
+  const t=tokenize(norm(str));let p=0;
+  const peek=()=>t[p], eat=x=>{if(t[p]===x){p++;return true}return false};
+  function equiv(){let a=impl();while(eat('↔')){a={t:'bin',op:'↔',a,b:impl()}}return a}
+  function impl(){const a=or();if(eat('→'))return{t:'bin',op:'→',a,b:impl()};return a}
+  function or(){let a=and();while(eat('∨'))a={t:'bin',op:'∨',a,b:and()};return a}
+  function and(){let a=un();while(eat('∧'))a={t:'bin',op:'∧',a,b:un()};return a}
+  function un(){
+    if(eat('¬'))return{t:'not',a:un()};
+    if(eat('(')){const e=equiv();if(!eat(')'))throw new Error('parenthèse fermante manquante');return e}
+    if(eat('⊤'))return{t:'const',v:true};if(eat('⊥'))return{t:'const',v:false};
+    const k=peek();if(k&&k.atom){p++;return{t:'atom',n:k.atom}}
+    throw new Error(k===undefined?'formule incomplète':'« '+(k.atom||k)+' » inattendu');
+  }
+  if(!t.length)throw new Error('formule vide');
+  const e=equiv();if(p<t.length)throw new Error('« '+(t[p].atom||t[p])+' » en trop');return e;
+}
+function str(e,top){
+  if(e.t==='atom')return e.n; if(e.t==='const')return e.v?'⊤':'⊥';
+  if(e.t==='not')return '¬'+str(e.a,false);
+  const s=str(e.a,false)+' '+e.op+' '+str(e.b,false);return top?s:'('+s+')';
+}
+function ev(e,v){switch(e.t){case'atom':return v[e.n];case'const':return e.v;case'not':return!ev(e.a,v);
+  default:{const a=ev(e.a,v),b=ev(e.b,v);return e.op==='∧'?a&&b:e.op==='∨'?a||b:e.op==='→'?(!a||b):a===b}}}
+function atoms(e,s){s=s||new Set();if(e.t==='atom')s.add(e.n);if(e.a)atoms(e.a,s);if(e.b)atoms(e.b,s);return s}
+function subs(e,list,seen){if(e.t==='atom'||e.t==='const')return;if(e.a)subs(e.a,list,seen);if(e.b)subs(e.b,list,seen);const k=str(e,true);if(!seen.has(k)){seen.add(k);list.push(e)}}
+
+const inp=document.getElementById('tt-in');
+function renderTT(){
+  const err=document.getElementById('tt-err');
+  let e;try{e=parse(inp.value);err.textContent=''}catch(x){err.textContent='⚠ '+x.message;return}
+  const at=[...atoms(e)].sort();
+  if(at.length>6){err.textContent='⚠ max 6 atomes (64 lignes)';return}
+  const sl=[];subs(e,sl,new Set());if(!sl.length)sl.push(e);
+  const rows=1<<at.length;let models=0;const tr=[],fr=[];
+  let html='<table class="tt"><tr>'+at.map(a=>'<th>'+a+'</th>').join('')+sl.map((s,i)=>'<th'+(i===sl.length-1?' class="res"':'')+'>'+str(s,true)+'</th>').join('')+'</tr>';
+  for(let r=0;r<rows;r++){
+    const v={};at.forEach((a,i)=>v[a]=!((r>>(at.length-1-i))&1));
+    const res=ev(e,v);if(res){models++;tr.push(v)}else fr.push(v);
+    html+='<tr'+(res?' class="hit"':'')+'>'+at.map(a=>'<td class="'+(v[a]?'T':'F')+'">'+(v[a]?'T':'F')+'</td>').join('')+
+      sl.map((s,i)=>{const x=ev(s,v);return'<td class="'+(x?'T':'F')+(i===sl.length-1?' res':'')+'">'+(x?'T':'F')+'</td>'}).join('')+'</tr>';
+  }
+  document.getElementById('tt-table').innerHTML=html+'</table>';
+  const vd=document.getElementById('tt-verdict');
+  if(models===rows){vd.textContent='Valide (tautologie)';vd.className='verdict v-valid'}
+  else if(models===0){vd.textContent='Insatisfiable';vd.className='verdict v-unsat'}
+  else{vd.textContent='Satisfiable, non valide';vd.className='verdict v-sat'}
+  document.getElementById('tt-n').textContent=at.length;
+  document.getElementById('tt-i').textContent='2^'+at.length+' = '+rows;
+  document.getElementById('tt-m').textContent=models+' / '+rows;
+  document.getElementById('tt-root').textContent=e.t==='bin'?e.op:e.t==='not'?'¬':'(atome)';
+  const lit=(v,a,neg)=>((v[a]!==neg)?'':'¬')+a;
+  const fnd=tr.length?(tr.length>16?'('+tr.length+' conjonctions — trop long)':tr.map(v=>(at.length>1?'(':'')+at.map(a=>lit(v,a,false)).join(' ∧ ')+(at.length>1?')':'')).join(' ∨ ')):'⊥ (aucune ligne vraie)';
+  const fnc=fr.length?(fr.length>16?'('+fr.length+' clauses — trop long)':fr.map(v=>(at.length>1?'(':'')+at.map(a=>lit(v,a,true)).join(' ∨ ')+(at.length>1?')':'')).join(' ∧ ')):'⊤ (aucune ligne fausse)';
+  document.getElementById('tt-fnd').textContent=fnd;document.getElementById('tt-fnc').textContent=fnc;
+  drawTree(e);
+}
+function drawTree(e){
+  const svg=document.getElementById('tt-tree');const nodes=[],edges=[];let leaf=0,maxD=0;
+  (function lay(n,d){maxD=Math.max(maxD,d);let x;
+    const kids=n.t==='not'?[n.a]:n.t==='bin'?[n.a,n.b]:[];
+    if(!kids.length){x=leaf++}else{const xs=kids.map(k=>lay(k,d+1));x=(xs[0]+xs[xs.length-1])/2;kids.forEach((k,i)=>edges.push([x,d,xs[i],d+1]))}
+    nodes.push({x,d,l:n.t==='atom'?n.n:n.t==='const'?(n.v?'⊤':'⊥'):n.t==='not'?'¬':n.op,atom:n.t==='atom'||n.t==='const'});return x})(e,0);
+  const W=Math.max(600,leaf*70),H=(maxD+1)*62+30,sx=x=>(x+.5)*W/leaf,sy=d=>32+d*62;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  let s='';edges.forEach(([x1,d1,x2,d2])=>s+='<line x1="'+sx(x1)+'" y1="'+sy(d1)+'" x2="'+sx(x2)+'" y2="'+sy(d2)+'" stroke="#C9BFAC" stroke-width="1.5"/>');
+  nodes.forEach(n=>{const r=n.atom?Math.max(17,n.l.length*5+10):17;
+    s+='<circle cx="'+sx(n.x)+'" cy="'+sy(n.d)+'" r="'+r+'" fill="'+(n.atom?'#2C5664':'#7B2D26')+'"/>'+
+       '<text x="'+sx(n.x)+'" y="'+(sy(n.d)+5)+'" text-anchor="middle" style="fill:#FBF8F0;font-family:Newsreader,serif;font-size:16px;font-style:italic">'+n.l.replace(/</g,'&lt;')+'</text>'});
+  svg.innerHTML=s;
+}
+inp.addEventListener('input',renderTT);
+document.querySelectorAll('#tt-syms .btn').forEach(b=>b.addEventListener('click',()=>{
+  if(b.dataset.s==='CLR'){inp.value='';}else{const a=inp.selectionStart??inp.value.length,z=inp.selectionEnd??a;inp.value=inp.value.slice(0,a)+b.dataset.s+inp.value.slice(z);inp.focus();inp.setSelectionRange(a+1,a+1)}
+  renderTT()}));
+document.querySelectorAll('#tt-presets .btn').forEach(b=>b.addEventListener('click',()=>{inp.value=b.dataset.f;renderTT()}));
+renderTT();
+
+/* ─── LP1 quantifier lab ─── */
+let N=3,P=[];const preset={
+  cours:()=>{N=2;P=[[1,0],[0,1]]},
+  diag:()=>{P=[...Array(N)].map((_,i)=>[...Array(N)].map((_,j)=>+(i===j)))},
+  col:()=>{P=[...Array(N)].map(()=>[...Array(N)].map((_,j)=>+(j===N-1)))},
+  rand:()=>{P=[...Array(N)].map(()=>[...Array(N)].map(()=>+(Math.random()<.5)))}
+};
+preset.diag();
+const D=()=>[...Array(N).keys()];
+const F=[
+ {f:'∀x ∃y P(x, y)',run(){const w=[];for(const x of D()){const y=D().find(y=>P[x][y]);if(y===undefined)return{v:0,c:D().map(y=>[x,y]),t:'Faux : pour x = '+(x+1)+', aucune case T sur la ligne (pas de y).'};w.push([x,y])}return{v:1,c:w,t:'Vrai : '+w.map(([x,y])=>'x='+(x+1)+' → y='+(y+1)).join(', ')+'. Chaque x a son propre y.'}}},
+ {f:'∃y ∀x P(x, y)',run(){const y=D().find(y=>D().every(x=>P[x][y]));if(y!==undefined)return{v:1,c:D().map(x=>[x,y]),t:'Vrai : la colonne y = '+(y+1)+' est entièrement T (un même y pour tous les x).'};return{v:0,c:D().map(y=>[D().find(x=>!P[x][y]),y]),t:'Faux : chaque colonne contient un F (en surbrillance) — aucun y ne marche pour tous les x.'}}},
+ {f:'∃x ∀y P(x, y)',run(){const x=D().find(x=>D().every(y=>P[x][y]));if(x!==undefined)return{v:1,c:D().map(y=>[x,y]),t:'Vrai : la ligne x = '+(x+1)+' est entièrement T.'};return{v:0,c:D().map(x=>[x,D().find(y=>!P[x][y])]),t:'Faux : chaque ligne contient un F.'}}},
+ {f:'∀y ∃x P(x, y)',run(){const w=[];for(const y of D()){const x=D().find(x=>P[x][y]);if(x===undefined)return{v:0,c:D().map(x=>[x,y]),t:'Faux : la colonne y = '+(y+1)+' n\'a aucun T.'};w.push([x,y])}return{v:1,c:w,t:'Vrai : chaque colonne a au moins un T.'}}},
+ {f:'∀x ∀y P(x, y)',run(){for(const x of D())for(const y of D())if(!P[x][y])return{v:0,c:[[x,y]],t:'Faux : contre-exemple P('+(x+1)+', '+(y+1)+') = F.'};return{v:1,c:[],t:'Vrai : toutes les cases sont T.'}}},
+ {f:'∃x ∃y P(x, y)',run(){for(const x of D())for(const y of D())if(P[x][y])return{v:1,c:[[x,y]],t:'Vrai : témoin P('+(x+1)+', '+(y+1)+') = T.'};return{v:0,c:[],t:'Faux : aucune case T.'}}},
+ {f:'∀x P(x, x)',run(){const x=D().find(x=>!P[x][x]);if(x!==undefined)return{v:0,c:[[x,x]],t:'Faux : P('+(x+1)+', '+(x+1)+') = F sur la diagonale.'};return{v:1,c:D().map(x=>[x,x]),t:'Vrai : toute la diagonale est T.'}}}
+];
+let sel=0;
+function renderQ(){
+  const g=document.getElementById('q-grid');const r=F[sel].run();const wit=new Set(r.c.map(([x,y])=>x+','+y));
+  let h='<tr><th></th>'+D().map(y=>'<th>y='+(y+1)+'</th>').join('')+'</tr>';
+  D().forEach(x=>{h+='<tr><th>x='+(x+1)+'</th>'+D().map(y=>'<td><button data-x="'+x+'" data-y="'+y+'" class="'+(P[x][y]?'on':'off')+(wit.has(x+','+y)?' wit':'')+'" aria-label="P('+(x+1)+','+(y+1)+')">'+(P[x][y]?'T':'F')+'</button></td>').join('')+'</tr>'});
+  g.innerHTML=h;
+  g.querySelectorAll('button').forEach(b=>b.onclick=()=>{P[b.dataset.x][b.dataset.y]^=1;renderQ()});
+  document.getElementById('q-list').innerHTML=F.map((f,i)=>{const v=f.run().v;return'<div class="q-row'+(i===sel?' sel':'')+'" data-i="'+i+'"><span class="fx">'+f.f+'</span><span class="badge '+(v?'T':'F')+'">'+(v?'T':'F')+'</span></div>'}).join('');
+  document.querySelectorAll('#q-list .q-row').forEach(d=>d.onclick=()=>{sel=+d.dataset.i;renderQ()});
+  document.getElementById('q-explain').innerHTML='<strong class="fx">'+F[sel].f+'</strong> — '+r.t;
+}
+document.querySelectorAll('#qlab [data-n]').forEach(b=>b.onclick=()=>{N=+b.dataset.n;preset.diag();document.querySelectorAll('#qlab [data-n]').forEach(x=>x.classList.toggle('btn-active',x===b));renderQ()});
+document.querySelectorAll('#qlab [data-preset]').forEach(b=>b.onclick=()=>{preset[b.dataset.preset]();document.querySelectorAll('#qlab [data-n]').forEach(x=>x.classList.toggle('btn-active',+x.dataset.n===N));renderQ()});
+renderQ();
+
+/* ─── Steppers ─── */
+const STEPS={
+ 'step-fnc':[
+  ['(P ∧ (Q → R)) → S','Formule de départ.'],
+  ['¬(P ∧ (Q → R)) ∨ S','Étape 1 — élimination du → principal : F → G ≡ ¬F ∨ G.'],
+  ['¬(P ∧ (¬Q ∨ R)) ∨ S','Étape 1 — élimination du → intérieur.'],
+  ['(¬P ∨ ¬(¬Q ∨ R)) ∨ S','Étape 2 — De Morgan : ¬(F ∧ G) ≡ ¬F ∨ ¬G.'],
+  ['(¬P ∨ (¬¬Q ∧ ¬R)) ∨ S','Étape 2 — De Morgan : ¬(F ∨ G) ≡ ¬F ∧ ¬G.'],
+  ['(¬P ∨ (Q ∧ ¬R)) ∨ S','Étape 2 — double négation. Les ¬ sont sur les atomes.'],
+  ['((¬P ∨ Q) ∧ (¬P ∨ ¬R)) ∨ S','Étape 3 — distributivité de ∨ sur ∧.'],
+  ['(S ∨ ¬P ∨ Q) ∧ (S ∨ ¬P ∨ ¬R)','Étape 3 — on redistribue S (commutativité + distributivité). ✓ FNC : conjonction de 2 clauses.']],
+ 'step-fnp':[
+  ['(∀x)(∀y)((∃z)(P(x,z) ∧ P(y,z)) → (∃u) Q(x,y,u))','Formule de départ.'],
+  ['(∀x)(∀y)(¬(∃z)(P(x,z) ∧ P(y,z)) ∨ (∃u) Q(x,y,u))','Étape 1 — élimination de → : F → G ≡ ¬F ∨ G.'],
+  ['(∀x)(∀y)((∀z)¬(P(x,z) ∧ P(y,z)) ∨ (∃u) Q(x,y,u))','Étape 2 — loi (2b) : ¬∃z F ≡ ∀z ¬F. Le ∃ devient ∀ en traversant ¬.'],
+  ['(∀x)(∀y)((∀z)(¬P(x,z) ∨ ¬P(y,z)) ∨ (∃u) Q(x,y,u))','Étape 2 — De Morgan. Les ¬ sont sur les atomes.'],
+  ['(∀x)(∀y)(∀z)((¬P(x,z) ∨ ¬P(y,z)) ∨ (∃u) Q(x,y,u))','Étape 4 — loi (1a) : z n\'apparaît pas dans (∃u)Q(x,y,u), on sort ∀z. (Étape 3 inutile : z et u sont déjà distincts.)'],
+  ['(∀x)(∀y)(∀z)(∃u)(¬P(x,z) ∨ ¬P(y,z) ∨ Q(x,y,u))','Étape 4 — loi (1a) : u n\'apparaît pas à gauche, on sort ∃u. ✓ FNP — préfixe ∀x∀y∀z∃u, matrice ¬P(x,z) ∨ ¬P(y,z) ∨ Q(x,y,u).']]
+};
+Object.entries(STEPS).forEach(([id,data])=>{
+  const root=document.getElementById(id);if(!root)return;const list=root.querySelector('.st-list');let k=0;
+  list.innerHTML=data.map((d,i)=>'<div class="st-step"><div class="st-num">Étape '+String(i).padStart(2,'0')+'</div><div class="st-f">'+d[0]+'</div><div class="st-why">'+d[1]+'</div></div>').join('');
+  const els=list.querySelectorAll('.st-step'),prev=root.querySelector('.st-prev'),next=root.querySelector('.st-next');
+  const upd=()=>{els.forEach((e,i)=>{e.classList.toggle('active',i===k);e.classList.toggle('done',i<k)});prev.disabled=k===0;next.disabled=k===data.length-1};
+  prev.onclick=()=>{if(k>0)k--;upd()};next.onclick=()=>{if(k<data.length-1)k++;upd()};
+  root.querySelector('.st-all').onclick=()=>{k=data.length-1;upd()};upd();
+});
+
+/* ─── Flashcards ─── */
+const CARDS=[
+ ['Valide ⟹ ?','Consistante (satisfiable). La réciproque est fausse.'],
+ ['F valide ⟺ ?','¬F est inconsistante (insatisfiable).'],
+ ['Combien d\'interprétations pour n atomes ?','2ⁿ'],
+ ['Quand P → Q est-elle fausse ?','Uniquement si P = T et Q = F.'],
+ ['Théorème 2 de la conséquence','A₁,…,Aₙ ⊨ B ⟺ A₁∧…∧Aₙ∧¬B est inconsistante.'],
+ ['¬∀x F ≡ ?','∃x ¬F (et ¬∃x F ≡ ∀x ¬F).'],
+ ['∀ se marie avec… / ∃ avec…','∀ avec → · ∃ avec ∧.'],
+ ['Formule close ?','Aucune variable libre.'],
+ ['∃y∀x P vs ∀x∃y P','∃y∀x P ⊨ ∀x∃y P, pas l\'inverse.'],
+ ['{∨, ∧} est-il complet ?','Non : impossible d\'exprimer ¬ (tout est vrai quand les atomes sont vrais).'],
+ ['Validité en LP1 ?','Semi-décidable (partiellement solvable). LP0 : décidable.'],
+ ['Qui a fondé la logique formelle moderne ?','Alfred Tarski (XXᵉ siècle).']
+];
+const fg=document.getElementById('flash');
+fg.innerHTML=CARDS.map(c=>'<div class="flash" tabindex="0"><div class="flash-in"><div class="flash-f">'+c[0]+'</div><div class="flash-b">'+c[1]+'</div></div></div>').join('');
+fg.querySelectorAll('.flash').forEach(f=>{f.onclick=()=>f.classList.toggle('flip');f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f.classList.toggle('flip')}}});
+})();
+</script>
+</body>
+</html>
