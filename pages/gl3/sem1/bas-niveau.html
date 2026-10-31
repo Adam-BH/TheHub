@@ -2,1435 +2,619 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="v1">
-<title>Révision Programmation Bas Niveau · INSAT GL3 · Pré-DS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="version" content="v2">
+<title>Bas Niveau · Résumé Ch1–Ch5</title>
 <link rel="icon" type="image/svg+xml" href="../../../assets/icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* Layout: parchment hub page — left = chapter tabs (I–V + pièges), right = sticky "code" sheet that stacks below on phones */
 :root{
-  --bg:#F4EFE4;--bg-deep:#ECE5D5;--bg-card:#FBF8F0;--ink:#1F1A14;--ink-soft:#4A3F32;--ink-faint:#8A7D6B;
-  --burgundy:#7B2D26;--burgundy-light:#A04438;--teal:#2C5664;--teal-light:#4A7A88;--gold:#B8924A;--gold-light:#E8C77B;
-  --rule:#C9BFAC;--rule-soft:#DDD3BF;--highlight:#F7E8B8;--shadow:rgba(80,60,30,.08);
-  --math:'Newsreader','Cambria Math','STIX Two Math',Georgia,serif;
+  --bg:#F4EFE4;--bg-deep:#ECE5D5;--card:#FBF8F0;--ink:#1F1A14;--ink-soft:#4A3F32;--ink-faint:#8A7D6B;
+  --burgundy:#7B2D26;--teal:#2C5664;--gold:#B8924A;--rule:#C9BFAC;--rule-soft:#DDD3BF;--hl:#F7E8B8;
+  --code-bg:#231E18;--code-ink:#EFE6D2;--code-key:#E8C77B;--code-com:#9C8F7A;--code-num:#9FC6CF;
+  --serif:'Instrument Serif',Georgia,serif;--body:'Newsreader',Georgia,'Times New Roman',serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
 }
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);background-image:radial-gradient(circle at 20% 10%,rgba(184,146,74,.04) 0%,transparent 50%),radial-gradient(circle at 80% 90%,rgba(123,45,38,.04) 0%,transparent 50%);color:var(--ink);font-family:'Newsreader',Georgia,serif;font-size:17px;line-height:1.65;min-height:100vh;padding:0 0 80px;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-main,header,footer{position:relative;z-index:1}
-
-/* hub back */
-.hub-back{position:absolute;top:16px;left:16px;z-index:80;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 12px;border:1px solid var(--rule);border-radius:6px;background:rgba(251,248,240,.88);color:var(--ink);box-shadow:0 10px 28px -22px rgba(31,26,20,.42);font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:500;line-height:1;text-decoration:none;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(8px);transition:transform .15s,border-color .15s}
-.hub-back:hover{transform:translateY(-1px);border-color:var(--burgundy)}
-@media(max-width:560px){.hub-back{top:10px;left:10px;min-height:34px;padding:6px 10px;font-size:.66rem}}
-
-header{padding:64px 32px 24px;max-width:1200px;margin:0 auto;text-align:center;border-bottom:1px solid var(--rule)}
-header::after{content:'◆ ◆ ◆';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 14px;font-size:10px;color:var(--gold);letter-spacing:8px}
-.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--burgundy);margin-bottom:12px;font-weight:500}
-h1{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(40px,6vw,68px);line-height:1;letter-spacing:-.01em;margin-bottom:8px}
-h1 em{font-style:italic;color:var(--burgundy)}
-.subtitle{font-style:italic;font-size:19px;color:var(--ink-soft);font-weight:300;margin-top:8px}
-.ds-strip{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}
-
-.tabs-wrapper{max-width:1200px;margin:32px auto 0;padding:0 32px;position:sticky;top:0;z-index:50;background:var(--bg)}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:32px;overflow-x:auto;scrollbar-width:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.6;overflow-x:hidden}
+a{color:var(--burgundy)}
+.wrap{max-width:1360px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hub-back{display:inline-flex;margin-top:14px;padding:6px 11px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;text-decoration:none}
+.hub-back:hover{border-color:var(--burgundy)}
+header{padding-block:22px 18px;text-align:center;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--burgundy);font-weight:500}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,5.5vw,60px);line-height:1;margin:10px 0 6px;text-wrap:balance}
+h1 em{color:var(--burgundy)}
+.subtitle{font-style:italic;color:var(--ink-soft);margin:0}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:28px;padding-block:20px 60px}
+@media(max-width:1020px){.layout{grid-template-columns:minmax(0,1fr)}}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
 .tabs::-webkit-scrollbar{display:none}
-.tab-btn{font-family:'Newsreader',serif;font-size:16px;font-weight:500;padding:14px 20px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--ink-faint);cursor:pointer;transition:all .25s;margin-bottom:-1px;white-space:nowrap}
-.tab-btn .tab-num{font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;opacity:.6}
-.tab-btn:hover{color:var(--ink);background:rgba(184,146,74,.08)}
+.tab-btn{font-family:var(--body);font-size:15.5px;font-weight:500;padding:11px 14px;background:none;border:0;border-bottom:2px solid transparent;color:var(--ink-faint);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.tab-btn .n{font-family:var(--mono);font-size:11px;margin-right:6px}
+.tab-btn:hover{color:var(--ink)}
 .tab-btn.active{color:var(--burgundy);border-bottom-color:var(--burgundy)}
-.tab-btn.active .tab-num{opacity:1}
-
-.tab-content{display:none;max-width:1200px;margin:0 auto;padding:0 32px;animation:fadeIn .4s ease}
-.tab-content.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media(max-width:600px){header{padding:64px 16px 24px}.tabs-wrapper,.tab-content{padding:0 16px}.tab-btn{padding:12px 12px;font-size:15px}}
-
-h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:38px;margin:48px 0 8px;letter-spacing:-.01em;line-height:1.1}
-h2 .h-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);letter-spacing:.15em;display:block;margin-bottom:6px;text-transform:uppercase}
-h2::after{content:'';display:block;width:60px;height:1px;background:var(--burgundy);margin-top:12px}
-h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:26px;color:var(--burgundy);margin:32px 0 12px;font-style:italic}
-h4{font-weight:600;font-size:18px;color:var(--teal);margin:20px 0 8px}
-p{margin-bottom:14px;color:var(--ink-soft)}
-p strong,li strong,td strong{color:var(--ink);font-weight:600}
-ul,ol{padding-left:24px;margin-bottom:14px;color:var(--ink-soft)}
-li{margin-bottom:6px}
-
-.box{background:var(--bg-card);border-left:3px solid var(--rule);padding:18px 22px;margin:16px 0;border-radius:0 4px 4px 0;box-shadow:0 1px 2px var(--shadow)}
+.tab-btn:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.tab{display:none;min-width:0}
+.tab.active{display:block}
+h2{font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.1;margin:26px 0 4px;text-wrap:balance}
+h2 .k{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;margin-bottom:4px}
+.lead{font-style:italic;color:var(--ink-soft);margin:0 0 10px}
+h3{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin:22px 0 8px}
+h3 .s{color:var(--gold);margin-right:6px}
+p{margin:0 0 10px;color:var(--ink-soft)}
+strong{color:var(--ink)}
+ul{margin:0 0 10px;padding-left:20px;color:var(--ink-soft)}
+li{margin-bottom:4px}
+code,.m{font-family:var(--mono);font-size:.84em;background:var(--bg-deep);padding:1px 5px;border-radius:3px;color:var(--ink)}
+.box{background:var(--card);border-left:3px solid var(--rule);padding:12px 16px;margin:10px 0;border-radius:0 4px 4px 0}
 .box>*:last-child{margin-bottom:0}
-.box-def{border-left-color:var(--teal)}.box-thm{border-left-color:var(--burgundy)}.box-prop{border-left-color:var(--gold)}
-.box-remark{border-left-color:var(--ink-faint);background:rgba(138,125,107,.05)}
-.box-method{border-left-color:var(--burgundy);background:linear-gradient(180deg,rgba(123,45,38,.04),transparent)}
-.box-ex{border-left-color:var(--teal-light);background:linear-gradient(180deg,rgba(44,86,100,.04),transparent)}
-.box-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;display:inline-block;margin-bottom:8px;font-weight:500;padding:2px 8px;border-radius:2px}
-.box-def .box-label{background:var(--teal);color:var(--bg-card)}.box-thm .box-label{background:var(--burgundy);color:var(--bg-card)}
-.box-prop .box-label{background:var(--gold);color:var(--ink)}.box-remark .box-label{background:var(--ink-faint);color:var(--bg-card)}
-.box-method .box-label{background:var(--burgundy);color:var(--bg-card)}.box-ex .box-label{background:var(--teal-light);color:var(--bg-card)}
-.src{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--ink-faint);float:right;margin-left:12px}
-
-/* formulas */
-.fx{font-family:var(--math);font-style:italic;color:var(--ink);white-space:nowrap}
-.formula{font-family:var(--math);font-size:20px;text-align:center;margin:14px 0;color:var(--ink);overflow-x:auto;padding:4px 0}
-.formula .c{font-style:normal;color:var(--burgundy)}
-.steps-eq{font-family:var(--math);font-size:17px;margin:10px 0 14px;overflow-x:auto}
-.steps-eq div{display:grid;grid-template-columns:28px 1fr auto;gap:10px;padding:5px 0;border-bottom:1px dashed var(--rule-soft);align-items:baseline}
-.steps-eq div:last-child{border-bottom:none}
-.steps-eq .eq{color:var(--gold);font-weight:600}
-.steps-eq .why{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;white-space:nowrap}
-@media(max-width:600px){.steps-eq div{grid-template-columns:20px 1fr}.steps-eq .why{grid-column:2}}
-
-/* tables */
-.tt-wrap{overflow-x:auto;margin:14px 0}
-table.tt{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--bg-card);margin:0 auto;min-width:240px}
-table.tt th,table.tt td{border:1px solid var(--rule-soft);padding:6px 12px;text-align:center}
-table.tt th{background:var(--bg-deep);color:var(--ink);font-weight:600;font-family:var(--math);font-size:15px;font-style:italic;white-space:nowrap}
-table.tt td.T{color:var(--teal);font-weight:600}table.tt td.F{color:var(--burgundy-light)}
-table.tt tr.hit td{background:rgba(247,232,184,.55)}
-table.tt th.res,table.tt td.res{border-left:2px solid var(--burgundy)}
-table.law{border-collapse:collapse;width:100%;font-size:15px;background:var(--bg-card)}
-table.law td{border-bottom:1px dashed var(--rule-soft);padding:8px 10px;vertical-align:top}
-table.law td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);width:150px}
-table.law td.fx{white-space:normal}
-
-.kv{display:grid;grid-template-columns:minmax(180px,auto) 1fr;gap:10px 24px;margin:16px 0;padding:16px 0;border-top:1px solid var(--rule-soft);border-bottom:1px solid var(--rule-soft)}
-.kv dt{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;padding-top:2px}
-.kv dd{color:var(--ink)}
-@media(max-width:700px){.kv{grid-template-columns:1fr}.kv dd{margin-bottom:10px}}
-
-/* viz */
-.viz-card{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:24px;margin:28px 0;box-shadow:0 2px 8px var(--shadow)}
-.viz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--rule-soft);gap:16px;flex-wrap:wrap}
-.viz-title{font-family:'Instrument Serif',serif;font-size:24px;color:var(--burgundy);font-style:italic}
-.viz-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);background:rgba(184,146,74,.12);padding:4px 10px;border-radius:2px}
-.viz-body{display:grid;grid-template-columns:1fr 290px;gap:24px;align-items:start}
-@media(max-width:860px){.viz-body{grid-template-columns:1fr}.viz-card{padding:16px}}
-.viz-controls{background:var(--bg-deep);padding:16px;border-radius:4px;font-size:14px}
-.viz-controls h5{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;font-weight:500}
-.viz-controls h5:not(:first-child){margin-top:16px}
-.viz-stat{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--rule-soft);font-family:'JetBrains Mono',monospace;font-size:12.5px}
-.viz-stat:last-child{border-bottom:none}.viz-stat-key{color:var(--ink-soft)}.viz-stat-val{color:var(--burgundy);font-weight:600;text-align:right}
-.viz-svg{width:100%;height:auto;background:#FCFAF3;border:1px solid var(--rule-soft);border-radius:4px;display:block}
-.viz-svg text:not([font-family]){font-family:'JetBrains Mono',monospace}.viz-svg text:not([font-size]){font-size:12px}.viz-svg text:not([fill]){fill:var(--ink-soft)}
-.fx-input{width:100%;font-family:var(--math);font-size:20px;padding:10px 12px;border:1px solid var(--rule);background:#FCFAF3;color:var(--ink);border-radius:4px;outline:none}
-.fx-input:focus{border-color:var(--burgundy)}
-.fx-err{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--burgundy-light);min-height:18px;margin-top:6px}
-.btn-group{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;padding:7px 12px;border:1px solid var(--rule);background:var(--bg-card);color:var(--ink-soft);cursor:pointer;border-radius:3px;transition:all .15s;font-weight:500}
-.btn:hover,.btn-active{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
-.btn:disabled{opacity:.4;cursor:default;background:var(--bg-card);color:var(--ink-soft);border-color:var(--rule)}
-.btn-sym{font-family:var(--math);font-size:16px;min-width:38px;text-transform:none}
-.verdict{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;margin:2px 0 6px}
-.verdict.v-valid{color:var(--teal)}.verdict.v-sat{color:var(--gold)}.verdict.v-unsat{color:var(--burgundy)}
-.canon{font-family:var(--math);font-size:15px;color:var(--ink);word-break:break-word;background:var(--bg-card);border:1px solid var(--rule-soft);border-radius:3px;padding:8px 10px;margin-top:4px}
-.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:10px}
-.legend-item{display:flex;align-items:center;gap:6px}.legend-swatch{width:14px;height:14px;border-radius:3px;border:1px solid var(--rule)}
-
-/* grid toggles (LP1 lab) */
-.pgrid{border-collapse:separate;border-spacing:6px;margin:6px auto}
-.pgrid th{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);font-weight:500;padding:2px 6px}
-.pgrid td button{width:54px;height:44px;border-radius:5px;border:1px solid var(--rule);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
-.pgrid td button.on{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
-.pgrid td button.off{background:#FCFAF3;color:var(--burgundy-light)}
-.pgrid td button.wit{box-shadow:0 0 0 3px var(--gold-light)}
-.q-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;margin:6px 0;background:var(--bg-card);border:1px solid var(--rule-soft);border-radius:4px;cursor:pointer;transition:border-color .15s}
-.q-row:hover,.q-row.sel{border-color:var(--burgundy)}
-.q-row .fx{font-size:16px}
-.badge{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px}
-.badge.T{background:var(--teal);color:var(--bg-card)}.badge.F{background:var(--burgundy);color:var(--bg-card)}
-.explain{font-size:14.5px;color:var(--ink-soft);margin-top:10px;padding:10px 12px;border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(247,232,184,.5),transparent)}
-
-/* stepper */
-.stepper .st-step{background:var(--bg-card);border-left:3px solid var(--rule);padding:10px 16px;margin:8px 0;border-radius:0 4px 4px 0;transition:all .3s;opacity:.35}
-.stepper .st-step.active{border-left-color:var(--burgundy);opacity:1;background:linear-gradient(90deg,rgba(123,45,38,.06),transparent)}
-.stepper .st-step.done{opacity:.8;border-left-color:var(--teal)}
-.st-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--ink-faint);text-transform:uppercase}
-.st-f{font-family:var(--math);font-size:18px;color:var(--ink);overflow-x:auto;white-space:nowrap;padding:2px 0}
-.st-why{font-size:14px;color:var(--ink-soft);font-style:italic}
-
-/* method cards */
-.method-card{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;padding:24px;margin:20px 0;box-shadow:0 2px 6px var(--shadow);position:relative;overflow:hidden}
-.method-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--burgundy),var(--gold))}
-.method-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.method-question{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;color:var(--ink);margin-bottom:16px;line-height:1.3}
-.method-question::before{content:'Q.';font-family:'JetBrains Mono',monospace;font-size:12px;font-style:normal;color:var(--burgundy);margin-right:10px;letter-spacing:.1em;vertical-align:super}
-.method-steps{counter-reset:step;list-style:none;padding:0;margin-bottom:0}
-.method-steps>li{counter-increment:step;padding:10px 0 10px 44px;border-bottom:1px dashed var(--rule-soft);position:relative;color:var(--ink-soft)}
-.method-steps>li:last-child{border-bottom:none}
-.method-steps>li::before{content:counter(step,decimal-leading-zero);position:absolute;left:0;top:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);font-weight:600;width:32px;text-align:right;padding-right:8px;border-right:1px solid var(--rule-soft)}
-.method-tip{background:linear-gradient(90deg,var(--highlight),transparent);padding:10px 14px;margin-top:14px;border-radius:3px;font-size:14.5px;font-style:italic;color:var(--ink-soft);border-left:2px solid var(--gold)}
-.method-tip::before{content:'✦ Astuce  ';font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;letter-spacing:.15em;color:var(--gold);font-weight:600}
-details.sol{margin-top:12px;border:1px solid var(--rule-soft);border-radius:4px;background:#FCFAF3}
-details.sol summary{cursor:pointer;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);list-style:none}
-details.sol summary::before{content:'▸ ';}
-details.sol[open] summary::before{content:'▾ ';}
-details.sol>div{padding:4px 14px 12px}
-.method-index{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin:20px 0 8px}
-.method-index a{display:block;padding:10px 12px;border:1px solid var(--rule-soft);border-radius:4px;background:var(--bg-card);color:var(--ink-soft);text-decoration:none;font-size:14.5px;transition:border-color .15s}
-.method-index a:hover{border-color:var(--burgundy);color:var(--ink)}
-.method-index a span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);margin-right:6px}
-
-/* flow / synth */
-.flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
-.flow-node{background:var(--bg-card);border:1px solid var(--rule);padding:18px;border-radius:4px}
-.flow-node.future{border-style:dashed;opacity:.75}
-.flow-node-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--burgundy);margin-bottom:8px;font-style:italic}
-.flow-node-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0}
-@media(max-width:700px){.two-col{grid-template-columns:1fr}}
-.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 9px;border-radius:99px;background:var(--bg-deep);color:var(--ink-soft);margin:2px 4px 2px 0;letter-spacing:.04em;border:1px solid var(--rule-soft)}
-.pill-burgundy{background:var(--burgundy);color:var(--bg-card);border-color:var(--burgundy)}
-.pill-teal{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
-.pill-gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
-.pattern-card{background:linear-gradient(135deg,var(--bg-card),var(--bg-deep));border:1px solid var(--rule);border-radius:6px;padding:22px;margin:16px 0}
-.pattern-card-title{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:4px}
-.pattern-card-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--burgundy);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
-.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14.5px}
-.chain span.k{background:var(--bg-card);border:1px solid var(--rule-soft);padding:4px 10px;border-radius:3px}
-.chain span.ar{color:var(--gold)}
-.intro{font-size:19px;font-style:italic;color:var(--ink-soft);max-width:760px;margin:0 auto 32px;text-align:center;line-height:1.5}
-.hl{background:linear-gradient(180deg,transparent 60%,var(--highlight) 60%);padding:0 2px}
-.warn{background:rgba(184,146,74,.12);border-left:3px solid var(--gold);padding:12px 16px;margin:14px 0;border-radius:0 3px 3px 0;font-size:15.5px;color:var(--ink-soft)}
-.warn::before{content:'⚠ Piège  ';color:var(--gold);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em}
-.warn.amb::before{content:'⚑ Ambiguïté du cours  ';color:var(--burgundy)}
-.warn.amb{border-left-color:var(--burgundy);background:rgba(123,45,38,.06)}
-code{font-family:'JetBrains Mono',monospace;font-size:.86em;background:var(--bg-deep);padding:1px 6px;border-radius:3px;color:var(--burgundy)}
-.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
-.timeline div{border-top:2px solid var(--gold);padding-top:10px}
-.timeline b{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.1em;display:block}
-.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:16px 0}
-.flash{perspective:900px;height:150px;cursor:pointer}
-.flash-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
-.flash.flip .flash-in{transform:rotateY(180deg)}
-.flash-f,.flash-b{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--rule);border-radius:6px;padding:14px 16px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:15.5px}
-.flash-f{background:var(--bg-card);font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;color:var(--ink)}
-.flash-b{background:var(--bg-deep);transform:rotateY(180deg);color:var(--ink-soft)}
-footer{max-width:1200px;margin:64px auto 0;padding:32px;text-align:center;color:var(--ink-faint);font-size:13px;border-top:1px solid var(--rule);font-style:italic}
-footer .footer-ornament{color:var(--gold);font-size:10px;letter-spacing:.5em;margin-bottom:12px}
-@media print{.hub-back,.tabs-wrapper,.viz-card{display:none}.tab-content{display:block!important}body::before{display:none}}
-</style>
-<style>
-/* extra — bas niveau */
-pre.code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;background:#1F1A14;color:#ECE5D5;padding:14px 16px;border-radius:5px;overflow-x:auto;margin:12px 0}
-pre.code .k{color:#E8C77B}pre.code .c{color:#8A7D6B;font-style:italic}pre.code .n{color:#9FC4CF}pre.code .s{color:#E9A79C}
-.regbits{display:grid;grid-template-columns:repeat(32,1fr);gap:1px;font-family:'JetBrains Mono',monospace;font-size:10px;margin:6px 0 2px;min-width:560px}
-.regbits div{text-align:center;padding:3px 0;background:#FCFAF3;border:1px solid var(--rule-soft);color:var(--ink-faint)}
-.regbits div.one{background:var(--teal);color:var(--bg-card);border-color:var(--teal)}
-.regbits div.hi{box-shadow:inset 0 -3px 0 var(--burgundy)}
-.regbits div.lbl{background:transparent;border:none;color:var(--ink-faint);font-size:9px}
-.reg-wrap{overflow-x:auto;padding-bottom:4px}
-.fld{display:flex;flex-direction:column;gap:4px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft)}
-.fld select,.fld input{font-family:'JetBrains Mono',monospace;font-size:13px;padding:6px 8px;border:1px solid var(--rule);border-radius:4px;background:#FCFAF3;color:var(--ink)}
-.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:12px}
-.tl text{font-family:'JetBrains Mono',monospace;font-size:10.5px;fill:#4A3F32}
-.tl .lane{fill:#FCFAF3;stroke:#DDD3BF}
-.tl .push{fill:#B8924A}.tl .pop{fill:#8A7D6B}.tl .tc{fill:#E8C77B}.tl .run{fill:#7B2D26}.tl .thr{fill:#DDD3BF}
-.tl .irq{stroke:#2C5664;stroke-width:2}
-.evrow{display:grid;grid-template-columns:1fr 70px 30px;gap:6px;align-items:center;margin:4px 0}
-.evrow select,.evrow input{font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 6px;border:1px solid var(--rule);border-radius:3px;background:#FCFAF3}
-.evrow button{border:1px solid var(--rule);background:#FCFAF3;border-radius:3px;cursor:pointer;color:var(--burgundy)}
+.def{border-left-color:var(--teal)}.thm{border-left-color:var(--burgundy)}.prop{border-left-color:var(--gold)}
+.trap{border-left-color:var(--burgundy);background:#F6E6DF}
+.trap::before{content:'⚠ Piège';display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--burgundy);margin-bottom:4px}
+.formula{font-family:var(--mono);font-size:14.5px;color:var(--ink);background:var(--hl);display:inline-block;padding:4px 10px;border-radius:4px;margin:2px 0}
+.tw{overflow-x:auto;margin:8px 0 12px}
+table{border-collapse:collapse;font-size:14px;width:100%}
+th,td{border-bottom:1px solid var(--rule-soft);padding:6px 8px;text-align:left;vertical-align:top}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);font-weight:500}
+td{font-variant-numeric:tabular-nums}
+td.m{background:none;padding:6px 8px;border-radius:0;font-size:12.5px;white-space:nowrap}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}
+.grid2>*{min-width:0}
+pre{background:var(--code-bg);color:var(--code-ink);font-family:var(--mono);font-size:12.5px;line-height:1.55;padding:10px 12px;border-radius:5px;overflow-x:auto;margin:6px 0 10px;white-space:pre}
+pre .c{color:var(--code-com)}pre .k{color:var(--code-key)}pre .n{color:var(--code-num)}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.chain span{font-family:var(--mono);font-size:12px;background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:4px 8px}
+.chain i{color:var(--gold);font-style:normal}
+/* aside */
+aside{min-width:0}
+.sheet{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:12px 14px}
+@media(max-width:1020px){.sheet{position:static;max-height:none}}
+.sheet h2{font-size:26px;margin:0 0 2px}
+.sheet details{border-top:1px solid var(--rule-soft);padding:6px 0}
+.sheet summary{cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--burgundy);padding:4px 0}
+.sheet pre{font-size:12px}
+/* widgets */
+.tool{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;margin:12px 0}
+.tool .row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.tool label{font-family:var(--mono);font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;display:flex;flex-direction:column;gap:3px}
+.tool select{font-family:var(--mono);font-size:13px;padding:5px 6px;border:1px solid var(--rule);border-radius:4px;background:var(--bg);color:var(--ink)}
+.quart{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px;margin:6px 0}
+.quart div{font-family:var(--mono);font-size:10.5px;text-align:center;padding:4px 0;border:1px solid var(--rule-soft);border-radius:3px;color:var(--ink-faint)}
+.quart div.on{background:var(--hl);border-color:var(--gold);color:var(--ink);font-weight:600}
+footer{text-align:center;font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding-block:20px 30px;border-top:1px solid var(--rule)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-
-<a class="hub-back" href="../../../index.html" aria-label="Retourner au Hub"><span aria-hidden="true">&larr;</span> Retour au Hub</a>
-
+<div class="wrap">
+<a class="hub-back" href="../../../index.html">← Hub</a>
 <header>
-  <div class="eyebrow">INSAT · GL3 · Semestre 1 · Pré-DS 2026 · E. Damergi</div>
-  <h1>Architectures &amp; programmation <em>bas niveau</em></h1>
-  <p class="subtitle">Révision interactive — Ch0 à Ch5 : architectures, interfaçage mémoire, GPIO, HAL, interruptions, NVIC &amp; EXTI</p>
-  <div class="ds-strip">
-    <span class="pill pill-burgundy">bus · /CE · byte select</span>
-    <span class="pill pill-teal">STM32F1 · registres</span>
-    <span class="pill pill-gold">NVIC · EXTI · SysTick</span>
-    <span class="pill">15 méthodes</span>
-  </div>
+  <div class="eyebrow">INSAT · GL3 · S1 · E. Damergi · STM32 F1 / F4</div>
+  <h1>Bas niveau, <em>l'essentiel</em></h1>
+  <p class="subtitle">Ch1 → Ch5 (diapo 52) : interfaçage, GPIO, HAL, UART/I2C, interruptions. Tout le code est dans le panneau « Code ».</p>
 </header>
 
+<div class="layout">
 <main>
-<div class="tabs-wrapper">
-  <nav class="tabs" role="tablist">
-    <button class="tab-btn active" data-tab="ch0"><span class="tab-num">0</span>Architectures</button>
-    <button class="tab-btn" data-tab="ch1"><span class="tab-num">I</span>Interfaçage mémoire</button>
-    <button class="tab-btn" data-tab="ch2"><span class="tab-num">II</span>GPIO registres</button>
-    <button class="tab-btn" data-tab="ch3"><span class="tab-num">III</span>HAL / FWL</button>
-    <button class="tab-btn" data-tab="ch4"><span class="tab-num">IV</span>Interruptions</button>
-    <button class="tab-btn" data-tab="ch5"><span class="tab-num">V</span>NVIC &amp; EXTI</button>
-    <button class="tab-btn" data-tab="methods"><span class="tab-num">M</span>Méthodes</button>
-    <button class="tab-btn" data-tab="synth"><span class="tab-num">S</span>Synthèse</button>
-  </nav>
+<nav class="tabs" role="tablist">
+  <button class="tab-btn active" data-t="t1"><span class="n">I</span>Interfaçage</button>
+  <button class="tab-btn" data-t="t2"><span class="n">II</span>GPIO registres</button>
+  <button class="tab-btn" data-t="t3"><span class="n">III</span>HAL GPIO</button>
+  <button class="tab-btn" data-t="t4"><span class="n">IV</span>UART · I2C</button>
+  <button class="tab-btn" data-t="t5"><span class="n">V</span>Interruptions</button>
+  <button class="tab-btn" data-t="t6"><span class="n">!</span>Pièges</button>
+</nav>
+
+<!-- ================= I ================= -->
+<section class="tab active" id="t1">
+<h2><span class="k">Chapitre I</span>Processeur · mémoire · E/S</h2>
+<p class="lead">Relier un processeur à des mémoires et des périphériques, ligne par ligne.</p>
+
+<h3><span class="s">§1.1</span>Les 3 bus</h3>
+<div class="tw"><table>
+<tr><th>Bus</th><th>Lignes</th><th>Rôle</th></tr>
+<tr><td>Adresse</td><td>N lignes A0…A(N−1)</td><td>capacité = <strong>2<sup>N</sup> octets</strong> (0 … 2<sup>N</sup>−1), 1 adresse par octet</td></tr>
+<tr><td>Données</td><td>M lignes</td><td>taille du mot (8/16/32) : M/8 octets par cycle</td></tr>
+<tr><td>Contrôle</td><td>/RD, /WR, Byte Select</td><td>lecture / écriture (actifs à 0), nb d'octets</td></tr>
+</table></div>
+
+<h3><span class="s">§1.2</span>La puce mémoire</h3>
+<div class="box def"><span class="formula">Taille = 2<sup>n</sup> × m bits = 2<sup>n</sup> × (m/8) octets</span><br>n = lignes d'adresse (profondeur : nombre de <strong>lignes</strong>), m = largeur d'une ligne.<br><strong>/CE = 0</strong> : connectée · <strong>/CE = 1</strong> : haute impédance. <strong>Une seule puce active</strong> à la fois sur un même fil de données, sinon court-circuit.</div>
+
+<h3><span class="s">§1.3</span>La règle des bits d'adresse</h3>
+<div class="box thm"><p><strong>Le processeur compte des octets, la mémoire compte des lignes.</strong> On découpe l'adresse en partant du bas :</p>
+<div class="chain"><span>bits bas → Byte Select</span><i>·</i><span>n bits suivants → broches A de la mémoire</span><i>·</i><span>bits hauts restants → /CE</span></div>
+<p>Nb de bits Byte Select = log₂(M/8) : <strong>0</strong> (M=8), <strong>1 = A0</strong> (M=16), <strong>2 = A1A0</strong> (M=32).</p></div>
+<div class="tw"><table>
+<tr><th>Même largeur (M = m), N = 12</th><th>n</th><th>Câblage</th><th>Byte Select</th></tr>
+<tr><td>M = m = 8</td><td>12</td><td>A11…A0 → A11…A0</td><td>—</td></tr>
+<tr><td>M = m = 16</td><td>11</td><td>A11…A1 → A10…A0</td><td>A0</td></tr>
+<tr><td>M = m = 32</td><td>10</td><td>A11…A2 → A9…A0</td><td>A1A0</td></tr>
+</table></div>
+
+<h3><span class="s">§1.4</span>Mémoire trop étroite (m &lt; M) : en parallèle</h3>
+<div class="box prop"><strong>M/m puces côte à côte</strong>, mêmes lignes d'adresse, <strong>même /CE</strong> (elles travaillent ensemble sur des fils différents). Le bus de données est découpé : Mem0 ← D7–D0, Mem1 ← D15–D8, Mem2 ← D23–D16, Mem3 ← D31–D24. Ici A1A0 = « quelle puce ».<br>Ex. N=12, M=32, 4 × 8 bits (n=10) : A11…A2 → A9…A0 de chaque puce. <strong>Octet 6</strong> = 0…01|10 → ligne 1, <strong>Mem2</strong>.</div>
+
+<h3><span class="s">§1.5</span>Mémoire trop petite : décodage par /CE</h3>
+<div class="box prop">Les puces partagent les mêmes fils → <strong>chacune son /CE</strong>, piloté par les <strong>bits hauts</strong> (chaque puce = un bloc d'adresses contigu).<br>Ex. N=12, M=m=32, n=9 (2 Ko) : A10…A2 → A8…A0, <strong>/CE0 = A11</strong> (0–2047), <strong>/CE1 = ¬A11</strong> (2048–4095). Adresse 2050 = 1|000000000|10 → Mem1, ligne 0, octet 2.<br>2 bits libres (A11 A10) → 4 puces : /CE0 actif pour 00, … , /CE3 pour 11.</div>
+<div class="box def"><strong>Les deux à la fois (banques)</strong> : puces par banque = M/m · banques = 2<sup>N</sup> / taille d'une banque. Ex. N=12, M=32, puces 512×8 : 4 par banque (2 Ko), 2 banques (A11) → <strong>8 puces</strong>.</div>
+
+<h3><span class="s">§1.6</span>Compilateur et cycles bus</h3>
+<div class="tw"><table>
+<tr><th>Type C</th><th>Lecture</th><th>Écriture</th><th>Byte Select</th></tr>
+<tr><td>u8 / s8</td><td>LDRB / LDRSB</td><td>STRB</td><td>00</td></tr>
+<tr><td>u16 / s16</td><td>LDRH / LDRSH</td><td>STRH</td><td>01</td></tr>
+<tr><td>u32 / s32</td><td>LDR</td><td>STR</td><td>10</td></tr>
+</table></div>
+<p>Variable 32 bits → adresse multiple de 4 (alignement). <strong>Lecture</strong> : /CE=0, /RD=0, adresse → la mémoire pilote le bus de données. <strong>Écriture</strong> : /CE=0, /WR=0, adresse + donnée → le processeur pilote.</p>
+
+<h3><span class="s">§1.7</span>Interface de périphérique (8255)</h3>
+<div class="box def">Câblée <strong>comme une mémoire</strong> ; pour le CPU c'est quelques <strong>registres à adresses fixes</strong>. Certains bits sont reliés aux broches : bit 1 ↔ +V, bit 0 ↔ 0 V. Écrire = bits → broches (LED, afficheur). Lire = broches → bits (boutons) : <strong>masquer</strong> les bits non câblés (aléatoires).<br>Ex. 7 segments PC7=a…PC1=g : « 3 » = a b c d g = <span class="m">0xF2</span>.</div>
+
+<h3><span class="s">§1.8</span>Masquage logique</h3>
+<p>Écrire <code>*Reg = 0x80</code> efface aussi les autres bits. On fait donc <strong>effacer puis écrire</strong> : <code>&amp;= ~(masque &lt;&lt; i)</code> puis <code>|= valeur &lt;&lt; i</code>. Chaque opération = lecture + calcul + écriture (3 instructions). Les recettes complètes sont dans <strong>Code → Masquage</strong> et au §2.5.</p>
+</section>
+
+<!-- ================= II ================= -->
+<section class="tab" id="t2">
+<h2><span class="k">Chapitre II</span>GPIO par accès registres (STM32F1)</h2>
+<p class="lead">Chaque périphérique = bloc de registres 32 bits à une adresse fixe.</p>
+
+<h3><span class="s">§2.1</span>Adresses</h3>
+<div class="box thm"><span class="formula">Adresse(Reg) = Base(Périph) + Offset(Reg)</span></div>
+<div class="grid2">
+<div class="tw"><table>
+<tr><th>Base</th><th>Adresse</th></tr>
+<tr><td>GPIOA</td><td class="m">0x4001 0800</td></tr>
+<tr><td>GPIOB</td><td class="m">0x4001 0C00</td></tr>
+<tr><td>GPIOC</td><td class="m">0x4001 1000</td></tr>
+<tr><td>GPIOD</td><td class="m">0x4001 1400</td></tr>
+<tr><td>RCC</td><td class="m">0x4002 1000</td></tr>
+</table></div>
+<div class="tw"><table>
+<tr><th>Registre</th><th>Offset</th><th>Rôle</th></tr>
+<tr><td>CRL</td><td>0x00</td><td>config pins 0–7</td></tr>
+<tr><td>CRH</td><td>0x04</td><td>config pins 8–15</td></tr>
+<tr><td>IDR</td><td>0x08</td><td>lecture (lecture seule)</td></tr>
+<tr><td>ODR</td><td>0x0C</td><td>écriture</td></tr>
+<tr><td>BSRR</td><td>0x10</td><td>1 → bit ODR à 1</td></tr>
+<tr><td>BRR</td><td>0x14</td><td>1 → bit ODR à 0</td></tr>
+</table></div>
+</div>
+<div class="box prop"><strong>Horloge d'abord</strong> : tout est éteint au reset sauf le RCC. <span class="m">RCC_APB2ENR = 0x4002 1018</span>, <strong>GPIOx = bit 2 + x</strong> : A = bit 2 (0x04), B = bit 3 (0x08), C = bit 4 (0x10). Les GPIO sont sur le bus APB2.</div>
+
+<h3><span class="s">§2.2</span>Un port = 16 broches</h3>
+<p>GPIOA…GPIOG, 16 pins chacun (PC9 = port C, pin 9). Dans IDR, ODR, BSRR, BRR : <strong>bit i = pin i</strong> (bits 0–15). Dans CRL/CRH : <strong>4 bits par pin</strong>.</p>
+
+<h3><span class="s">§2.3</span>CRL / CRH : le quartet CNF | MODE</h3>
+<div class="box thm"><span class="formula">pin p → CRL si p &lt; 8, sinon CRH · décalage = 4 × (p mod 8)</span><br>Quartet = <strong>CNF1 CNF0</strong> (type) <strong>MODE1 MODE0</strong> (00 = entrée ; 01/10/11 = sortie 10/2/50 MHz).</div>
+<div class="tw"><table>
+<tr><th>Configuration</th><th>Quartet</th><th>Hex</th></tr>
+<tr><td>Entrée analogique</td><td>0000</td><td>0x0</td></tr>
+<tr><td><strong>Entrée flottante</strong> (reset)</td><td>0100</td><td>0x4</td></tr>
+<tr><td>Entrée pull-up / pull-down</td><td>1000</td><td>0x8</td></tr>
+<tr><td>Sortie push-pull 10 / <strong>2</strong> / 50 MHz</td><td>0001 / <strong>0010</strong> / 0011</td><td>0x1 / 0x2 / 0x3</td></tr>
+<tr><td>Sortie open-drain 2 MHz</td><td>0110</td><td>0x6</td></tr>
+<tr><td>Fonction alternative push-pull 50 MHz</td><td>1011</td><td>0xB</td></tr>
+</table></div>
+<ul>
+<li><strong>Le mode décide</strong> : en sortie la broche suit ODR ; en entrée IDR recopie la broche (IDR est en <strong>lecture seule</strong>).</li>
+<li><strong>Pull-up/down</strong> : valeur par défaut d'une entrée non pilotée. Bouton vers GND → pull-up ; bouton vers 3,3 V → pull-down. Sur F1 (hors diapos) : 1000 + bit ODR = 1 → pull-up, 0 → pull-down.</li>
+<li><strong>Push-pull</strong> pilote 3,3 V et 0 V ; <strong>open-drain</strong> ne tire qu'à 0 V (résistance externe pour le 1). Seul le quartet change dans le code.</li>
+</ul>
+
+<div class="tool" aria-label="Calculateur de configuration GPIO">
+<div class="row">
+<label for="gp">Port<select id="gp"><option>A</option><option>B</option><option selected>C</option><option>D</option></select></label>
+<label for="gn">Pin<select id="gn"></select></label>
+<label for="gm">Mode<select id="gm"><option value="4">Entrée flottante 0100</option><option value="8">Entrée pull 1000</option><option value="0">Entrée analogique 0000</option><option value="2" selected>Sortie PP 2 MHz 0010</option><option value="1">Sortie PP 10 MHz 0001</option><option value="3">Sortie PP 50 MHz 0011</option><option value="6">Sortie OD 2 MHz 0110</option><option value="11">AF PP 50 MHz 1011</option></select></label>
+</div>
+<div id="gcap" style="font-family:var(--mono);font-size:12px;color:var(--ink-faint)"></div>
+<div class="quart" id="gq"></div>
+<pre id="gcode"></pre>
 </div>
 
-<!-- ═══════════════════ 0 · ARCHITECTURES ═══════════════════ -->
-<section class="tab-content active" id="ch0">
-  <p class="intro">Avant de programmer un microcontrôleur, il faut savoir pourquoi on l'a choisi : processeur généraliste, DSP, ASIP ou matériel dédié ? Tout est un compromis entre flexibilité et performance.</p>
+<h3><span class="s">§2.4</span>La recette en 4 étapes</h3>
+<div class="chain"><span>1 · #define des registres</span><i>→</i><span>2 · horloge RCC_APB2ENR</span><i>→</i><span>3 · CRL/CRH : effacer puis écrire</span><i>→</i><span>4 · ODR / BSRR / BRR ou IDR &amp; masque</span></div>
 
-  <h2><span class="h-num">§ 0.1</span>Deux approches pour un traitement</h2>
-  <div class="two-col">
-    <div class="box box-def" style="margin:0">
-      <span class="box-label">Approche logicielle</span><span class="src">Ch0 · s.4–7</span>
-      <p>Matériel <strong>standard</strong> : un processeur à jeu d'instructions (GPP, DSP, ASIP). On écrit un <strong>programme</strong> (C, C++, ASM) compilé en binaire.</p>
-      <p style="font-size:15px">Unité de traitement = <strong>unité de contrôle</strong> (séquence de contrôle qui <em>dépend des instructions</em>) + <strong>chemin de données</strong> (UAL, registres).</p>
-    </div>
-    <div class="box box-thm" style="margin:0">
-      <span class="box-label">Matériel dédié (SPP)</span><span class="src">Ch0 · s.4–6</span>
-      <p><strong>SPP</strong> (Single Purpose Processor) : un circuit conçu pour <strong>un seul</strong> algorithme. Algorithme → machine à états → tables de vérité/transitions → VHDL / Verilog.</p>
-      <p style="font-size:15px">SPP = <strong>DataPath + contrôle</strong> avec une séquence de contrôle <strong>prédéfinie</strong> (pas d'instructions en mémoire).</p>
-    </div>
-  </div>
+<h3><span class="s">§2.5</span>Décalage et masquage : les cas à savoir</h3>
+<div class="box def"><strong>Rappel</strong> : bit n vaut 2<sup>n</sup> · 1 chiffre hex = 4 bits · bit 4 = <span class="m">0x10</span>, bit 9 = <span class="m">0x200</span> · <span class="m">1u &lt;&lt; n</span> = « un 1 en position n » · <span class="m">u</span> = non signé 32 bits (sûr avec <span class="m">~</span> et le bit 31).</div>
+<div class="tw"><table>
+<tr><th>But</th><th>Code</th><th>Pourquoi</th></tr>
+<tr><td>Mettre le bit n à 1</td><td class="m">REG |= 1u &lt;&lt; n;</td><td>OR avec 1 force à 1, OR avec 0 ne change rien</td></tr>
+<tr><td>Mettre le bit n à 0</td><td class="m">REG &amp;= ~(1u &lt;&lt; n);</td><td>AND avec 0 force à 0, le reste reste à 1</td></tr>
+<tr><td>Écrire un champ k bits en position s</td><td class="m">REG &amp;= ~(MASK &lt;&lt; s);<br>REG |= VAL &lt;&lt; s;</td><td>1. effacer le champ 2. écrire la valeur (MASK = k uns, ex. 0xF)</td></tr>
+<tr><td>Config PC9 sortie 10 MHz</td><td class="m">GPIOC_CRH &amp;= ~(0xFu &lt;&lt; 4);<br>GPIOC_CRH |= 0x1u &lt;&lt; 4;</td><td>pin 9 → CRH, 4 × (9−8) = 4</td></tr>
+<tr><td>Config 2 pins voisines (PA1 sortie, PA0 entrée)</td><td class="m">CRL_A &amp;= ~0xFFu;<br>CRL_A |= 0x14;</td><td>un seul masque pour 2 quartets : 0001 0100</td></tr>
+<tr><td>Config les 8 pins d'un registre</td><td class="m">CRL_B = 0x11111111;</td><td>rien à garder → <span class="m">=</span> direct</td></tr>
+<tr><td>Allumer / éteindre avec ODR</td><td class="m">ODR |= 1u &lt;&lt; 9;<br>ODR &amp;= ~(1u &lt;&lt; 9);</td><td>3 opérations (lecture-modif-écriture)</td></tr>
+<tr><td>Allumer / éteindre avec BSRR / BRR</td><td class="m">BSRR = 1u &lt;&lt; 9;<br>BRR = 1u &lt;&lt; 9;</td><td><span class="m">=</span> suffit : écrire 0 ne change rien. 1 seule écriture</td></tr>
+<tr><td>Tester une entrée</td><td class="m">if (IDR &amp; (1u &lt;&lt; 2))</td><td>résultat 0 ou 0x04 (pas 1 !)</td></tr>
+<tr><td>Lire un groupe de pins comme un nombre</td><td class="m">v = (IDR_B &amp; 0x0F00) &gt;&gt; 8;</td><td>masquer PB8–PB11 puis redescendre en bit 0</td></tr>
+<tr><td>Écrire un motif 8 bits sur PB0–PB7</td><td class="m">BSRR_B = 0x3F;<br>BRR_B = 0xC0;</td><td>BSRR = les 1, BRR = les 0, toujours complémentaires (0x3F + 0xC0 = 0xFF)</td></tr>
+<tr><td>Activer 2 horloges</td><td class="m">RCC_APB2ENR |= 0x04 | 0x08;</td><td>GPIOA + GPIOB = 0x0C</td></tr>
+</table></div>
 
-  <h2><span class="h-num">§ 0.2</span>Von Neumann vs Harvard</h2>
-  <div class="two-col">
-    <div class="box box-def" style="margin:0">
-      <span class="box-label">Von Neumann</span><span class="src">s.8</span>
-      <p>Instructions <strong>et</strong> données passent par le <strong>même bus</strong> de données. Une seule mémoire vue par le CPU.</p>
-    </div>
-    <div class="box box-def" style="margin:0">
-      <span class="box-label">Harvard</span><span class="src">s.9</span>
-      <p>Instructions et données passent par <strong>deux bus différents</strong> : on peut lire une instruction et une donnée <strong>en même temps</strong>. (Cortex-M3 : architecture Harvard.)</p>
-    </div>
-  </div>
-  <div class="box box-remark"><span class="box-label">Où sont code et données</span><p>En général : <strong>Flash</strong> = code + constantes ; <strong>RAM</strong> = variables.</p></div>
-
-  <h2><span class="h-num">§ 0.3</span>Critères de choix</h2>
-  <table class="law">
-    <tr><td>1 · Coût final</td><td><span class="fx">FC = NRE / Q + UC</span> — NRE = coût d'ingénierie non récurrent (conception, une seule fois), Q = quantité produite, UC = coût unitaire. Un ASIC a un NRE énorme mais un UC faible : rentable seulement en grande série.</td></tr>
-    <tr><td>2 · Time to market</td><td>Un retard D sur une fenêtre de vente de durée 2P fait baisser le pic de revenus : pic retardé ≈ <span class="fx">R·(P − D)/P</span>. Le retard coûte cher.</td></tr>
-    <tr><td>3 · Performance</td><td><strong>MIPS/MHz</strong> (ou MFLOPS/MHz) ; performance absolue = <span class="fx">fréquence × MIPS/MHz</span> ; bande passante mémoire (octets/s). Cortex-M0 0,9 · M3/M4 1,25 · A5 1,57 · A7 1,9 MIPS/MHz.</td></tr>
-    <tr><td>4 · Énergie</td><td>Puissance en W, énergie en J = P × t → autonomie batterie, dissipation (taille, poids). PC : dizaines de W ; smartphone : W ; MCU : µW → mW.</td></tr>
-    <tr><td>5 · Flexibilité</td><td>À quel point il est difficile de faire évoluer ou changer complètement le comportement du système.</td></tr>
-  </table>
-
-  <h2><span class="h-num">§ 0.4</span>L'exemple Σ aᵢ·xᵢ</h2>
-  <div class="box box-ex">
-    <span class="box-label">Calcul de y = a₀x₃ + a₁x₂ + a₂x₁ + a₃x₀</span><span class="src">Ch0 · s.15–27</span>
-    <p>Forme présente partout : convolution (filtres), corrélation, calcul matriciel.</p>
-    <table class="mat" style="width:100%">
-      <tr><th></th><th>GPP</th><th>GPP + 2 UAL + MAC (DSP)</th><th>SPP dédié</th></tr>
-      <tr><th>Instructions (fetch)</th><td>22</td><td>10</td><td class="nz">0</td></tr>
-      <tr><th>Transferts mém → reg</th><td>8</td><td>8</td><td>8 en parallèle (1 cycle)</td></tr>
-      <tr><th>Transferts reg → reg</th><td>7</td><td>—</td><td class="nz">0</td></tr>
-      <tr><th>Multiplications</th><td>4 cycles</td><td>4 (2 cycles)</td><td>4 en parallèle (1 cycle)</td></tr>
-      <tr><th>Additions</th><td>4 cycles</td><td>2 + 1 MAC</td><td>1 addition à 4 termes (1 cycle)</td></tr>
-      <tr><th>Changer le calcul</th><td class="nz">réécrire + compiler</td><td>réécrire + compiler</td><td>nouveau matériel</td></tr>
-    </table>
-    <p style="margin-top:10px;font-size:15px"><strong>MAC</strong> (Multiply ACcumulate) : <span class="fx">ACC ← ACC + (Ri·Rj + Rk·Rl)</span> en une instruction. Plusieurs UAL commandées par le <strong>même</strong> signal de contrôle = architecture <strong>SIMD</strong>. SIMD + MAC = ce qu'on trouve dans les <strong>DSP</strong>.</p>
-  </div>
-
-  <h2><span class="h-num">§ 0.5</span>Le spectre GPP → ASIC</h2>
-  <div class="viz-card" style="padding:16px">
-    <svg class="viz-svg" viewBox="0 0 860 170" role="img" aria-label="Spectre flexibilité performance" style="cursor:default">
-      <defs><linearGradient id="g0" x1="0" x2="1"><stop offset="0" stop-color="#2C5664"/><stop offset="1" stop-color="#7B2D26"/></linearGradient>
-      <marker id="a0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10z" fill="#4A3F32"/></marker></defs>
-      <rect x="40" y="70" width="780" height="10" rx="5" fill="url(#g0)"/>
-      <g font-family="Instrument Serif, serif" font-style="italic" font-size="19" fill="#1F1A14" text-anchor="middle">
-        <text x="80" y="58">GPP</text><text x="230" y="58">DSP</text><text x="380" y="58">ASIP</text><text x="560" y="58">SPP sur FPGA</text><text x="770" y="58">ASIC</text>
-      </g>
-      <g font-family="JetBrains Mono, monospace" font-size="10.5" fill="#8A7D6B" text-anchor="middle">
-        <text x="80" y="104">jeu d'instr. général</text><text x="230" y="104">SIMD + MAC</text><text x="380" y="104">instr. spécialisées</text><text x="560" y="104">matériel programmable</text><text x="770" y="104">silicium figé</text>
-      </g>
-      <path d="M60,140 L420,140" stroke="#4A3F32" marker-start="url(#a0)"/><text x="240" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#2C5664">+ flexibilité · + time to market</text>
-      <path d="M440,140 L800,140" stroke="#4A3F32" marker-end="url(#a0)"/><text x="620" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#7B2D26">+ performance / énergie</text>
-    </svg>
-  </div>
-  <table class="law">
-    <tr><td>GPP</td><td>General Purpose Processor : flexible, moins performant/efficace.</td></tr>
-    <tr><td>DSP</td><td>Digital Signal Processor : SIMD + MAC pour le traitement du signal.</td></tr>
-    <tr><td>ASIP</td><td>Application Specific Instruction Processor : cœur (UAL) profondément spécialisé, jeu d'instructions taillé pour une application.</td></tr>
-    <tr><td>SPP sur FPGA</td><td>Matériel dédié sur blocs logiques <strong>programmables</strong> (architecture reprogrammable).</td></tr>
-    <tr><td>ASIC</td><td>Application Specific Integrated Circuit : SPP gravé en transistors (architecture <strong>fixe</strong>). Le plus performant, le moins flexible.</td></tr>
-  </table>
-
-  <h2><span class="h-num">§ 0.6</span>Taxonomie de Flynn</h2>
-  <div class="flow-grid">
-    <div class="flow-node"><div class="flow-node-tag">SISD</div><div class="flow-node-title">Single Instr. Single Data</div><p style="font-size:14.5px">Une UAL, une donnée à la fois. Ex. <strong>Cortex-M3</strong>.</p></div>
-    <div class="flow-node"><div class="flow-node-tag">SIMD</div><div class="flow-node-title">Single Instr. Multiple Data</div><p style="font-size:14.5px">Plusieurs UAL font la même instruction sur des données différentes. Ex. <strong>Cortex-M4</strong>, DSP.</p></div>
-    <div class="flow-node"><div class="flow-node-tag">MISD</div><div class="flow-node-title">Multiple Instr. Single Data</div><p style="font-size:14.5px">Plusieurs instructions sur la même donnée (rare).</p></div>
-    <div class="flow-node"><div class="flow-node-tag">MIMD</div><div class="flow-node-title">Multiple Instr. Multiple Data</div><p style="font-size:14.5px">Plusieurs unités indépendantes (multicœurs).</p></div>
-  </div>
-  <div class="warn amb">Les slides 31 légendent MISD et MIMD avec « Single Instruction Single/Multiple Data » (copier-coller). Retiens les vrais sens : MISD = <strong>M</strong>ultiple Instruction Single Data, MIMD = <strong>M</strong>ultiple Instruction Multiple Data.</div>
-
-  <h2><span class="h-num">§ 0.7</span>SoC vs microcontrôleur</h2>
-  <div class="two-col">
-    <div class="box box-def" style="margin:0"><span class="box-label">MCU</span><span class="src">s.40–41</span><p>Un petit ordinateur sur une puce : un ou plusieurs CPU + mémoires (Flash, RAM) + périphériques programmables (GPIO, timers, USART, ADC/DAC…). Usage général : IoT, domotique, électroménager, automobile.</p></div>
-    <div class="box box-def" style="margin:0"><span class="box-label">SoC</span><span class="src">s.37–41</span><p>Tout un système sur une puce, conçu pour <strong>un domaine</strong> (smartphone, décodeur satellite) : GPP + DSP + ASIP + SPP/FPGA, et beaucoup de périphériques avancés. Choix des composants guidé par l'application.</p></div>
-  </div>
-  <div class="box box-remark"><span class="box-label">Dilemme smartphone</span><p>Il faut à la fois de la <strong>flexibilité</strong> (mises à jour, apps : GPP) et de la <strong>performance</strong> (déchiffrement, décodage son/image, 4G : DSP, ASIP, SPP). Solution : un <strong>SoC</strong> qui contient les deux (ex. Snapdragon, STi5518).</p></div>
+<h3><span class="s">§2.6</span>Exercice01 (clavier + 7 segments) en résumé</h3>
+<p>LED PA1 (sortie), Appui_detect PA0 (entrée), clavier PB8–PB11 (entrées), afficheur PB0=a … PB7=h (sorties). RCC <span class="m">|= 0x0C</span> · CRL_A <span class="m">&amp;= ~0xFF; |= 0x14</span> · CRL_B <span class="m">= 0x11111111</span> · CRH_B <span class="m">&amp;= ~0xFFFF; |= 0x4444</span> · touche <span class="m">(IDR_B &amp; 0x0F00) &gt;&gt; 8</span> · « 0 » = 0x3F/0xC0, « H » = 0x76/0x89 sur <strong>BSRR_B/BRR_B</strong>.</p>
+<div class="box trap">La correction du prof inverse les ports A et B dans la boucle : la LED PA1 se pilote avec <span class="m">BSRR_A</span>, l'afficheur avec <span class="m">BSRR_B / BRR_B</span>.</div>
 </section>
 
-<!-- ═══════════════════ I · INTERFAÇAGE MÉMOIRE ═══════════════════ -->
-<section class="tab-content" id="ch1">
-  <p class="intro">Le cœur du chapitre le plus calculatoire : relier un processeur à des mémoires et à des périphériques, ligne d'adresse par ligne d'adresse. Toutes les questions se résolvent avec quatre formules.</p>
+<!-- ================= III ================= -->
+<section class="tab" id="t3">
+<h2><span class="k">Chapitre III</span>De l'accès registres à la HAL</h2>
+<p class="lead">Une bibliothèque qui supprime les 3 douleurs : adresses, valeurs de config, décalages/masques.</p>
 
-  <h2><span class="h-num">§ 1.1</span>Les trois bus</h2>
-  <table class="law">
-    <tr><td>Bus de contrôle</td><td><span class="fx">/RD</span> (lecture, actif à 0) · <span class="fx">/WR</span> (écriture, actif à 0) · <strong>Byte Select</strong> (nombre d'octets à transférer).</td></tr>
-    <tr><td>Bus d'adresse</td><td><span class="fx">N</span> lignes <span class="fx">A₀…A_{N−1}</span>.</td></tr>
-    <tr><td>Bus de données</td><td><span class="fx">M</span> lignes <span class="fx">D₀…D_{M−1}</span> = taille du <strong>mot</strong> (8, 16, 32, 64). Processeur 32 bits : mot = 32, demi-mot = 16, double mot = 64.</td></tr>
-  </table>
-  <div class="box box-thm">
-    <span class="box-label">Capacité d'adressage</span><span class="src">Ch1 · s.5–7</span>
-    <div class="formula">capacité = 2ᴺ octets &nbsp;&nbsp; espace d'adressage = 0 … 2ᴺ − 1</div>
-    <p>Chaque <strong>octet</strong> a son adresse unique. 1 Ko = 2¹⁰, 1 Mo = 2²⁰, 1 Go = 2³⁰. Ex. N = 30 → 2³⁰ = 1 073 741 824 octets = 1 Go.</p>
-    <p style="font-size:15px">Avec M = 16 (resp. 32), on récupère 2 (resp. 4) octets <strong>dans le même cycle</strong>.</p>
-  </div>
-  <div class="box box-prop">
-    <span class="box-label">Accès aligné / non aligné</span><span class="src">s.11</span>
-    <div class="two-col" style="margin:0">
-      <div><h4 style="margin-top:0">Sans support non aligné</h4><p>Une donnée doit être <strong>entièrement dans la même ligne</strong> mémoire → accès en 1 cycle, mais <strong>espace perdu</strong> (trous).</p></div>
-      <div><h4 style="margin-top:0">Avec support non aligné</h4><p>Une donnée peut être coupée sur deux lignes → mémoire compacte, mais <strong>2 cycles</strong> pour les données coupées.</p></div>
-    </div>
-  </div>
+<h3><span class="s">§3.1</span>Les couches</h3>
+<div class="tw"><table>
+<tr><th>Douleur</th><th>Supprimée par</th><th>Exemple</th></tr>
+<tr><td>Adresses</td><td>Header : bases + <strong>struct</strong> qui copie l'ordre des registres + pointeur</td><td class="m">GPIOC-&gt;CRH</td></tr>
+<tr><td>Valeurs</td><td>Constantes nommées (<span class="m">stm32xx_gpio.h</span>)</td><td class="m">GPIO_PIN_9, GPIO_MODE_OUTPUT_PP</td></tr>
+<tr><td>Masques</td><td>Fonctions (<span class="m">.c</span>)</td><td class="m">HAL_GPIO_WritePin(…)</td></tr>
+</table></div>
+<div class="box def"><strong>L'astuce de la struct</strong> : champs <span class="m">uint32_t CRL, CRH, IDR, ODR…</span> de 4 octets chacun = mêmes offsets que les registres. <span class="m">#define GPIOC ((GPIO_TypeDef*)0x40011000)</span> → le compilateur calcule base + offset. <strong>Firmware</strong> = logiciel lié à une puce, non portable.</div>
 
-  <h2><span class="h-num">§ 1.2</span>La mémoire</h2>
-  <div class="box box-def">
-    <span class="box-label">Profondeur, largeur, taille</span><span class="src">Ch1 · s.12–13</span>
-    <p><span class="fx">n</span> lignes d'adresse → <span class="fx">2ⁿ</span> emplacements (<strong>profondeur</strong>) ; <span class="fx">m</span> lignes de données → <strong>largeur</strong> d'un emplacement.</p>
-    <div class="formula">Taille = 2ⁿ × m bits = 2ⁿ × (m / 8) octets</div>
-    <p style="font-size:15px">Ex. n = 10, m = 16 → 1024 × 2 = 2048 octets. L'adresse d'un octet <em>dans</em> la mémoire est un <strong>offset</strong> ; son adresse effective dépend de où la mémoire est placée dans l'espace du processeur.</p>
-  </div>
-  <div class="box box-thm">
-    <span class="box-label">Chip Enable /CE</span><span class="src">Ch1 · s.14–16</span>
-    <ul>
-      <li><span class="fx">/CE = 0</span> : la puce est <strong>connectée</strong> au bus de données.</li>
-      <li><span class="fx">/CE = 1</span> : sorties en <strong>haute impédance</strong> (tristate) = électriquement déconnectée.</li>
-      <li>Si deux puces pilotent la même ligne (une à 0 V, l'autre à 3,3 V) : <strong>court-circuit</strong>.</li>
-      <li>Règle : <span class="hl">à un instant donné, une seule puce active (0), toutes les autres à 1</span>.</li>
-    </ul>
-  </div>
+<h3><span class="s">§3.2</span>HAL Cube : la recette (tous périphériques)</h3>
+<div class="chain"><span>1 · déclarer PPP_InitTypeDef</span><i>→</i><span>2 · __HAL_RCC_PPP_CLK_ENABLE()</span><i>→</i><span>3 · remplir les champs</span><i>→</i><span>4 · HAL_PPP_Init(PPPx, &amp;struct)</span></div>
+<div class="grid2">
+<div class="tw"><table>
+<tr><th>Champ</th><th>Valeurs</th></tr>
+<tr><td>Pin</td><td>GPIO_PIN_0…15, combinables avec <span class="m">|</span></td></tr>
+<tr><td>Mode</td><td>INPUT, OUTPUT_PP, OUTPUT_OD, AF_PP, AF_OD, ANALOG, IT_RISING…</td></tr>
+<tr><td>Pull</td><td>NOPULL, PULLUP, PULLDOWN</td></tr>
+<tr><td>Speed</td><td>FREQ_LOW / MEDIUM / HIGH / VERY_HIGH</td></tr>
+<tr><td>Alternate</td><td>GPIO_AFx_PPP (ex. GPIO_AF7_USART2)</td></tr>
+</table></div>
+<div class="tw"><table>
+<tr><th>Fonction HAL</th><th>= registres</th></tr>
+<tr><td>HAL_GPIO_Init</td><td>CRL/CRH effacer + écrire</td></tr>
+<tr><td>HAL_GPIO_ReadPin</td><td>IDR &amp; masque</td></tr>
+<tr><td>HAL_GPIO_WritePin</td><td>BSRR / BRR</td></tr>
+<tr><td>HAL_GPIO_TogglePin</td><td>ODR ^= masque</td></tr>
+<tr><td>SET_BIT / CLEAR_BIT</td><td>|= / &amp;= ~</td></tr>
+</table></div>
+</div>
 
-  <h2><span class="h-num">§ 1.3</span>Connecter une mémoire de même largeur</h2>
-  <div class="box box-thm">
-    <span class="box-label">Conditions</span><span class="src">Ch1 · s.17</span>
-    <div class="formula">M = m &nbsp;&nbsp;et&nbsp;&nbsp; 2ᴺ = 2ⁿ × (m / 8)</div>
-    <p style="font-size:15px">(la mémoire peut être plus petite que la capacité d'adressage ; voir § 1.5).</p>
-  </div>
-  <table class="mat" style="width:100%;margin-bottom:12px">
-    <tr><th>Cas</th><th>n</th><th>lignes processeur → mémoire</th><th>lignes de poids faible</th></tr>
-    <tr><th>M = m = 8, N = 12</th><td>n = N = 12</td><td>A₁₁…A₀ → A₁₁…A₀</td><td>—</td></tr>
-    <tr><th>M = m = 16, N = 12</th><td>n = N − 1 = 11</td><td>A₁₁…A₁ → A₁₀…A₀</td><td class="nz">A₀ → byte select</td></tr>
-    <tr><th>M = m = 32, N = 12</th><td>n = N − 2 = 10</td><td>A₁₁…A₂ → A₉…A₀</td><td class="nz">A₁A₀ → byte select</td></tr>
-  </table>
-  <div class="box box-def">
-    <span class="box-label">Byte Select + A₁A₀ (M = 32)</span><span class="src">Ch1 · s.22–23</span>
-    <p>Byte Select indique la <strong>taille</strong> (00 = 1 octet, 01 = 2, 10 = 4) ; <span class="fx">A₁A₀</span> donne l'<strong>offset du premier octet</strong> dans la ligne. Une logique d'accès (dans la mémoire ou le CPU) aiguille les octets vers le registre.</p>
-    <table class="mat"><tr><th>Byte Select</th><th>A₁A₀</th><th>octets</th></tr>
-      <tr><td>00 (1)</td><td>00 / 01 / 10 / 11</td><td>octet 0 / 1 / 2 / 3</td></tr>
-      <tr><td>01 (2)</td><td>00 / 10 / 01*</td><td>0+1 / 2+3 / 1+2*</td></tr>
-      <tr><td>10 (4)</td><td>00</td><td>0+1+2+3</td></tr></table>
-    <p style="font-size:13.5px;color:var(--ink-faint)">* seulement si le système supporte l'accès non aligné.</p>
-  </div>
-
-  <h2><span class="h-num">§ 1.4</span>Le compilateur et la mémoire</h2>
-  <div class="box box-ex">
-    <span class="box-label">Listing mémoire</span><span class="src">Ch1 · s.24–26</span>
-    <p>Pour chaque variable globale, le compilateur réserve une adresse et un type, puis remplace chaque <span class="fx">=</span> par la bonne instruction de transfert :</p>
-    <table class="mat"><tr><th>type</th><th>lecture</th><th>écriture</th><th>byte select</th></tr>
-      <tr><td>u8 / s8</td><td>LDRB / LDRSB</td><td>STRB</td><td>00 (1 octet)</td></tr>
-      <tr><td>u16 / s16</td><td>LDRH / LDRSH</td><td>STRH</td><td>01 (2 octets)</td></tr>
-      <tr><td>u32 / s32</td><td>LDR</td><td>STR</td><td>10 (4 octets)</td></tr></table>
-    <pre class="code"><span class="c">// a:u16 @0x1000  b,c:u32 @0x1004,0x1008  d,e,f:u8 @0x100C..E  g:s32 @0x1010</span>
-uint8_t x = e;   <span class="c">→ MOV Rn, 0x100D ; LDRB Rx, [Rn]</span>
-int     y = g;   <span class="c">→ MOV Rn, 0x1010 ; LDR  Ry, [Rn]</span>
-uint16_t z = a;  <span class="c">→ MOV Rn, 0x1000 ; LDRH Rz, [Rn]</span></pre>
-    <p style="font-size:14.5px">Note : g (32 bits) commence en 0x1010 et non 0x100F : <strong>alignement</strong> sur une adresse multiple de 4.</p>
-  </div>
-  <div class="box box-remark"><span class="box-label">Cycles lecture / écriture</span><span class="src">s.50–54</span>
-    <p><strong>Lecture</strong> (<span class="fx">LDR Rn,[Rm]</span>) : le CPU active <span class="fx">/CE</span> et <span class="fx">/RD</span>, met l'adresse sur le bus d'adresse, la mémoire place le contenu sur le bus de données. <strong>Écriture</strong> (<span class="fx">STR Rn,[Rm]</span>) : le CPU active <span class="fx">/CE</span> et <span class="fx">/WR</span>, met l'adresse <strong>et</strong> la donnée sur les bus.</p></div>
-
-  <h2><span class="h-num">§ 1.5</span>Largeurs ou profondeurs différentes</h2>
-  <div class="two-col">
-    <div class="box box-prop" style="margin:0">
-      <span class="box-label">Largeur m &lt; M → en parallèle</span><span class="src">s.28–36</span>
-      <p>Il faut <span class="fx">M / m</span> mémoires <strong>côte à côte</strong>, toutes avec le même <span class="fx">/CE</span> et les mêmes lignes d'adresse ; chacune prend une tranche du bus de données.</p>
-      <p style="font-size:14.5px">Ex. N = 12, M = 32, m = 8, n = 10 : 4 mémoires ; Mem0 ← D₇…D₀, Mem1 ← D₁₅…D₈, Mem2 ← D₂₃…D₁₆, Mem3 ← D₃₁…D₂₄ ; adresse proc. A₁₁…A₂ → A₉…A₀. L'octet d'adresse 6 est dans Mem2.</p>
-    </div>
-    <div class="box box-prop" style="margin:0">
-      <span class="box-label">Profondeur insuffisante → décodage</span><span class="src">s.38–43</span>
-      <p>Si la mémoire couvre moins que <span class="fx">2ᴺ</span>, les lignes d'adresse <strong>en trop</strong> (poids fort) servent à générer les <span class="fx">/CE</span> : elles choisissent la <strong>zone</strong> où la mémoire répond.</p>
-      <p style="font-size:14.5px">Ex. N = 12, M = m = 32, n = 9 : mémoire de 2 Ko. A₁₀…A₂ → A₈…A₀ ; <strong>A₁₁</strong> choisit la zone : <span class="fx">/CE₀ = A₁₁</span> (0…2047), <span class="fx">/CE₁ = ¬A₁₁</span> (2048…4095).</p>
-    </div>
-  </div>
-  <div class="warn amb">Les slides 41–43 écrivent <span class="fx">/CE = A9</span> puis <span class="fx">/CE₀ = A9, /CE₁ = /A9</span>. Avec N = 12 et A₁₀…A₂ déjà reliés à la mémoire, la ligne libre est <strong>A₁₁</strong> (c'est d'ailleurs ce que montre le schéma). Écris <span class="fx">A₁₁</span> et justifie.</div>
-  <div class="box box-thm">
-    <span class="box-label">Association de mémoires</span><span class="src">s.44–48</span>
-    <ul>
-      <li><span class="fx">2ⁱ</span> mémoires à <span class="fx">n</span> lignes d'adresse → une mémoire à <span class="fx">n + i</span> lignes (en profondeur, avec décodage).</li>
-      <li>Une mémoire 32 bits = 2 × 16 bits ou 4 × 8 bits (en largeur).</li>
-      <li>On peut combiner les deux : barrette 4 Go (1G × 32) = 8 puces de 512 Mo.</li>
-    </ul>
-  </div>
-
-  <!-- VIZ 1 -->
-  <div class="viz-card" id="memlab">
-    <div class="viz-header"><div class="viz-title">Calculateur d'interfaçage processeur / mémoire</div><div class="viz-tag">Change N, M, n, m</div></div>
-    <div class="viz-body">
-      <div>
-        <div class="fgrid">
-          <label class="fld">N (adresse CPU)<input type="number" id="ml-N" min="4" max="32" value="12"></label>
-          <label class="fld">M (données CPU)<select id="ml-M"><option>8</option><option>16</option><option selected>32</option></select></label>
-          <label class="fld">n (adresse mém.)<input type="number" id="ml-n" min="1" max="32" value="10"></label>
-          <label class="fld">m (données mém.)<select id="ml-m"><option selected>8</option><option>16</option><option>32</option></select></label>
-        </div>
-        <div class="btn-group" style="margin:0 0 10px">
-          <button class="btn" data-ex="12,8,12,8">cas 1 (M=m=8)</button><button class="btn" data-ex="12,16,11,16">cas 2 (M=m=16)</button><button class="btn" data-ex="12,32,10,32">cas 3 (M=m=32)</button><button class="btn" data-ex="12,32,10,16">2 × 16 bits</button><button class="btn" data-ex="12,32,10,8">4 × 8 bits</button><button class="btn" data-ex="12,32,9,32">profondeur ½</button>
-        </div>
-        <svg class="viz-svg" id="ml-svg" viewBox="0 0 700 260" style="cursor:default"></svg>
-      </div>
-      <div class="viz-controls">
-        <h5>Résultats</h5>
-        <div id="ml-out"></div>
-        <h5>Câblage</h5>
-        <div id="ml-wire" style="font-size:13px;color:var(--ink-soft)"></div>
-      </div>
-    </div>
-  </div>
-
-  <h2><span class="h-num">§ 1.6</span>Interfaces de périphériques</h2>
-  <div class="box box-def">
-    <span class="box-label">Vu du processeur, un périphérique = des registres</span><span class="src">Ch1 · s.57–61</span>
-    <ul>
-      <li>Les interfaces de périphériques sont reliées au CPU par les bus d'adresse/données, <strong>exactement comme une mémoire</strong>.</li>
-      <li>Pour le CPU, une interface est un ensemble de <strong>registres à adresses prédéfinies</strong> qu'on lit et écrit : registres de <strong>configuration</strong>, d'<strong>état</strong>, d'<strong>entrée/sortie</strong>, plus une logique (simple : connexions, mux ; complexe : SPP).</li>
-      <li>Certains bits sont reliés aux <strong>broches</strong> du SoC : bit à 1 ↔ +V (3,3 V / 5 V), bit à 0 ↔ 0 V.</li>
-    </ul>
-  </div>
-  <div class="box box-method">
-    <span class="box-label">Accès en C par pointeur</span><span class="src">Ch1 · s.63–64</span>
-    <pre class="code"><span class="k">#define</span> Reg_name ((<span class="n">volatile</span> type_data *) adr)   <span class="c">// pointeur vers le registre</span>
-*Reg_name = valeur;      <span class="c">// écriture</span>
-variable  = *Reg_name;   <span class="c">// lecture</span></pre>
-  </div>
-  <div class="warn">Trois erreurs des slides à ne <strong>pas</strong> recopier : (1) le <span class="fx">;</span> à la fin d'un <span class="fx">#define</span> (il serait collé dans chaque expression) ; (2) l'oubli de <span class="fx">volatile</span> (sans lui, le compilateur peut supprimer des lectures/écritures de registre) ; (3) l'oubli de <span class="fx">0x</span> (« 40021018 » est un nombre décimal).</div>
-  <div class="box box-ex">
-    <span class="box-label">Exemples 8255 (PC)</span><span class="src">Ch1 · s.65–79</span>
-    <p><strong>LEDs sur Port A (0x300)</strong> : clignoter → écrire 0xFF puis 0x00 en boucle.</p>
-    <p><strong>Afficheur 7 segments sur Port C (0x30E)</strong>, PC7 = a … PC1 = g, PC0 = h : afficher « 3 » = segments a, b, c, d, g →</p>
-    <div class="formula" style="font-size:17px">PC7…PC0 = 1 1 1 1 0 0 1 0 = <span class="c">0xF2</span></div>
-    <p><strong>Boutons sur PC1, PC0 → LEDs PA1, PA0</strong> :</p>
-    <pre class="code"><span class="k">#define</span> PortA ((<span class="n">volatile</span> uint8_t*) 0x300)
-<span class="k">#define</span> PortC ((<span class="n">volatile</span> uint8_t*) 0x30E)
-uint8_t etat = *PortC & 0x03;      <span class="c">// MASQUER : ne garder que PC1, PC0</span>
-<span class="k">switch</span> (etat) {
-  <span class="k">case</span> 0x01: *PortA = 0x01; <span class="k">break</span>;   <span class="c">// BP0 → Led0</span>
-  <span class="k">case</span> 0x02: *PortA = 0x02; <span class="k">break</span>;   <span class="c">// BP1 → Led1</span>
-  <span class="k">default</span>:   *PortA = 0x00;
-}</pre>
-    <p style="font-size:14.5px">Le cours le souligne : les autres bits de Port C sont <strong>aléatoires</strong>, il faut <strong>masquer</strong> avant de comparer. Et le code des slides oublie les <span class="fx">break</span> (fallthrough : on finirait toujours dans default).</p>
-  </div>
+<h3><span class="s">§3.3</span>Écrire HAL_GPIO_Init soi-même (F1, diapos 31–41)</h3>
+<ol style="padding-left:20px;color:var(--ink-soft)">
+<li><strong>Quartet</strong> : <span class="m">configValue = (Mode &lt;&lt; 2) | Speed</span> (Mode = CNF, Speed = MODE).</li>
+<li><strong>Pins à configurer</strong> : boucle 0–15, <span class="m">if (Pin &amp; (1u &lt;&lt; pinId))</span>.</li>
+<li><strong>Placement</strong> : pinId ≤ 7 → CRL, décalage <span class="m">4*pinId</span> ; sinon CRH, <span class="m">4*(pinId−8)</span>.</li>
+<li><strong>Optimiser</strong> : chaque <span class="m">&amp;=</span>/<span class="m">|=</span> = lecture + écriture → 4 accès par pin → <strong>4n</strong>. Construire <span class="m">maskCRL/confCRL</span> (et CRH) en variables, puis 2 opérations par registre → <strong>8 accès</strong> quel que soit n (n=10 : 40 → 8).</li>
+</ol>
+<div class="box trap">Diapos 36–38 : <span class="m">&amp;= ~0x0Fu &lt;&lt; 4*pinId</span> sans parenthèses efface aussi les pins inférieures (<span class="m">~</span> passe avant <span class="m">&lt;&lt;</span>). Toujours <span class="m">~(0x0Fu &lt;&lt; s)</span>. Diapo 24 : il manque le <span class="m">&amp;</span> devant GPIO_InitStruct.</div>
 </section>
 
-<!-- ═══════════════════ II · GPIO PAR REGISTRES ═══════════════════ -->
-<section class="tab-content" id="ch2">
-  <p class="intro">STM32F1 (Cortex-M3) : chaque périphérique est un bloc de registres à une adresse fixe. Programmer un GPIO, c'est toujours les mêmes 4 étapes et un peu de masquage de bits.</p>
+<!-- ================= IV ================= -->
+<section class="tab" id="t4">
+<h2><span class="k">Chapitre IV</span>Communication série en polling (F4)</h2>
+<p class="lead">Même HAL, mais pour parler à d'autres puces : handle, attente sur bits d'état, timeout.</p>
 
-  <h2><span class="h-num">§ 2.1</span>Memory map : adresse de base + offset</h2>
-  <div class="box box-def">
-    <span class="box-label">Principe</span><span class="src">Ch2 · s.2–7</span>
-    <p>Chaque mémoire ou périphérique occupe une zone précise de l'espace d'adressage : la <strong>memory map</strong>. L'adresse où commence un périphérique est son <strong>adresse de base</strong> ; chaque registre a un <strong>offset</strong> fixe.</p>
-    <div class="formula">Adresse(Reg X, Periph i) = Base(Periph i) + Offset(Reg X)</div>
-  </div>
-  <div class="box box-prop">
-    <span class="box-label">Bus du STM32F1</span><span class="src">Ch2 · s.6</span>
-    <p>Cortex-M3 → Bus Matrix → <strong>AHB</strong> (72 MHz : RCC, DMA, Ethernet, USB…) → ponts AHB/APB → <strong>APB1</strong> (36 MHz : USART2–5, SPI2/3, I2C, TIM2–7…) et <strong>APB2</strong> (72 MHz : <strong>GPIOA…GPIOG</strong>, AFIO, USART1, SPI1, ADC1/2, TIM1/8).</p>
-  </div>
+<h3><span class="s">§4.1</span>Le handle</h3>
+<div class="box def"><span class="m">PPP_HandleTypeDef</span> = <strong>Instance</strong> (registres, ex. USART2) + <strong>Init</strong> (config) + <strong>état</strong> (buffers, compteurs). On passe toujours <span class="m">&amp;handle</span>. Les fonctions renvoient <span class="m">HAL_OK / HAL_ERROR / HAL_BUSY / HAL_TIMEOUT</span>.</div>
 
-  <h2><span class="h-num">§ 2.2</span>RCC : activer l'horloge d'abord</h2>
-  <div class="box box-thm">
-    <span class="box-label">Règle n°1</span><span class="src">Ch2 · s.9–11</span>
-    <p>Au démarrage, <span class="hl">tous les périphériques sont désactivés sauf le RCC</span> (Reset &amp; Clock Control), pour réduire la consommation. C'est le RCC qui les active par un bit <strong>ENABLE</strong>, un par périphérique.</p>
-    <p>RCC (base <span class="fx">0x4002 1000</span>) : <span class="fx">AHBENR</span> (+0x14 → 0x4002 1014), <span class="fx">APB2ENR</span> (+0x18 → <strong>0x4002 1018</strong>), <span class="fx">APB1ENR</span> (+0x1C → 0x4002 101C).</p>
-    <table class="mat"><tr><th>bit APB2ENR</th><th>0</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr><tr><th>périph</th><td>AFIO</td><td>GPIOA</td><td>GPIOB</td><td>GPIOC</td><td>GPIOD</td><td>GPIOE</td></tr></table>
-  </div>
-  <div class="warn amb">Les slides utilisent tantôt <span class="fx">0x00000010</span>, tantôt <span class="fx">0x00000004</span> pour « activer GPIOC ». Sur STM32F1, GPIOC = <strong>bit 4 = 0x10</strong> ; 0x04 active GPIOA. Pour PA2 + PC9 : <span class="fx">0x04 | 0x10 = 0x14</span> (c'est bien la valeur du slide 45).</div>
+<h3><span class="s">§4.2</span>UART</h3>
+<ul>
+<li>2 fils croisés (TX → RX) + GND, <strong>asynchrone</strong> : pas d'horloge, les deux côtés fixent le <strong>baud rate</strong> (9600 bit/s ≈ 1 ms par octet).</li>
+<li>Trame : ligne au repos à 1 · <strong>start 0</strong> · 8 ou 9 bits de données (<strong>LSB d'abord</strong>) · parité optionnelle · <strong>stop 1</strong> (1 ou 2).</li>
+<li>Registres : <strong>DR</strong> (données), <strong>SR</strong> : <strong>TXE</strong> bit 7 = prêt à émettre, <strong>RXNE</strong> bit 5 = octet reçu ; BRR (vitesse) ; CR1 (UE, TE, RE, M, PCE).</li>
+<li>Broches en <strong>fonction alternative</strong> : <span class="m">AF_PP</span>, <span class="m">PULLUP</span>, <span class="m">GPIO_AF7_USART2</span>. PA2/PA3 = USART2 (AF7), PA9/PA10 = USART1 (AF7), PA11/PA12 = USART6 (AF8).</li>
+</ul>
+<div class="box prop"><strong>Pourquoi attendre ?</strong> Écrire DR en boucle va trop vite (MHz) pour la ligne (kHz) : les octets s'écrasent. Polling = <span class="m">while (!(SR &amp; 0x80));</span> avant chaque octet, mais c'est <strong>bloquant</strong>. <span class="m">HAL_UART_Transmit</span> fait la même attente avec un <strong>timeout</strong>.</div>
+<p><strong>CubeMX</strong> génère <span class="m">MX_GPIO_Init()</span> et <span class="m">MX_USART2_UART_Init()</span> ; on écrit seulement la logique dans <span class="m">main.c</span>.</p>
 
-  <h2><span class="h-num">§ 2.3</span>Structure d'un GPIO</h2>
-  <div class="box box-def">
-    <span class="box-label">Un port GPIO</span><span class="src">Ch2 · s.13–17</span>
-    <ul>
-      <li>Jusqu'à 7–10 ports (GPIOA…), <strong>16 broches</strong> par port, chaque broche configurable <strong>individuellement</strong>.</li>
-      <li>Toute communication avec l'extérieur passe obligatoirement par un GPIO (même l'USART, le SPI… via une broche GPIO).</li>
-      <li>Registres : <span class="fx">CRL</span>, <span class="fx">CRH</span> (configuration), <span class="fx">IDR</span> (entrée), <span class="fx">ODR</span> (sortie), <span class="fx">BSRR</span>, <span class="fx">BRR</span> (mise à 1 / à 0 atomique).</li>
-    </ul>
-    <table class="mat"><tr><th>registre</th><th>CRL</th><th>CRH</th><th>IDR</th><th>ODR</th><th>BSRR</th><th>BRR</th></tr><tr><th>offset</th><td>0x00</td><td>0x04</td><td>0x08</td><td>0x0C</td><td>0x10</td><td>0x14</td></tr></table>
-    <p style="font-size:14.5px;margin-top:6px">Bases : GPIOA <span class="fx">0x4001 0800</span> · GPIOB <span class="fx">0x4001 0C00</span> · GPIOC <span class="fx">0x4001 1000</span> · GPIOD <span class="fx">0x4001 1400</span>.</p>
-  </div>
-  <div class="box box-prop">
-    <span class="box-label">4 modes par broche</span><span class="src">Ch2 · s.19–24</span>
-    <table class="law">
-      <tr><td>Input</td><td>la tension sur la broche est lue dans le bit i d'<strong>IDR</strong>.</td></tr>
-      <tr><td>Output</td><td>la broche prend la tension du bit i d'<strong>ODR</strong> (imposé par le CPU).</td></tr>
-      <tr><td>Alternate Function</td><td>la broche est reliée directement à un signal d'un périphérique (USART, Ethernet…).</td></tr>
-      <tr><td>Analog</td><td>la broche est reliée à l'ADC/DAC.</td></tr>
-    </table>
-    <p style="margin-top:8px">Configuration électrique : résistances <strong>pull-up / pull-down / no pull</strong> (entrée), transistors <strong>push-pull / open-drain</strong> (sortie seulement), <strong>vitesse</strong> de commutation 2, 10 ou 50 MHz (plus bas = moins de consommation). Au reset : <strong>Input Floating</strong>.</p>
-  </div>
-  <div class="box box-thm">
-    <span class="box-label">CRL / CRH : 4 bits par broche</span><span class="src">Ch2 · s.29–30</span>
-    <p>16 broches × 4 bits = 64 bits = <strong>2 registres</strong> : <span class="fx">CRL</span> pour les broches 0–7, <span class="fx">CRH</span> pour 8–15. Broche p → bits <span class="fx">4·(p mod 8)</span> à <span class="fx">4·(p mod 8)+3</span>. Le quartet vaut <span class="fx">CNF[1:0] MODE[1:0]</span> :</p>
-    <table class="mat" style="width:100%">
-      <tr><th>configuration</th><th>quartet</th><th>hex</th></tr>
-      <tr><td>Input analog</td><td>0000</td><td>0x0</td></tr>
-      <tr><td>Input floating (reset)</td><td>0100</td><td class="nz">0x4</td></tr>
-      <tr><td>Input pull-up / pull-down</td><td>1000</td><td>0x8</td></tr>
-      <tr><td>Output push-pull 10 MHz</td><td>0001</td><td>0x1</td></tr>
-      <tr><td>Output push-pull 2 MHz</td><td>0010</td><td class="nz">0x2</td></tr>
-      <tr><td>Output push-pull 50 MHz</td><td>0011</td><td>0x3</td></tr>
-      <tr><td>Output open-drain 2 MHz</td><td>0110</td><td>0x6</td></tr>
-      <tr><td>AF push-pull 50 MHz</td><td>1011</td><td>0xB</td></tr>
-    </table>
-  </div>
-
-  <h2><span class="h-num">§ 2.4</span>Programmer une broche : 4 étapes</h2>
-  <div class="box box-method">
-    <span class="box-label">Accès direct aux registres</span><span class="src">Ch2 · s.32</span>
-    <ol class="method-steps">
-      <li><strong>Définir</strong> les registres utilisés (taille, adresse) avec des <span class="fx">#define</span> pointeurs.</li>
-      <li><strong>Activer</strong> l'horloge du GPIO dans <span class="fx">RCC_APB2ENR</span>.</li>
-      <li><strong>Configurer</strong> la broche : effacer son quartet dans CRL/CRH, puis écrire le nouveau.</li>
-      <li><strong>Écrire</strong> (ODR / BSRR / BRR) ou <strong>lire</strong> (IDR &amp; masque) la valeur.</li>
-    </ol>
-  </div>
-  <pre class="code"><span class="c">// LED sur PC9 (sortie push-pull 2 MHz) + bouton sur PA2 (input floating)</span>
-<span class="k">#define</span> RCC_APB2ENR ((<span class="n">volatile</span> uint32_t*) 0x40021018)
-<span class="k">#define</span> GPIOC_CRH   ((<span class="n">volatile</span> uint32_t*) 0x40011004)
-<span class="k">#define</span> GPIOC_BSRR  ((<span class="n">volatile</span> uint32_t*) 0x40011010)
-<span class="k">#define</span> GPIOC_BRR   ((<span class="n">volatile</span> uint32_t*) 0x40011014)
-<span class="k">#define</span> GPIOA_CRL   ((<span class="n">volatile</span> uint32_t*) 0x40010800)
-<span class="k">#define</span> GPIOA_IDR   ((<span class="n">volatile</span> uint32_t*) 0x40010808)   <span class="c">// base + 0x08</span>
-
-*RCC_APB2ENR |= 0x14;                 <span class="c">// GPIOA (bit 2) + GPIOC (bit 4)</span>
-*GPIOC_CRH &= ~(0xFu &lt;&lt; 4);           <span class="c">// PC9 → quartet bits 7..4 de CRH</span>
-*GPIOC_CRH |=  (0x2u &lt;&lt; 4);           <span class="c">// 0010 = output PP 2 MHz</span>
-*GPIOA_CRL &= ~(0xFu &lt;&lt; 8);           <span class="c">// PA2 → bits 11..8 de CRL</span>
-*GPIOA_CRL |=  (0x4u &lt;&lt; 8);           <span class="c">// 0100 = input floating</span>
-<span class="k">while</span> (1) {
-  <span class="k">if</span> (*GPIOA_IDR & (1u &lt;&lt; 2))  *GPIOC_BSRR = 1u &lt;&lt; 9;   <span class="c">// appuyé → LED ON</span>
-  <span class="k">else</span>                           *GPIOC_BRR  = 1u &lt;&lt; 9;   <span class="c">// sinon LED OFF</span>
-}</pre>
-  <div class="warn amb">Le slide 44 donne <span class="fx">GPIOA_IDR = 0x40010800</span> (même adresse que CRL) : c'est faux, IDR = base + 0x08 = <strong>0x40010808</strong>. Le slide 47 annonce « Pin 0 » alors que le code configure la broche 2 (décalage de 8).</div>
-
-  <h2><span class="h-num">§ 2.5</span>Masquage logique &amp; BSRR / BRR</h2>
-  <div class="box box-prop">
-    <span class="box-label">Les 4 opérations de base</span>
-    <table class="law">
-      <tr><td>Mettre le bit k à 1</td><td class="fx">REG |= (1u &lt;&lt; k);</td></tr>
-      <tr><td>Mettre le bit k à 0</td><td class="fx">REG &amp;= ~(1u &lt;&lt; k);</td></tr>
-      <tr><td>Inverser le bit k</td><td class="fx">REG ^= (1u &lt;&lt; k);</td></tr>
-      <tr><td>Tester le bit k</td><td class="fx">if (REG &amp; (1u &lt;&lt; k)) …</td></tr>
-      <tr><td>Écrire un champ de w bits à la position p</td><td class="fx">REG = (REG &amp; ~(((1u&lt;&lt;w)−1) &lt;&lt; p)) | (val &lt;&lt; p);</td></tr>
-    </table>
-  </div>
-  <div class="two-col">
-    <div class="box box-remark" style="margin:0">
-      <span class="box-label">Inconvénient du masquage</span><span class="src">s.39</span>
-      <p>Chaque <span class="fx">|=</span> ou <span class="fx">&amp;=</span> = <strong>3 instructions</strong> : lire le registre, opération logique, réécrire. Code plus long, plus lent, et <strong>non atomique</strong> (une interruption entre la lecture et l'écriture peut écraser une modification).</p>
-    </div>
-    <div class="box box-thm" style="margin:0">
-      <span class="box-label">Masquage câblé : BSRR / BRR</span><span class="src">s.40–42</span>
-      <p><span class="fx">BSRR</span> (Bit Set) : un 1 au bit i → ODRᵢ = 1 ; un 0 → ODRᵢ inchangé.<br><span class="fx">BRR</span> (Bit Reset) : un 1 au bit i → ODRᵢ = 0 ; un 0 → inchangé.<br><strong>1 seule instruction</strong> (écriture simple <span class="fx">=</span>), valable seulement pour ODR.</p>
-    </div>
-  </div>
-
-  <!-- VIZ 2 -->
-  <div class="viz-card" id="gpiolab">
-    <div class="viz-header"><div class="viz-title">Configurateur GPIO STM32F1</div><div class="viz-tag">Port · broche · mode → registres &amp; code</div></div>
-    <div class="fgrid">
-      <label class="fld">Port<select id="gp-port"><option>A</option><option>B</option><option selected>C</option><option>D</option><option>E</option></select></label>
-      <label class="fld">Broche<select id="gp-pin"></select></label>
-      <label class="fld">Mode<select id="gp-mode">
-        <option value="2">Output PP 2 MHz</option><option value="1">Output PP 10 MHz</option><option value="3">Output PP 50 MHz</option><option value="6">Output OD 2 MHz</option>
-        <option value="4">Input floating</option><option value="8">Input pull-up/down</option><option value="0">Input analog</option><option value="11">AF PP 50 MHz</option></select></label>
-      <label class="fld">Style<select id="gp-style"><option value="reg">registres</option><option value="hal">FWL (HAL)</option></select></label>
-    </div>
-    <div class="reg-wrap"><div id="gp-reg"></div></div>
-    <div class="viz-body" style="margin-top:12px">
-      <pre class="code" id="gp-code" style="margin:0"></pre>
-      <div class="viz-controls"><h5>Calcul</h5><div id="gp-calc"></div></div>
-    </div>
-  </div>
+<h3><span class="s">§4.3</span>I2C</h3>
+<ul>
+<li>2 fils partagés : <strong>SCL</strong> (horloge, du maître) et <strong>SDA</strong> (données, half-duplex). Plusieurs esclaves, chacun une <strong>adresse</strong> 7 bits (128) ou 10 bits.</li>
+<li><strong>Start</strong> : SDA descend pendant SCL = 1 · <strong>Stop</strong> : SDA monte pendant SCL = 1 · <strong>ACK</strong> après chaque octet (géré par le matériel).</li>
+<li>Écrire un registre : S · adr+W · A · reg · A · data… · P. Lire : écrire reg, puis <strong>restart</strong> · adr+R · data… · P.</li>
+<li>La HAL veut l'adresse <strong>décalée</strong> : <span class="m">0x1D &lt;&lt; 1 = 0x3A</span> (bit 0 = R/W).</li>
+</ul>
+<div class="box def"><strong>LIS3DSH</strong> : adresse 0x1D → 0x3A. Activer : CTRL_REG4 (0x20) = 0x77 (ODR 0111, BDU 0, Z Y X = 111). Lire Z : 2 octets à 0x2C–0x2D.</div>
+<div class="box trap">Diapos 17/19 : <span class="m">&amp;huart2</span>, pas <span class="m">huart2</span>. <span class="m">sizeof("Hello") = 6</span> (le <span class="m">'\0'</span>). Diapo 16 : indices 0…4. SPI annoncé dans le titre mais non traité.</div>
 </section>
 
-<!-- ═══════════════════ III · HAL / FWL ═══════════════════ -->
-<section class="tab-content" id="ch3">
-  <p class="intro">Le même clignotement de LED, sans connaître une seule adresse : la Firmware Library de ST cache les registres derrière des structures et des fonctions.</p>
+<!-- ================= V ================= -->
+<section class="tab" id="t5">
+<h2><span class="k">Chapitre V</span>Interruptions (diapos 1–52)</h2>
+<p class="lead">Le périphérique prévient le processeur au lieu d'être interrogé en boucle.</p>
 
-  <h2><span class="h-num">§ 3.1</span>Pourquoi une couche d'abstraction</h2>
-  <div class="box box-def">
-    <span class="box-label">Problème de l'accès direct</span><span class="src">Ch3 · s.2–3</span>
-    <p>Il faut connaître (1) les <strong>adresses</strong> des registres, (2) la <strong>structure</strong> des registres et les valeurs des paramètres, (3) faire les <strong>décalages et masquages</strong>. Approche compliquée, documentation technique nécessaire, temps de développement long.</p>
-  </div>
-  <div class="box box-thm">
-    <span class="box-label">Firmware / HAL / driver</span><span class="src">Ch3 · s.4–5</span>
-    <p>Programme utilisateur → <strong>Firmware HAL</strong> (Hardware Abstraction Layer, drivers ST FWL) → Matériel STM32. Le constructeur fournit ces librairies pour exploiter les périphériques <strong>en faisant abstraction</strong> des adresses et des registres.</p>
-    <p>Le firmware est du code (C ou ASM) qui <strong>dépend complètement</strong> de la plateforme : il n'est <strong>pas portable</strong> sur un autre matériel. « Firm » = ferme, entre Hard et Soft.</p>
-  </div>
+<h3><span class="s">§5.1</span>Polling ou interruptions</h3>
+<p><strong>Polling</strong> : tests répétés, CPU et énergie gaspillés, événements ratés. <strong>Interruption</strong> : chaque périphérique a une ligne <strong>IRQ</strong> ; <span class="m">main</span> n'est interrompu que s'il se passe quelque chose.</p>
 
-  <h2><span class="h-num">§ 3.2</span>Les 3 étapes d'abstraction</h2>
-  <table class="law">
-    <tr><td>1 · Adresses → structures</td><td><span class="fx">stm32f10x.h</span> déclare une <strong>struct</strong> par type de périphérique dont les champs ont les <strong>mêmes offsets</strong> que les registres, et un pointeur par instance : <span class="fx">GPIOC-&gt;CRH</span>, <span class="fx">RCC-&gt;APB2ENR</span>. Le compilateur remplace l'accès au champ par <span class="fx">base + offset</span>.</td></tr>
-    <tr><td>2 · Valeurs → constantes</td><td><span class="fx">stm32f10x_gpio.h</span> nomme les paramètres : <span class="fx">GPIO_Mode_Out_PP</span>, <span class="fx">GPIO_Speed_2MHz</span>, <span class="fx">GPIO_Pin_9 = 1&lt;&lt;9</span>.</td></tr>
-    <tr><td>3 · Décalages → fonctions</td><td><span class="fx">stm32f10x_gpio.c</span> : <span class="fx">GPIO_Init</span>, <span class="fx">GPIO_SetBits</span> (écrit BSRR), <span class="fx">GPIO_ResetBits</span> (écrit BRR), <span class="fx">GPIO_ReadInputDataBit</span>…</td></tr>
-  </table>
-  <div class="box box-ex">
-    <span class="box-label">Ex. 1 du corrigé DS 2021 : le fichier memory map d'un périphérique</span>
-    <pre class="code"><span class="k">#define</span> LCDCtrl0_Base 0x2000A000
-<span class="k">typedef struct</span> {
-  <span class="n">volatile</span> uint16_t ModeReg;     <span class="c">// offset 0x00</span>
-  <span class="n">volatile</span> uint16_t PalReg;      <span class="c">// offset 0x02</span>
-  <span class="n">volatile</span> uint32_t PosPixReg;   <span class="c">// offset 0x04</span>
-  <span class="n">volatile</span> uint32_t CodeColReg;  <span class="c">// offset 0x08</span>
-} LCD_TypeDef;
-<span class="k">#define</span> LcdCtrl0 ((LCD_TypeDef *) LCDCtrl0_Base)   <span class="c">// LcdCtrl0-&gt;ModeReg = …</span></pre>
-    <p style="font-size:14.5px">L'ordre et la taille des champs doivent reproduire <strong>exactement</strong> les offsets (16 bits + 16 bits = 4 octets → PosPixReg tombe bien en 0x04).</p>
-  </div>
+<h3><span class="s">§5.2</span>Les acteurs</h3>
+<ul>
+<li><strong>ISR (handler)</strong> : fonction C qui traite l'événement, en Flash avec <span class="m">main</span>.</li>
+<li><strong>Table des vecteurs</strong> : au <strong>début de la Flash</strong>, tableau des <strong>adresses</strong> des ISR, 4 octets chacune → <span class="m">@ISR n</span> à <span class="m">base + 4 × n</span>.</li>
+<li><strong>Contrôleur</strong> : registres <strong>pending</strong> (en attente), <strong>mask/enable</strong> (autorisée), <strong>active</strong> (en cours), <strong>priorité</strong>.</li>
+<li><strong>INT</strong> (contrôleur → CPU) : « ça sonne ». <strong>/INTA</strong> (CPU → contrôleur, actif à 0) : « je décroche ».</li>
+</ul>
 
-  <h2><span class="h-num">§ 3.3</span>Organisation de la librairie</h2>
-  <table class="law">
-    <tr><td>PPP / PPPx</td><td>PPP = type de périphérique (GPIO, USART, USB) ; PPPx = une instance (GPIOA…, USART1…).</td></tr>
-    <tr><td>stm32f1xx.h</td><td>adresses des périphériques + description des registres (memory map).</td></tr>
-    <tr><td>stm32f1xx_PPP.h</td><td>paramètres de configuration du périphérique PPP (et la struct <span class="fx">PPP_InitTypeDef</span>).</td></tr>
-    <tr><td>stm32f1xx_PPP.c</td><td>fonctions d'initialisation, de configuration et de traitement de PPP.</td></tr>
-    <tr><td>misc.c / .h</td><td>fonctions du NVIC et du SysTick (périphériques du cœur).</td></tr>
-    <tr><td>system_stm32…c</td><td>configuration de l'horloge système.</td></tr>
-  </table>
+<h3><span class="s">§5.3</span>La chaîne et les 6 étapes</h3>
+<div class="chain"><span>événement</span><i>→</i><span>flag = 1</span><i>→</i><span>IT enable périph ?</span><i>→</i><span>IRQ → pending = 1</span><i>→</i><span>enable NVIC + priorité ?</span><i>→</i><span>INT</span></div>
+<div class="tw"><table>
+<tr><th>#</th><th>Étape</th></tr>
+<tr><td>1</td><td>Événement → flag → IRQ → pending ; non masquée → INT = 1</td></tr>
+<tr><td>2</td><td>Le CPU <strong>termine l'instruction X</strong>, répond /INTA = 0</td></tr>
+<tr><td>3</td><td><strong>PUSH</strong> : sauve @X+1 et les registres dans la pile ; lit @ISR dans la table (4 × n)</td></tr>
+<tr><td>4</td><td>Exécute l'ISR ; INT retombe ; <strong>pending effacé automatiquement</strong></td></tr>
+<tr><td>5</td><td><strong>POP</strong> : restaure le contexte</td></tr>
+<tr><td>6</td><td>Reprend <span class="m">main</span> à X+1</td></tr>
+</table></div>
+<div class="box trap"><strong>Effacer le flag dans l'ISR</strong>, sinon pending revient et l'ISR tourne en boucle (sauf SysTick, effacé seul).</div>
+<div class="box prop"><strong>Interruption masquée</strong> : enable NVIC = 0 → flag et pending passent à 1, INT reste à 0, rien ne se passe ; dès qu'on met enable à 1, elle se déclenche (en retard). IT enable du <strong>périphérique</strong> = 0 → l'IRQ ne monte jamais, pas d'interruption du tout.</div>
 
-  <h2><span class="h-num">§ 3.4</span>Structure de tout programme FWL</h2>
-  <div class="box box-method">
-    <span class="box-label">4 étapes</span><span class="src">Ch3 · s.16–19</span>
-    <ol class="method-steps">
-      <li><strong>Déclarer</strong> une structure : <span class="fx">PPP_InitTypeDef PPP_InitStructure;</span></li>
-      <li><strong>Activer l'horloge</strong> : <span class="fx">RCC_BUSxPeriphClockCmd(RCC_BUSxPeriph_PPPx, ENABLE);</span> (BUSx = AHB, APB1, APB2).</li>
-      <li><strong>Configurer</strong> : remplir les champs, puis <span class="fx">PPP_Init(PPPx, &amp;PPP_InitStructure);</span></li>
-      <li><strong>Traiter</strong> : appeler les fonctions du périphérique.</li>
-    </ol>
-  </div>
-  <pre class="code"><span class="c">// LEDs PC13 et PC14 qui clignotent (output PP, 2 MHz)</span>
-<span class="k">#include</span> <span class="s">"stm32f10x.h"</span>
-GPIO_InitTypeDef GPIO_InitStructure;
-<span class="k">int</span> main(<span class="k">void</span>) {
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);       <span class="c">// GPIOC est sur APB2</span>
-  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_13 | GPIO_Pin_14;    <span class="c">// plusieurs broches d'un coup</span>
-  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-  GPIO_Init(GPIOC, &amp;GPIO_InitStructure);
-  <span class="k">while</span> (1) {
-    GPIO_SetBits  (GPIOC, GPIO_Pin_13 | GPIO_Pin_14);  Delay();   <span class="c">// BSRR = 0x6000</span>
-    GPIO_ResetBits(GPIOC, GPIO_Pin_13 | GPIO_Pin_14);  Delay();   <span class="c">// BRR  = 0x6000</span>
-  }
-}</pre>
-  <div class="warn amb">Le slide 18 écrit « GPIOA … BUSx = AHB1 » et le programme complet (s.30) appelle <span class="fx">RCC_AHB1PeriphClockCmd(RCC_APB2Periph_GPIOC…)</span> : sur STM32<strong>F1</strong> les GPIO sont sur <strong>APB2</strong> (AHB1 c'est le STM32F4). Utilise <span class="fx">RCC_APB2PeriphClockCmd</span>.</div>
-  <div class="box box-remark"><span class="box-label">Pourquoi GPIO_Pin_x est une puissance de 2</span><p><span class="fx">GPIO_Pin_13 | GPIO_Pin_14 = 0x2000 | 0x4000 = 0x6000</span> : chaque broche est un bit, on peut donc en <strong>combiner</strong> plusieurs avec <span class="fx">|</span>. Même idée que <span class="fx">EXTI_Line3 | EXTI_Line7</span> ou que le codage <span class="fx">LCD0 = 0x01, LCD1 = 0x02, LCD2 = 0x04, LCD3 = 0x08</span> du DS 2021.</p></div>
+<h3><span class="s">§5.4</span>Plusieurs interruptions</h3>
+<div class="tw"><table>
+<tr><th>Nouvelle IRQ pendant une ISR, priorité…</th><th>Résultat</th></tr>
+<tr><td>plus basse ou égale</td><td><strong>Chaînage</strong> : elle attend (pending) puis passe après</td></tr>
+<tr><td>plus haute</td><td><strong>Imbrication</strong> : elle interrompt l'ISR en cours (2e PUSH), qui reprend ensuite</td></tr>
+</table></div>
+<p><strong>Interruption globale</strong> : tous les événements d'un périphérique en OU sur une seule IRQ → l'ISR teste les flags pour savoir lequel.</p>
+
+<h3><span class="s">§5.5</span>Cortex-M : NVIC et numérotation</h3>
+<div class="box thm"><span class="formula">n° exception = n° IRQ + 16 · @vecteur = VTOR + 4 × n° exception</span><br>Les 16 premières entrées appartiennent au cœur. Table des vecteurs → n° d'<strong>exception</strong> ; registres NVIC → n° d'<strong>IRQ</strong>.</div>
+<div class="tw"><table>
+<tr><th>Exc.</th><th>Offset</th><th>Quoi</th><th>Priorité</th></tr>
+<tr><td>0</td><td>0x00</td><td>MSP initial (pas une ISR)</td><td>—</td></tr>
+<tr><td>1 / 2 / 3</td><td>0x04 / 0x08 / 0x0C</td><td>Reset / NMI / HardFault</td><td>−3 / −2 / −1 fixes</td></tr>
+<tr><td>11 / 14 / 15</td><td>0x2C / 0x38 / 0x3C</td><td>SVCall / PendSV / SysTick</td><td>réglables</td></tr>
+<tr><td>16 + n</td><td>0x40 + 4n</td><td>IRQ #n (périphériques)</td><td>0 … 15</td></tr>
+</table></div>
+<ul>
+<li>F1 : 68 IRQ, F4 : 82. IRQn négatif (SysTick −1…) = exception du cœur, <strong>pas dans ISER/IP</strong>.</li>
+<li><strong>Thread mode</strong> (code normal) / <strong>Handler mode</strong> (ISR).</li>
+<li><strong>Synchrone</strong> (instruction : division par 0, accès invalide) : immédiat. <strong>Asynchrone</strong> (périphérique) : selon la priorité.</li>
+<li><strong>SVC</strong> (instruction SVC, synchrone) → priorité la plus haute (0). <strong>PendSV</strong> (<span class="m">SCB-&gt;ICSR = 1 &lt;&lt; 28</span>, asynchrone) → la plus basse.</li>
+<li>Les <strong>priorités</strong> sont dans les registres du NVIC (IP), écrites par le code au démarrage, pas dans la Flash.</li>
+</ul>
+
+<h3><span class="s">§5.6</span>Accélérations matérielles</h3>
+<div class="tw"><table>
+<tr><th>Technique</th><th>Effet</th></tr>
+<tr><td>PUSH/POP matériels</td><td>12 cycles chacun (R0–R3, R12, LR, PC, PSR) ; ARM7 : 26</td></tr>
+<tr><td>Tail chaining</td><td>ISR1 → ISR2 en 6 cycles, sans POP + PUSH inutiles</td></tr>
+<tr><td>Préemption pendant POP</td><td>POP abandonné, entrée dans la nouvelle ISR en 6 cycles</td></tr>
+<tr><td>Late arrival</td><td>IRQ plus prioritaire pendant le PUSH : on la sert d'abord, même PUSH</td></tr>
+</table></div>
+
+<h3><span class="s">§5.7</span>Registres NVIC</h3>
+<div class="tw"><table>
+<tr><th>Registre</th><th>Écrire 1 au bit n…</th></tr>
+<tr><td>ISER / ICER</td><td>autoriser / interdire IRQ n</td></tr>
+<tr><td>ISPR / ICPR</td><td>mettre / annuler pending</td></tr>
+<tr><td>IABR</td><td>lecture seule : ISR n en cours</td></tr>
+<tr><td>STIR</td><td>écrire le <strong>numéro</strong> n → déclenche</td></tr>
+<tr><td>IP[n]</td><td>1 octet de priorité ; STM32 : bits 7–4 utilisés</td></tr>
+</table></div>
+<div class="box thm"><span class="formula">IRQ n déclenchée ⇔ pending n = 1 ET enable n = 1</span><br><span class="formula">registre = n &gt;&gt; 5 · bit = n &amp; 0x1F</span> (n / 32 et n % 32)</div>
+
+<h3><span class="s">§5.8</span>Priorités</h3>
+<ul>
+<li>4 bits, <strong>plus petit = plus prioritaire</strong>, découpés en <strong>préemption</strong> | <strong>sous-priorité</strong> selon PRIGROUP (AIRCR, clé <span class="m">0x05FA</span> dans les bits 31–16).</li>
+<li>Groupe 0 (111) 0|4 bits · 1 (110) 1|3 · <strong>2 (101) 2|2</strong> · 3 (100) 3|1 · 4 (011) 4|0.</li>
+<li><strong>Seule une préemption plus petite interrompt</strong> une ISR en cours, même si la sous-priorité est meilleure.</li>
+<li>En attente toutes les deux : préemption plus petite d'abord, puis sous-priorité plus petite.</li>
+</ul>
+
+<div class="tool" aria-label="Convertisseur IRQ">
+<div class="row"><label for="iq">Interruption (STM32F1)<select id="iq"></select></label></div>
+<div id="iqout" style="font-size:14px;color:var(--ink-soft)"></div>
+</div>
 </section>
 
-<!-- ═══════════════════ IV · INTERRUPTIONS ═══════════════════ -->
-<section class="tab-content" id="ch4">
-  <p class="intro">Une interruption, c'est trois phases : sauvegarder, servir, restaurer. Le Cortex-M3 rend les deux phases de bord automatiques et sait les sauter quand elles sont inutiles. C'est l'exercice de chronogramme du DS.</p>
-
-  <h2><span class="h-num">§ 4.1</span>Le NVIC</h2>
-  <div class="box box-def">
-    <span class="box-label">Nested Vectored Interrupt Controller</span><span class="src">Doc. cours · Gestion des interruptions</span>
-    <ul>
-      <li>Contrôleur d'interruptions <strong>étroitement couplé</strong> au cœur Cortex-M3 (communication plus rapide) ; il intègre le timer système <strong>SysTick</strong>.</li>
-      <li>Registres et adresses <strong>identiques</strong> sur tous les Cortex-M3 → code et OS temps réel portables.</li>
-      <li>Jusqu'à <strong>255 entrées</strong> : 1 <strong>NMI</strong> (non masquable, souvent le watchdog), jusqu'à <strong>14 exceptions</strong> (internes au processeur : fautes, SVCall, PendSV, SysTick), jusqu'à <strong>240 interruptions externes</strong> (périphériques). STM32F1 : 68 IRQ (0…67).</li>
-    </ul>
-  </div>
-  <table class="mat" style="width:100%;margin-bottom:12px">
-    <tr><th>n°</th><th>exception</th><th>priorité</th><th>vecteur</th></tr>
-    <tr><td>1</td><td>Reset</td><td class="nz">−3 (figée, max)</td><td>0x04</td></tr>
-    <tr><td>2</td><td>NMI</td><td class="nz">−2 (figée)</td><td>0x08</td></tr>
-    <tr><td>3</td><td>Hard Fault</td><td class="nz">−1 (figée)</td><td>0x0C</td></tr>
-    <tr><td>4 · 5 · 6</td><td>MemManage · Bus Fault · Usage Fault</td><td>configurable</td><td>0x10 · 0x14 · 0x18</td></tr>
-    <tr><td>11 · 12 · 14</td><td>SVCall · Debug Monitor · PendSV</td><td>configurable</td><td>0x2C · 0x30 · 0x38</td></tr>
-    <tr><td>15</td><td>SysTick</td><td>configurable</td><td>0x3C</td></tr>
-    <tr><td>16 + i</td><td>IRQ externe n° i (0…239)</td><td>configurable</td><td>0x40 + 4i</td></tr>
-  </table>
-  <div class="box box-thm">
-    <span class="box-label">Table des vecteurs</span>
-    <p>Adresse 0x00 : valeur initiale du <strong>MSP</strong> (pile) ; à partir de 0x04 : adresses des handlers (ISR). Relocalisable via <span class="fx">VTOR</span> : <span class="hl">@ISRᵢ se lit à VTOR + 4·i</span>.</p>
-  </div>
-
-  <h2><span class="h-num">§ 4.2</span>Déroulement d'une interruption</h2>
-  <div class="box box-thm">
-    <span class="box-label">PUSH → Handler → POP</span>
-    <ol>
-      <li><strong>PUSH (12 cycles)</strong> : sauvegarde <strong>automatique</strong> (matérielle) de R0–R3, R12, LR (R14), PC (R15), PSR dans la pile, <strong>en parallèle</strong> avec la lecture de l'adresse du handler (architecture Harvard).</li>
-      <li><strong>Handler</strong> (ISR) : la fonction C associée.</li>
-      <li><strong>POP (12 cycles)</strong> : restauration des registres.</li>
-    </ol>
-    <p style="font-size:15px">Le CM3 peut aussi interrompre les instructions multi-cycles (load/store multiples) → meilleure latence.</p>
-  </div>
-
-  <h2><span class="h-num">§ 4.3</span>Les 4 optimisations du Cortex-M3</h2>
-  <div class="two-col">
-    <div class="box box-prop" style="margin:0">
-      <span class="box-label">Tail chaining (TC) · 6 cycles</span>
-      <p>Une IRQ <strong>i</strong> arrive pendant le handler d'une IRQ <strong>j</strong> plus prioritaire : i attend. À la fin de j, au lieu de POP + PUSH (24 cycles inutiles : on restaure puis resauvegarde la même chose), le CM3 fait un <strong>TC de 6 cycles</strong> (juste lire l'adresse du handler i).</p>
-    </div>
-    <div class="box box-prop" style="margin:0">
-      <span class="box-label">Préemption du POP · 1–12 + 6</span>
-      <p>L'IRQ arrive <strong>pendant le POP</strong> : le POP est <strong>arrêté immédiatement</strong> (il ne fait que relire la pile, aucune perte), puis TC 6 cycles. Coût total <strong>7 à 18 cycles</strong>. Indépendant des priorités relatives des deux IRQ.</p>
-    </div>
-    <div class="box box-prop" style="margin:0">
-      <span class="box-label">Imbrication (nested)</span>
-      <p>Une IRQ <strong>plus prioritaire</strong> arrive pendant un handler : le handler est suspendu, PUSH 12, on sert la prioritaire, POP 12, et on reprend le handler suspendu là où il était.</p>
-    </div>
-    <div class="box box-prop" style="margin:0">
-      <span class="box-label">Late arrival</span>
-      <p>Une IRQ plus prioritaire arrive <strong>pendant le PUSH</strong> d'une autre : un seul PUSH suffit. À la fin du PUSH, le CM3 sert directement la <strong>plus prioritaire</strong>, puis enchaîne l'autre par TC.</p>
-    </div>
-  </div>
-  <div class="warn">Pour l'ARM7 / x86 : chaque handler a son propre PUSH et POP complets (pas de TC, pas de late arrival). Question de cours classique : <strong>comparer</strong> les deux enchaînements et donner le gain (24 → 6 cycles).</div>
-
-  <!-- VIZ 3 -->
-  <div class="viz-card" id="irqlab">
-    <div class="viz-header"><div class="viz-title">Simulateur de chronogramme Cortex-M3</div><div class="viz-tag">PUSH 12 · POP 12 · TC 6</div></div>
-    <div class="btn-group" style="margin:0 0 10px" id="irq-presets">
-      <button class="btn btn-active" data-p="ds">DS 2021 (extrait vérifié)</button>
-      <button class="btn" data-p="tc">tail chaining</button>
-      <button class="btn" data-p="late">late arrival</button>
-      <button class="btn" data-p="nest">imbrication</button>
-    </div>
-    <svg class="viz-svg tl" id="irq-svg" viewBox="0 0 900 230" style="cursor:default"></svg>
-    <div class="legend">
-      <div class="legend-item"><span class="legend-swatch" style="background:#B8924A"></span>PUSH</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#8A7D6B"></span>POP</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#E8C77B"></span>TC</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#7B2D26"></span>handler</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#2C5664;width:3px"></span>IRQ</div>
-    </div>
-    <div class="viz-body" style="margin-top:14px">
-      <div>
-        <h5 style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--ink-faint);margin-bottom:6px">SOURCES (priorité : plus petit = plus prioritaire · durée en cycles)</h5>
-        <div id="irq-src"></div>
-        <h5 style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--ink-faint);margin:12px 0 6px">ÉVÉNEMENTS (cycle où l'IRQ devient pending)</h5>
-        <div id="irq-ev"></div>
-        <div class="btn-group"><button class="btn" id="irq-add">+ événement</button></div>
-      </div>
-      <div class="viz-controls"><h5>Exécutions des handlers</h5><div id="irq-tab"></div><h5>Lecture</h5><div id="irq-log" class="hist"></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ V · NVIC & EXTI ═══════════════════ -->
-<section class="tab-content" id="ch5">
-  <p class="intro">Pour qu'un front sur une broche exécute du code, il faut traverser quatre blocs : GPIO → AFIO → EXTI → NVIC. Chacun a son interrupteur à activer.</p>
-
-  <h2><span class="h-num">§ 5.1</span>Conditions de déclenchement</h2>
-  <div class="box box-thm">
-    <span class="box-label">Deux autorisations</span>
-    <ol>
-      <li>Au niveau du <strong>périphérique</strong> : autoriser l'envoi d'IRQ suite à un événement (réception série, fin de conversion…). L'événement met un <strong>bit d'état (FLAG)</strong> à 1.</li>
-      <li>Au niveau du <strong>NVIC</strong> : autoriser l'entrée (bit Enable) et lui donner une <strong>priorité</strong>. Le FLAG met le <strong>pending bit</strong> du NVIC à 1.</li>
-    </ol>
-  </div>
-  <table class="law">
-    <tr><td>ISERx</td><td>Interrupt Set-Enable : écrire 1 au bit i autorise l'IRQ i.</td></tr>
-    <tr><td>ICERx</td><td>Interrupt Clear-Enable : écrire 1 interdit l'IRQ i.</td></tr>
-    <tr><td>ISPRx</td><td>Set-Pending : met l'IRQ en attente (normalement fait par le périphérique).</td></tr>
-    <tr><td>ICPRx</td><td>Clear-Pending : retire l'attente (fait automatiquement par le matériel quand le handler démarre).</td></tr>
-  </table>
-  <p style="font-size:14.5px;margin-top:6px">STM32F1 : 68 IRQ → 3 registres de 32 bits par fonction (0–31, 32–63, 64–67).</p>
-
-  <h2><span class="h-num">§ 5.2</span>Priorités : groupe et sous-priorité</h2>
-  <div class="box box-def">
-    <span class="box-label">Preemption priority vs SubPriority</span>
-    <p>ARM range les IRQ en <strong>groupes</strong> (<em>preemption priority</em>) et donne à chacune un rang dans son groupe (<em>subpriority</em>). <strong>Valeur plus petite = plus prioritaire.</strong></p>
-    <ul>
-      <li>Deux IRQ en attente : on sert d'abord la plus prioritaire (groupe, puis sous-priorité).</li>
-      <li>Une IRQ en cours n'est <strong>préemptée</strong> que par une IRQ d'un <strong>groupe strictement plus prioritaire</strong>. La sous-priorité ne sert <strong>jamais</strong> à préempter, seulement à départager les attentes.</li>
-    </ul>
-  </div>
-  <div class="box box-prop">
-    <span class="box-label">PRIGROUP (AIRCR bits 10..8) — F1 : 4 bits de priorité</span>
-    <table class="mat" style="width:100%">
-      <tr><th>FWL</th><th>PRIGROUP</th><th>bits groupe</th><th>groupes</th><th>bits sous-prio</th><th>niveaux / groupe</th></tr>
-      <tr><td>NVIC_PriorityGroup_0</td><td>111</td><td>0</td><td>1</td><td>4</td><td>16</td></tr>
-      <tr><td>NVIC_PriorityGroup_1</td><td>110</td><td>1</td><td>2</td><td>3</td><td>8</td></tr>
-      <tr><td>NVIC_PriorityGroup_2</td><td>101</td><td>2</td><td>4</td><td>2</td><td>4</td></tr>
-      <tr><td>NVIC_PriorityGroup_3</td><td>100</td><td>3</td><td>8</td><td>1</td><td>2</td></tr>
-      <tr><td>NVIC_PriorityGroup_4</td><td>011 (défaut*)</td><td>4</td><td>16</td><td>0</td><td>1</td></tr>
-    </table>
-    <p style="font-size:14px;margin-top:6px">Fonction : <span class="fx">NVIC_PriorityGroupConfig(NVIC_PriorityGroup_x);</span></p>
-  </div>
-  <div class="warn amb">Le document de cours dit qu'à priorités égales « c'est celle ayant le numéro le plus <strong>élevé</strong> qui est prioritaire ». Sur ARM Cortex-M, c'est le numéro le plus <strong>bas</strong> (ex. EXTI3_IRQn = 9 passe avant EXTI9_5_IRQn = 23). Signale-le si la question tombe. Le défaut « * » de PRIGROUP est aussi celui du document, à vérifier dans tes notes.</div>
-
-  <h2><span class="h-num">§ 5.3</span>Configurer le NVIC avec la FWL</h2>
-  <pre class="code">NVIC_InitTypeDef NVIC_InitStruct;
-NVIC_InitStruct.NVIC_IRQChannel                   = EXTI9_5_IRQn;  <span class="c">// n° de l'entrée</span>
-NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 1;             <span class="c">// groupe</span>
-NVIC_InitStruct.NVIC_IRQChannelSubPriority        = 0;             <span class="c">// rang dans le groupe</span>
-NVIC_InitStruct.NVIC_IRQChannelCmd                = ENABLE;
-NVIC_Init(&amp;NVIC_InitStruct);</pre>
-
-  <h2><span class="h-num">§ 5.4</span>Les handlers</h2>
-  <div class="box box-def">
-    <span class="box-label">Nommer la fonction suffit</span>
-    <p>Le <strong>startup file</strong> (fourni par ARM/ST) remplit la table des vecteurs avec des noms fixes. Il suffit d'écrire une fonction avec <strong>le bon nom</strong> : <span class="fx">void EXTI0_IRQHandler(void)</span>, <span class="fx">SysTick_Handler</span>, <span class="fx">USART1_IRQHandler</span>… Le linker met son adresse au bon vecteur.</p>
-  </div>
-  <div class="box box-thm">
-    <span class="box-label">Effacer le FLAG dans le handler</span>
-    <p>Quand le handler démarre, le <strong>pending bit du NVIC</strong> est effacé automatiquement, mais le <strong>FLAG du périphérique</strong> reste à 1 → l'IRQ se redéclencherait sans nouvel événement. Il faut l'effacer dans le handler : <span class="fx">PPP_ClearITPendingBit(…)</span> (malgré son nom, elle efface le FLAG du périphérique).</p>
-  </div>
-  <div class="box box-prop">
-    <span class="box-label">Interruption globale / groupée</span>
-    <p>Plusieurs FLAGs reliés par un <strong>OU logique</strong> à une seule entrée NVIC (nombre d'entrées limité). Dans le handler, tester chaque source :</p>
-    <pre class="code"><span class="k">void</span> EXTI9_5_IRQHandler(<span class="k">void</span>) {
-  <span class="k">if</span> (EXTI_GetITStatus(EXTI_Line7)) { <span class="c">/* … */</span> EXTI_ClearITPendingBit(EXTI_Line7); }
-  <span class="k">if</span> (EXTI_GetITStatus(EXTI_Line8)) { <span class="c">/* … */</span> EXTI_ClearITPendingBit(EXTI_Line8); }
-}</pre>
-  </div>
-
-  <h2><span class="h-num">§ 5.5</span>Le bloc EXTI</h2>
-  <div class="box box-def">
-    <span class="box-label">EXTernal Interrupt/event controller</span>
-    <ul>
-      <li><strong>20 lignes</strong> : EXTI0…15 viennent des GPIO (via <strong>AFIO</strong>, GPIOA par défaut), EXTI16 = PVD, 17 = RTC, 18 = USB, 19 = Ethernet.</li>
-      <li><span class="hl">La ligne EXTIi est reliée à la broche i d'<strong>un seul</strong> port</span> : PA3, PB3, PC3… partagent EXTI3, on choisit le port avec <span class="fx">GPIO_EXTILineConfig(GPIO_PortSourceGPIOx, GPIO_PinSourcei)</span>.</li>
-      <li>Chaque ligne peut générer une <strong>interruption</strong> (vers le NVIC) ou un <strong>événement</strong> (impulsion sur une broche AF, choisie par AFIO_EVCR).</li>
-    </ul>
-  </div>
-  <table class="law">
-    <tr><td>RTSR</td><td>Rising Trigger : 1 = déclenche sur front <strong>montant</strong>.</td></tr>
-    <tr><td>FTSR</td><td>Falling Trigger : 1 = déclenche sur front <strong>descendant</strong> (les deux peuvent être actifs).</td></tr>
-    <tr><td>SWIER</td><td>Software Interrupt Event : simule une activité sur la ligne.</td></tr>
-    <tr><td>IMR</td><td>Interrupt Mask : 1 = interruption autorisée, 0 = masquée.</td></tr>
-    <tr><td>EMR</td><td>Event Mask : 1 = génération d'événement autorisée.</td></tr>
-    <tr><td>PR</td><td>Pending : mis à 1 quand le front arrive ; <strong>à effacer dans le handler</strong> (sinon re-déclenchement).</td></tr>
-  </table>
-  <div class="box box-prop" style="margin-top:14px">
-    <span class="box-label">Entrées NVIC des lignes EXTI (STM32F1)</span>
-    <table class="mat" style="width:100%"><tr><th>lignes</th><th>EXTI0</th><th>EXTI1</th><th>EXTI2</th><th>EXTI3</th><th>EXTI4</th><th>EXTI5–9</th><th>EXTI10–15</th></tr>
-      <tr><th>IRQn</th><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td class="nz">23 · EXTI9_5</td><td class="nz">40 · EXTI15_10</td></tr></table>
-    <p style="font-size:14.5px;margin-top:6px">EXTI9_5 et EXTI15_10 sont des interruptions <strong>groupées</strong> (corrigé DS 2021, Q2).</p>
-  </div>
-  <pre class="code"><span class="c">// Interruption sur front montant de PC11 (bouton)</span>
-RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
-<span class="c">/* PC11 en input floating (GPIO_Init) */</span>
-GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource11);   <span class="c">// EXTI11 ← PC11</span>
-EXTI_InitStructure.EXTI_Line    = EXTI_Line11;
-EXTI_InitStructure.EXTI_Mode    = EXTI_Mode_Interrupt;
-EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-EXTI_Init(&amp;EXTI_InitStructure);
-<span class="c">/* NVIC : EXTI15_10_IRQn, priorité, ENABLE (§ 5.3) */</span>
-<span class="k">void</span> EXTI15_10_IRQHandler(<span class="k">void</span>) {
-  <span class="k">if</span> (EXTI_GetITStatus(EXTI_Line11)) { <span class="c">/* traitement */</span> EXTI_ClearITPendingBit(EXTI_Line11); }
-}</pre>
-  <div class="warn">L'horloge <strong>AFIO</strong> doit être activée pour que <span class="fx">GPIO_EXTILineConfig</span> fonctionne (c'est un registre AFIO). Oubli classique.</div>
-
-  <h2><span class="h-num">§ 5.6</span>SysTick</h2>
-  <div class="box box-def">
-    <span class="box-label">Timer système du cœur</span>
-    <p>Timer intégré au NVIC (exception n° 15, <span class="fx">SysTick_Handler</span>). <span class="fx">SysTick_Config(N)</span> le programme pour générer une interruption <strong>tous les N cycles</strong> d'horloge.</p>
-    <p style="font-size:15px">DS 2021 Q3 : cycle 0 = exécution de <span class="fx">SysTick_Config(55)</span> → IRQ SysTick aux cycles <strong>55 et 110</strong> (entre 0 et 160).</p>
-  </div>
-</section>
-
-<!-- ═══════════════════ M · MÉTHODES ═══════════════════ -->
-<section class="tab-content" id="methods">
-  <p class="intro">Le livre de recettes : une carte par type de question des DS de bas niveau. Les exercices viennent du cours (exemples 8255, STM32) et de l'examen 2021 corrigé.</p>
-  <div class="method-index">
-    <a href="#m1"><span>M1</span>Choisir une architecture</a>
-    <a href="#m2"><span>M2</span>Compter instructions / cycles</a>
-    <a href="#m3"><span>M3</span>Capacité, taille, n</a>
-    <a href="#m4"><span>M4</span>Câbler une mémoire de même largeur</a>
-    <a href="#m5"><span>M5</span>Mémoires plus étroites (parallèle)</a>
-    <a href="#m6"><span>M6</span>Décodage d'adresse et /CE</a>
-    <a href="#m7"><span>M7</span>Listing mémoire, alignement, LDR/STR</a>
-    <a href="#m8"><span>M8</span>Piloter un registre en C (8255)</a>
-    <a href="#m9"><span>M9</span>Masquage de bits</a>
-    <a href="#m10"><span>M10</span>GPIO STM32 par registres</a>
-    <a href="#m11"><span>M11</span>GPIO avec la FWL</a>
-    <a href="#m12"><span>M12</span>Écrire un firmware (DS 2021 Pb)</a>
-    <a href="#m13"><span>M13</span>Interruption EXTI de bout en bout</a>
-    <a href="#m14"><span>M14</span>Chronogramme d'interruptions</a>
-    <a href="#m15"><span>M15</span>Priorités &amp; PRIGROUP</a>
-  </div>
-
-  <h2><span class="h-num">Bloc A · Ch0–1</span>Architecture &amp; interfaçage</h2>
-
-  <div class="method-card" id="m1">
-    <div class="method-meta"><span class="pill pill-burgundy">Ch0</span><span class="pill">question de cours</span></div>
-    <div class="method-question">Comment justifier le choix GPP / DSP / ASIP / FPGA / ASIC pour une application ?</div>
-    <ol class="method-steps">
-      <li>Lister les besoins : <strong>performance</strong> (débit, temps réel), <strong>énergie</strong> (batterie ?), <strong>flexibilité</strong> (mises à jour ?), <strong>quantité</strong> produite, <strong>time to market</strong>.</li>
-      <li>Placer chaque besoin sur l'axe flexibilité ↔ performance (GPP … ASIC).</li>
-      <li>Coût : <span class="fx">FC = NRE/Q + UC</span> ; ASIC seulement si Q est très grand.</li>
-      <li>Si besoins contradictoires (smartphone) → <strong>SoC</strong> qui combine GPP + accélérateurs.</li>
-    </ol>
-    <div class="method-tip">Ne réponds jamais « le plus performant » : la réponse attendue est un <strong>compromis argumenté</strong> critère par critère.</div>
-  </div>
-
-  <div class="method-card" id="m2">
-    <div class="method-meta"><span class="pill pill-burgundy">Ch0 · s.15–27</span></div>
-    <div class="method-question">Comment comparer le coût d'un calcul sur GPP, DSP (SIMD + MAC) et matériel dédié ?</div>
-    <ol class="method-steps">
-      <li>Écrire la séquence d'instructions sur le GPP (chargements, produits, additions, transferts) et la <strong>compter</strong> par type.</li>
-      <li>Refaire avec 2 UAL + MAC : les produits se font par paires, l'accumulation dans ACC.</li>
-      <li>Matériel dédié : 0 instruction, tout en parallèle (1 cycle par étage).</li>
-      <li>Conclure sur cycles (performance) et nombre d'opérations (énergie), puis flexibilité.</li>
-    </ol>
-    <div class="method-tip">Les chiffres de référence pour 4 termes : <strong>22</strong> instructions (GPP) → <strong>10</strong> (SIMD + MAC) → <strong>0</strong> (SPP).</div>
-  </div>
-
-  <div class="method-card" id="m3">
-    <div class="method-meta"><span class="pill pill-burgundy">Ch1 · s.5–13</span></div>
-    <div class="method-question">Comment calculer la capacité d'adressage, la taille d'une mémoire et le nombre de lignes d'adresse ?</div>
-    <ol class="method-steps">
-      <li>Capacité processeur = <span class="fx">2ᴺ</span> <strong>octets</strong> ; espace = 0 … 2ᴺ − 1.</li>
-      <li>Taille mémoire = <span class="fx">2ⁿ × m/8</span> octets.</li>
-      <li>Pour couvrir tout l'espace avec une mémoire de largeur m = M : <span class="fx">2ᴺ = 2ⁿ × M/8 ⇒ n = N − log₂(M/8)</span> (M = 8 → n = N ; 16 → N−1 ; 32 → N−2).</li>
-      <li>Convertir avec 1 Ko = 2¹⁰, 1 Mo = 2²⁰, 1 Go = 2³⁰.</li>
-    </ol>
-    <div class="method-tip">Toujours raisonner en <strong>octets</strong> côté processeur : c'est ce que compte l'adresse.</div>
-  </div>
-
-  <div class="method-card" id="m4">
-    <div class="method-meta"><span class="pill pill-burgundy">Ch1 · s.17–23</span></div>
-    <div class="method-question">Comment câbler une mémoire de même largeur que le processeur ?</div>
-    <ol class="method-steps">
-      <li>Vérifier <span class="fx">M = m</span>.</li>
-      <li>Calculer <span class="fx">k = log₂(M/8)</span> : les <strong>k lignes de poids faible</strong> (A₀ ou A₁A₀) ne vont <strong>pas</strong> à la mémoire, elles servent avec Byte Select à choisir les octets.</li>
-      <li>Relier <span class="fx">A_{k} … A_{k+n−1}</span> du processeur à <span class="fx">A₀ … A_{n−1}</span> de la mémoire.</li>
-      <li>Relier les M lignes de données une à une.</li>
-      <li>Si les lignes d'adresse sont toutes utilisées : <span class="fx">/CE = 0</span> en permanence (mémoire unique).</li>
-    </ol>
-    <div class="method-tip">Dessine toujours le schéma avec les <strong>numéros</strong> des lignes aux deux bouts : c'est là que sont les points.</div>
-  </div>
-
-  <div class="method-card" id="m5">
-    <div class="method-meta"><span class="pill pill-burgundy">Ch1 · s.28–36</span></div>
-    <div class="method-question">Comment utiliser des mémoires moins larges que le bus de données (m &lt; M) ?</div>
-    <ol class="method-steps">
-      <li>Nombre de puces côte à côte = <span class="fx">M / m</span>.</li>
-      <li>Toutes reçoivent les <strong>mêmes</strong> lignes d'adresse (<span class="fx">A_k … A_{k+n−1}</span>, k = log₂(M/8)) et le <strong>même</strong> <span class="fx">/CE</span>.</li>
-      <li>La puce j reçoit la tranche de données <span class="fx">D_{(j+1)m−1} … D_{jm}</span>.</li>
-      <li>Pour savoir où est un octet d'adresse a : la puce est donnée par <span class="fx">(a mod (M/8)) / (m/8)</span>, la ligne par <span class="fx">a div (M/8)</span>.</li>
-    </ol>
-    <details class="sol"><summary>Corrigé — N = 12, M = 32, n = 10, m = 8</summary><div>
-      <p>4 puces (Mem0…Mem3), toutes sur A₁₁…A₂ → A₉…A₀ et /CE = 0. Mem0 ← D₇…D₀, Mem1 ← D₁₅…D₈, Mem2 ← D₂₃…D₁₆, Mem3 ← D₃₁…D₂₄.</p>
-      <p>Octet 6 : 6 mod 4 = 2 → <strong>Mem2</strong>, ligne 6 div 4 = 1. Octet 7 → Mem3 ligne 1.</p>
-    </div></details>
-  </div>
-
-  <div class="method-card" id="m6">
-    <div class="method-meta"><span class="pill pill-burgundy">Ch1 · s.38–46</span></div>
-    <div class="method-question">Comment placer une (ou plusieurs) mémoire(s) plus petite(s) dans l'espace d'adressage ?</div>
-    <ol class="method-steps">
-      <li>Relier d'abord les lignes « internes » : <span class="fx">A_k … A_{k+n−1}</span> → mémoire.</li>
-      <li>Les lignes restantes <span class="fx">A_{k+n} … A_{N−1}</span> forment le <strong>numéro de zone</strong> (2^(N−k−n) zones possibles).</li>
-      <li>Pour qu'une mémoire réponde dans la zone z, <span class="fx">/CE</span> doit valoir 0 <strong>exactement</strong> quand ces lignes valent z (/CE actif bas → expression inversée).</li>
-      <li>Donner la plage : zone z couvre <span class="fx">z × taille … (z+1) × taille − 1</span>.</li>
-      <li>Vérifier qu'à chaque adresse, <strong>une seule</strong> /CE est à 0.</li>
-    </ol>
-    <div class="method-tip">Avec une seule ligne libre A : <span class="fx">/CE₀ = A</span> (zone basse) et <span class="fx">/CE₁ = ¬A</span> (zone haute). Avec deux lignes, il faut un décodeur 2 vers 4 (ou les équations <span class="fx">/CEᵢ</span> en somme de produits).</div>
-    <details class="sol"><summary>Corrigé — N = 12, M = m = 32, n = 9 (cours s.38–43)</summary><div>
-      <p>k = 2, la mémoire prend A₁₀…A₂. Ligne libre : <strong>A₁₁</strong>. Taille mémoire = 2⁹ × 4 = 2048 o.</p>
-      <p>Mem0 en 0…2047 : <span class="fx">/CE₀ = A₁₁</span> ; Mem1 en 2048…4095 : <span class="fx">/CE₁ = ¬A₁₁</span>. Ensemble : tout l'espace est rempli.</p>
-    </div></details>
-  </div>
-
-  <div class="method-card" id="m7">
-    <div class="method-meta"><span class="pill pill-burgundy">Ch1 · s.24–26</span></div>
-    <div class="method-question">Comment construire le listing mémoire des variables et traduire les affectations en LDR/STR ?</div>
-    <ol class="method-steps">
-      <li>Partir de l'adresse de début de la RAM et placer chaque variable dans l'ordre de déclaration.</li>
-      <li><strong>Aligner</strong> : une variable de 2 octets commence à une adresse paire, de 4 octets à un multiple de 4 (sauf si non aligné supporté).</li>
-      <li>Lecture : <span class="fx">LDRB/LDRSB</span> (8 bits), <span class="fx">LDRH/LDRSH</span> (16), <span class="fx">LDR</span> (32). Écriture : <span class="fx">STRB, STRH, STR</span>.</li>
-      <li>Chaque instruction implique une valeur de Byte Select (00, 01, 10) et une valeur de A₁A₀ (offset dans la ligne).</li>
-    </ol>
-    <div class="method-tip">Le « S » de LDRSB/LDRSH = <strong>signé</strong> : extension du bit de signe vers 32 bits.</div>
-  </div>
-
-  <div class="method-card" id="m8">
-    <div class="method-meta"><span class="pill pill-burgundy">Ch1 · s.63–79</span></div>
-    <div class="method-question">Comment piloter un port d'E/S en C (LEDs, 7 segments, boutons) ?</div>
-    <ol class="method-steps">
-      <li>Dessiner le <strong>diagramme</strong> du fonctionnement (lire → tester → écrire).</li>
-      <li>Pour chaque état à afficher, écrire la <strong>valeur binaire</strong> du port bit par bit (en suivant le câblage PA7…PA0), puis la convertir en hex.</li>
-      <li>Déclarer le registre : <span class="fx">#define Port ((volatile uint8_t*) adresse)</span>.</li>
-      <li>Lire : <span class="fx">v = *Port &amp; masque;</span> · écrire : <span class="fx">*Port = valeur;</span></li>
-      <li>Toujours <strong>masquer</strong> les bits non câblés avant un test, et mettre les <span class="fx">break</span> dans le switch.</li>
-    </ol>
-    <details class="sol"><summary>Corrigé — afficher « 3 » (cours s.71–74)</summary><div>
-      <p>Câblage PC7 = a, PC6 = b, PC5 = c, PC4 = d, PC3 = e, PC2 = f, PC1 = g, PC0 = h. « 3 » = a b c d g.</p>
-      <p>PC7…PC0 = 1 1 1 1 0 0 1 0 = <strong>0xF2</strong> → <span class="fx">*PortC = 0xF2;</span></p>
-    </div></details>
-  </div>
-
-  <h2><span class="h-num">Bloc B · Ch2–3</span>Registres &amp; firmware</h2>
-
-  <div class="method-card" id="m9">
-    <div class="method-meta"><span class="pill pill-teal">Ch2 · s.36–41</span><span class="pill pill-gold">DS 2021 Pb Q3</span></div>
-    <div class="method-question">Comment modifier un champ de bits sans toucher aux autres ?</div>
-    <ol class="method-steps">
-      <li>Repérer la <strong>position</strong> p et la <strong>largeur</strong> w du champ.</li>
-      <li>Construire le masque <span class="fx">((1u &lt;&lt; w) − 1) &lt;&lt; p</span> (ex. 2 bits en position 4 : <span class="fx">0x3 &lt;&lt; 4 = 0x30</span>).</li>
-      <li><strong>Effacer</strong> : <span class="fx">REG &amp;= ~masque;</span></li>
-      <li><strong>Écrire</strong> : <span class="fx">REG |= (valeur &lt;&lt; p);</span></li>
-      <li>Plusieurs champs d'un coup : additionner (OU) les masques et les valeurs.</li>
-    </ol>
-    <div class="method-tip">Ne fais jamais seulement <span class="fx">|=</span> sur un champ de plusieurs bits : s'il contenait déjà des 1, le résultat est faux. Toujours <strong>effacer puis écrire</strong>.</div>
-  </div>
-
-  <div class="method-card" id="m10">
-    <div class="method-meta"><span class="pill pill-teal">Ch2 · s.32–50</span></div>
-    <div class="method-question">Comment configurer et utiliser une broche GPIO du STM32F1 par accès registres ?</div>
-    <ol class="method-steps">
-      <li><strong>Adresses</strong> : base du port + offset (CRL 0x00, CRH 0x04, IDR 0x08, ODR 0x0C, BSRR 0x10, BRR 0x14) ; RCC_APB2ENR = 0x40021018.</li>
-      <li><strong>Horloge</strong> : <span class="fx">*RCC_APB2ENR |= 1 &lt;&lt; (2 + n°port)</span> (A = 2, B = 3, C = 4…).</li>
-      <li><strong>Registre</strong> : CRL si broche &lt; 8, CRH sinon ; décalage <span class="fx">4 × (p mod 8)</span>.</li>
-      <li><strong>Quartet</strong> : output PP 2 MHz = 0x2, input floating = 0x4, etc. Effacer puis écrire.</li>
-      <li><strong>Utiliser</strong> : <span class="fx">BSRR = 1&lt;&lt;p</span> (1), <span class="fx">BRR = 1&lt;&lt;p</span> (0), <span class="fx">IDR &amp; (1&lt;&lt;p)</span> (lire).</li>
-    </ol>
-    <div class="method-tip">Vérifie ton calcul avec le configurateur du § 2.5 : il affiche le registre, le décalage et le code.</div>
-  </div>
-
-  <div class="method-card" id="m11">
-    <div class="method-meta"><span class="pill pill-teal">Ch3 · s.16–30</span></div>
-    <div class="method-question">Comment écrire le même programme avec la Firmware Library ?</div>
-    <ol class="method-steps">
-      <li><span class="fx">GPIO_InitTypeDef GPIO_InitStructure;</span></li>
-      <li><span class="fx">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx, ENABLE);</span></li>
-      <li>Remplir <span class="fx">GPIO_Pin</span> (combinable avec |), <span class="fx">GPIO_Mode</span>, <span class="fx">GPIO_Speed</span> puis <span class="fx">GPIO_Init(GPIOx, &amp;GPIO_InitStructure);</span></li>
-      <li><span class="fx">GPIO_SetBits / GPIO_ResetBits / GPIO_ReadInputDataBit</span>.</li>
-    </ol>
-    <div class="method-tip">Pour expliquer « ce que fait la FWL » : <span class="fx">GPIO_SetBits(GPIOx, Pin)</span> exécute simplement <span class="fx">GPIOx-&gt;BSRR = Pin;</span>.</div>
-  </div>
-
-  <div class="method-card" id="m12">
-    <div class="method-meta"><span class="pill pill-teal">Ch3</span><span class="pill pill-gold">DS 2021 · Problème (12 pts)</span></div>
-    <div class="method-question">Comment écrire la couche firmware d'un nouveau périphérique (memory map, codage, Init) ?</div>
-    <ol class="method-steps">
-      <li><strong>.h memory map</strong> : <span class="fx">#define</span> des adresses de base, une <span class="fx">typedef struct</span> dont les champs respectent <strong>taille et offset</strong> de chaque registre, un <span class="fx">#define PERIPHx ((Type*) base)</span> par instance.</li>
-      <li><strong>Codage des identifiants</strong> : une puissance de 2 par élément (0x01, 0x02, 0x04, 0x08) pour pouvoir en combiner plusieurs avec |.</li>
-      <li><strong>Fonction Init</strong> : boucle sur les éléments sélectionnés, construire un masque et une valeur (champ de w bits en position w·i), puis <span class="fx">REG &amp;= ~masque; REG |= valeur;</span></li>
-      <li>Ne modifier <strong>que</strong> les bits concernés.</li>
-    </ol>
-    <details class="sol"><summary>Corrigé — Q3 : LCD0 et LCD2 en mode Texte / RGB, pixel (15,4), couleur (10,20,30)</summary><div>
-      <pre class="code">LcdCtrl0-&gt;ModeReg &amp;= ~(uint16_t)0x33;  LcdCtrl0-&gt;ModeReg |= 0x11;   <span class="c">// 01 aux bits 1..0 et 5..4</span>
-LcdCtrl0-&gt;PalReg  &amp;= ~(uint16_t)0x33;  LcdCtrl0-&gt;PalReg  |= 0x22;   <span class="c">// 10 = RGB</span>
-LcdCtrl0-&gt;PosPixReg  = 0x8F8F8F8F;      <span class="c">// Y=4 (100) X=15 (01111) → 0x8F pour chaque LCD</span>
-LcdCtrl0-&gt;CodeColReg = (30u&lt;&lt;20) | (20u&lt;&lt;10) | 10u;   <span class="c">// = 0x01E0500A</span></pre>
-      <p style="font-size:14.5px"><strong>Attention :</strong> le corrigé officiel donne <span class="fx">0x0078500A</span>, qui décode en comp1 = 10, comp2 = 532, comp3 = 7. La bonne valeur est <strong>0x01E0500A</strong> (30 = 0x1E en bits 29..20, 20 = 0x14 en bits 19..10).</p>
-    </div></details>
-    <details class="sol"><summary>Corrigé — Q4 : la fonction LcdInit</summary><div>
-      <pre class="code"><span class="k">void</span> LcdInit(LCD_TypeDef *LcdCtrlx, Lcd_InitTypeDef *init) {
-  uint16_t mask = 0, mode = 0, pal = 0;
-  <span class="k">for</span> (<span class="k">int</span> i = 0; i &lt;= 3; i++) {
-    <span class="k">if</span> ((init-&gt;Lcd_Id &amp; (1u &lt;&lt; i)) != 0) {          <span class="c">// LCDi sélectionné ?</span>
-      mask |= 0x3u &lt;&lt; (2*i);                          <span class="c">// champ de 2 bits</span>
-      mode |= (uint16_t)(init-&gt;Lcd_Mode    &lt;&lt; (2*i));
-      pal  |= (uint16_t)(init-&gt;Lcd_Palette &lt;&lt; (2*i));
-    }
-  }
-  LcdCtrlx-&gt;ModeReg = (LcdCtrlx-&gt;ModeReg &amp; ~mask) | mode;
-  LcdCtrlx-&gt;PalReg  = (LcdCtrlx-&gt;PalReg  &amp; ~mask) | pal;
-}</pre>
-      <p style="font-size:14.5px">Le corrigé officiel écrit <span class="fx">if (Id &amp; (1&lt;&lt;i) != 0)</span> : en C, <span class="fx">!=</span> est prioritaire sur <span class="fx">&amp;</span>, ce qui donne <span class="fx">Id &amp; 1</span>. Il faut les <strong>parenthèses</strong>.</p>
-    </div></details>
-  </div>
-
-  <h2><span class="h-num">Bloc C · Ch4–5</span>Interruptions</h2>
-
-  <div class="method-card" id="m13">
-    <div class="method-meta"><span class="pill pill-gold">Ch5</span><span class="pill pill-gold">DS 2021 · Ex1 Q1–Q2</span></div>
-    <div class="method-question">Comment déclencher un handler sur un front d'une broche (EXTI) ?</div>
-    <ol class="method-steps">
-      <li><strong>Horloges</strong> : GPIOx + <strong>AFIO</strong> (APB2).</li>
-      <li><strong>GPIO</strong> : broche en entrée (floating / pull).</li>
-      <li><strong>AFIO</strong> : <span class="fx">GPIO_EXTILineConfig(GPIO_PortSourceGPIOx, GPIO_PinSourcei)</span> relie la ligne EXTIi à la broche i du port x.</li>
-      <li><strong>EXTI</strong> : ligne(s), mode Interrupt, front (Rising / Falling / Rising_Falling), ENABLE, <span class="fx">EXTI_Init</span>.</li>
-      <li><strong>NVIC</strong> : bon IRQn (EXTI0…4 seuls, 5–9 → EXTI9_5, 10–15 → EXTI15_10), priorités, ENABLE.</li>
-      <li><strong>Handler</strong> au bon nom ; tester <span class="fx">EXTI_GetITStatus</span> si groupé ; <span class="fx">EXTI_ClearITPendingBit</span>.</li>
-    </ol>
-    <div class="method-tip">Deux broches de même numéro (PA3 et PD3) <strong>ne peuvent pas</strong> utiliser EXTI en même temps : une seule ligne EXTI3. Dans le DS 2021, PB3 n'a donc aucun effet (EXTI3 est relié à PD3).</div>
-  </div>
-
-  <div class="method-card" id="m14">
-    <div class="method-meta"><span class="pill pill-gold">Ch4</span><span class="pill pill-gold">DS 2021 · Ex1 Q3–Q4 (4 pts)</span></div>
-    <div class="method-question">Comment tracer le chronogramme de plusieurs interruptions sur Cortex-M3 ?</div>
-    <ol class="method-steps">
-      <li>Lister les IRQ : <strong>instant</strong> (front + type de front configuré, SysTick tous les N cycles), <strong>priorité</strong>, <strong>durée</strong> du handler (somme des cycles).</li>
-      <li>Avancer dans le temps. Processeur libre + IRQ → <strong>PUSH 12</strong>, puis on sert la plus prioritaire en attente à la <strong>fin</strong> du PUSH (late arrival).</li>
-      <li>IRQ plus prioritaire pendant un handler → handler suspendu, <strong>PUSH 12</strong>, imbrication.</li>
-      <li>Fin d'un handler : une IRQ éligible attend → <strong>TC 6</strong> ; sinon <strong>POP 12</strong> (vers le handler suspendu ou le programme).</li>
-      <li>IRQ éligible pendant un POP → POP <strong>arrêté</strong> + <strong>TC 6</strong>.</li>
-      <li>Remplir le tableau : début et fin de chaque exécution de handler (le temps où il est suspendu compte dans l'intervalle).</li>
-    </ol>
-    <div class="method-tip">Un handler qui ne remet pas son FLAG à 0 (ou le remet trop tôt alors que la ligne bouge encore) se ré-exécute. Lis bien <strong>où</strong> est placé le ClearPendingBit.</div>
-    <details class="sol"><summary>Corrigé officiel — tableau Q4 + décompositions vérifiées</summary><div>
-      <table class="mat" style="width:100%"><tr><th>Handler</th><th>nb</th><th>1ʳᵉ</th><th>2ᵉ</th></tr>
-        <tr><td>SysTick (6 c.)</td><td>2</td><td>61 → 67</td><td>122 → 128</td></tr>
-        <tr><td>EXTI3 (10 c.)</td><td>2</td><td>10 → 28</td><td>105 → 145</td></tr>
-        <tr><td>EXTI9_5 (10 c.)</td><td>2</td><td>42 → 52</td><td>89 → 99</td></tr>
-        <tr><td>EXTI15_10 (6 c.)</td><td>2</td><td>28 → 83</td><td>151 → 157</td></tr></table>
-      <p style="font-size:14.5px;margin-top:8px"><strong>Vérifié avec les règles</strong> (rejoue-le dans le simulateur du § 4.3, preset « DS 2021 ») : EXTI15_10 tourne 28–30 ; EXTI9_5 arrive à 30 → PUSH 30–42, handler 42–52 ; POP 52–55 interrompu par SysTick (55) → TC 55–61, SysTick 61–67 ; POP 67–79 ; EXTI15_10 reprend 79–83 (2 + 4 = 6 cycles ✓). EXTI3 n°2 : 105–110, SysTick à 110 → PUSH 110–122, 122–128, POP 128–140, reprise 140–145 ✓.</p>
-      <p style="font-size:14px;color:var(--ink-faint)">Les signaux d'entrée du sujet sont une image illisible ici ; la première exécution d'EXTI3 (« 10 → 28 ») n'a pas pu être reconstituée. À revoir avec le chronogramme papier.</p>
-    </div></details>
-  </div>
-
-  <div class="method-card" id="m15">
-    <div class="method-meta"><span class="pill pill-gold">Ch5</span></div>
-    <div class="method-question">Comment décider qui préempte qui avec PRIGROUP, groupe et sous-priorité ?</div>
-    <ol class="method-steps">
-      <li>Lire PRIGROUP → nombre de bits de <strong>groupe</strong> g et de <strong>sous-priorité</strong> 4 − g.</li>
-      <li>Découper la valeur de priorité (4 bits) : bits forts = groupe, bits faibles = sous-priorité.</li>
-      <li><strong>Préemption</strong> : seulement si groupe strictement plus petit.</li>
-      <li><strong>Choix entre IRQ en attente</strong> : groupe, puis sous-priorité, puis numéro d'IRQ (le plus petit gagne).</li>
-    </ol>
-    <div class="method-tip">Exception figée : Reset (−3), NMI (−2), HardFault (−1) passent avant tout ce que tu peux configurer.</div>
-  </div>
-</section>
-
-<!-- ═══════════════════ S · SYNTHÈSE ═══════════════════ -->
-<section class="tab-content" id="synth">
-  <p class="intro">Un seul fil rouge : <em>tout est une adresse.</em> Mémoire, port 8255, GPIO STM32, NVIC : le processeur ne fait que lire et écrire des mots à des adresses. Le reste, c'est savoir lesquelles et quels bits.</p>
-
-  <h2><span class="h-num">S · 1</span>Vue d'ensemble</h2>
-  <div class="flow-grid">
-    <div class="flow-node"><div class="flow-node-tag">0 · Architectures</div><div class="flow-node-title">Choisir le matériel</div><span class="pill">GPP→ASIC</span><span class="pill">Harvard</span><span class="pill">NRE/Q+UC</span><span class="pill">Flynn</span><span class="pill">SoC/MCU</span></div>
-    <div class="flow-node"><div class="flow-node-tag">I · Interfaçage</div><div class="flow-node-title">Bus &amp; mémoires</div><span class="pill">2ᴺ octets</span><span class="pill">2ⁿ·m/8</span><span class="pill">/CE</span><span class="pill">byte select</span><span class="pill">décodage</span></div>
-    <div class="flow-node"><div class="flow-node-tag">II · GPIO</div><div class="flow-node-title">Registres STM32</div><span class="pill">base+offset</span><span class="pill">RCC</span><span class="pill">CRL/CRH</span><span class="pill">BSRR/BRR</span></div>
-    <div class="flow-node"><div class="flow-node-tag">III · HAL</div><div class="flow-node-title">Abstraction</div><span class="pill">struct-&gt;REG</span><span class="pill">PPP_Init</span><span class="pill">non portable</span></div>
-    <div class="flow-node"><div class="flow-node-tag">IV · Interruptions</div><div class="flow-node-title">Cortex-M3</div><span class="pill">PUSH/POP 12</span><span class="pill">TC 6</span><span class="pill">late arrival</span><span class="pill">nested</span></div>
-    <div class="flow-node"><div class="flow-node-tag">V · NVIC &amp; EXTI</div><div class="flow-node-title">Programmer</div><span class="pill">ISER</span><span class="pill">PRIGROUP</span><span class="pill">EXTI 20 lignes</span><span class="pill">SysTick</span></div>
-  </div>
-
-  <h2><span class="h-num">S · 2</span>Les ponts</h2>
-  <div class="two-col">
-    <div class="box box-prop" style="margin:0"><span class="box-label">I → II</span><p>Un GPIO <strong>est</strong> une interface de périphérique du Ch1 : des registres à une adresse, câblés aux broches. Le 8255 et le STM32 se programment pareil : <span class="fx">*(volatile T*)adr</span>.</p></div>
-    <div class="box box-prop" style="margin:0"><span class="box-label">II → III</span><p>La FWL ne fait que remplacer adresses, valeurs et décalages par des structures, constantes et fonctions. Le DS te demande de <strong>refaire</strong> cette couche pour un périphérique inventé.</p></div>
-    <div class="box box-prop" style="margin:0"><span class="box-label">0 → IV</span><p>L'architecture <strong>Harvard</strong> du CM3 permet de lire le vecteur pendant la sauvegarde des registres : d'où le PUSH en 12 cycles.</p></div>
-    <div class="box box-prop" style="margin:0"><span class="box-label">II/III → V</span><p>Une IRQ EXTI traverse <strong>GPIO → AFIO → EXTI → NVIC</strong>. Chaque bloc a son horloge, sa config et son bit à effacer.</p></div>
-  </div>
-
-  <h2><span class="h-num">S · 3</span>Carte : d'une broche à un handler</h2>
-  <div class="viz-card" style="padding:16px">
-    <svg class="viz-svg" viewBox="0 0 900 250" role="img" aria-label="Chaîne broche vers handler" style="cursor:default">
-      <defs><marker id="as" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#B8924A"/></marker></defs>
-      <g font-family="JetBrains Mono, monospace" font-size="11" fill="#4A3F32" text-anchor="middle">
-        <rect x="20" y="70" width="140" height="90" rx="6" fill="#FBF8F0" stroke="#2C5664"/><text x="90" y="102" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#2C5664">GPIO</text><text x="90" y="124">broche en entrée</text><text x="90" y="142">RCC APB2 · CRL/CRH</text>
-        <rect x="200" y="70" width="140" height="90" rx="6" fill="#FBF8F0" stroke="#2C5664"/><text x="270" y="102" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#2C5664">AFIO</text><text x="270" y="124">EXTILineConfig</text><text x="270" y="142">1 port par ligne i</text>
-        <rect x="380" y="70" width="140" height="90" rx="6" fill="#FBF8F0" stroke="#2C5664"/><text x="450" y="102" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#2C5664">EXTI</text><text x="450" y="124">RTSR/FTSR · IMR</text><text x="450" y="142">PR (à effacer)</text>
-        <rect x="560" y="70" width="140" height="90" rx="6" fill="#7B2D26"/><text x="630" y="102" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#FBF8F0">NVIC</text><text x="630" y="124" fill="#F7E8B8">ISER · priorité</text><text x="630" y="142" fill="#F7E8B8">pending · PRIGROUP</text>
-        <rect x="740" y="70" width="140" height="90" rx="6" fill="#FBF8F0" stroke="#B8924A"/><text x="810" y="102" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#1F1A14">Handler</text><text x="810" y="124">VTOR + 4·i</text><text x="810" y="142">nom du startup</text>
-      </g>
-      <g stroke="#B8924A" stroke-width="1.6" marker-end="url(#as)"><path d="M160,115 L198,115"/><path d="M340,115 L378,115"/><path d="M520,115 L558,115"/><path d="M700,115 L738,115"/></g>
-      <g font-family="JetBrains Mono, monospace" font-size="11" fill="#8A7D6B" text-anchor="middle">
-        <text x="270" y="200">PUSH 12 → handler → POP 12</text><text x="630" y="200">TC 6 si une autre IRQ attend</text>
-        <text x="450" y="40">un front montant/descendant sur la broche</text>
-      </g>
-    </svg>
-  </div>
-
-  <h2><span class="h-num">S · 4</span>Exercices qui reviennent</h2>
-  <div class="pattern-card"><div class="pattern-card-title">« Connecter ces mémoires au processeur »</div><div class="pattern-card-sub">Ch1 · M3 → M6</div>
-    <div class="chain"><span class="k">k = log₂(M/8)</span><span class="ar">→</span><span class="k">M/m puces en largeur</span><span class="ar">→</span><span class="k">A_k…A_{k+n−1} → mémoire</span><span class="ar">→</span><span class="k">lignes restantes → /CE</span><span class="ar">→</span><span class="k">plages</span></div></div>
-  <div class="pattern-card"><div class="pattern-card-title">« Écrire le code C qui… »</div><div class="pattern-card-sub">Ch1–3 · M8 → M11</div>
-    <div class="chain"><span class="k">#define pointeurs volatile</span><span class="ar">→</span><span class="k">horloge</span><span class="ar">→</span><span class="k">config (effacer + écrire)</span><span class="ar">→</span><span class="k">lire &amp; masquer / écrire</span></div></div>
-  <div class="pattern-card"><div class="pattern-card-title">« Développer la couche firmware »</div><div class="pattern-card-sub">DS 2021 Problème · M12</div>
-    <div class="chain"><span class="k">struct = offsets</span><span class="ar">→</span><span class="k">#define instance</span><span class="ar">→</span><span class="k">Id en puissances de 2</span><span class="ar">→</span><span class="k">Init : masque + valeur</span></div></div>
-  <div class="pattern-card"><div class="pattern-card-title">« Chronogramme des interruptions »</div><div class="pattern-card-sub">DS 2021 Ex1 · M13 → M15</div>
-    <div class="chain"><span class="k">instants + priorités + durées</span><span class="ar">→</span><span class="k">PUSH 12</span><span class="ar">→</span><span class="k">nested / late arrival</span><span class="ar">→</span><span class="k">TC 6 / POP 12</span><span class="ar">→</span><span class="k">tableau début–fin</span></div></div>
-
-  <h2><span class="h-num">S · 5</span>Auto-test express</h2>
-  <p style="text-align:center;font-style:italic">Clique sur une carte pour la retourner.</p>
-  <div class="flash-grid" id="flash"></div>
-
-  <h2><span class="h-num">S · 6</span>Check-list avant le DS</h2>
-  <dl class="kv">
-    <dt>À savoir énoncer</dt><dd>GPP/DSP/ASIP/SPP/FPGA/ASIC · Von Neumann vs Harvard · 5 critères · Flynn · SoC vs MCU · rôle des 3 bus et de /CE · conditions d'interfaçage · aligné/non aligné · RCC · 4 modes GPIO · BSRR/BRR · rôle d'une HAL · NVIC (entrées, exceptions figées) · PUSH/POP/TC/préemption/nested/late arrival · groupe vs sous-priorité · registres EXTI · interruption groupée.</dd>
-    <dt>À savoir faire</dt><dd>Calculer n, taille, nombre de puces · câbler et décoder /CE · listing mémoire + LDR/STR · valeur hex d'un port (7 segments) · masques · configurer un GPIO (registres et FWL) · écrire struct memory map + Init · configurer EXTI + NVIC · chronogramme d'interruptions.</dd>
-    <dt>Valeurs clés</dt><dd>RCC_APB2ENR = 0x40021018 · GPIOA/B/C = 0x40010800 / 0x40010C00 / 0x40011000 · CRL 0x00 CRH 0x04 IDR 0x08 ODR 0x0C BSRR 0x10 BRR 0x14 · out PP 2 MHz = 0x2 · in floating = 0x4 · PUSH = POP = 12 · TC = 6 · VTOR + 4i · EXTI9_5 = 23, EXTI15_10 = 40.</dd>
-    <dt>Pièges classiques</dt><dd>Oublier l'horloge (RCC, AFIO) · <span class="fx">|=</span> sans effacer d'abord · CRL vs CRH · <span class="fx">;</span> dans un #define · pas de volatile · pas de break · <span class="fx">a &amp; b != 0</span> sans parenthèses · oublier d'effacer le FLAG · confondre groupe et sous-priorité · deux broches de même numéro sur EXTI.</dd>
-  </dl>
+<!-- ================= PIÈGES ================= -->
+<section class="tab" id="t6">
+<h2><span class="k">Avant le DS</span>Pièges et erreurs des diapos</h2>
+<h3>Pièges classiques</h3>
+<ul>
+<li>Bits bas → Byte Select, milieu → mémoire, hauts → /CE (seulement pour la profondeur).</li>
+<li>Puces en parallèle : <strong>même /CE</strong>. Puces empilées : <strong>/CE différents</strong>.</li>
+<li>Oublier l'horloge RCC avant de configurer un GPIO.</li>
+<li><span class="m">*REG = x</span> au lieu de <span class="m">|=</span> efface les autres bits (sauf BSRR/BRR où <span class="m">=</span> est correct).</li>
+<li>Comparer <span class="m">(IDR &amp; 0x04) == 1</span> : faux, le résultat vaut 0x04. Tester <span class="m">!= 0</span>.</li>
+<li>Oublier <span class="m">&gt;&gt; 8</span> après <span class="m">&amp; 0x0F00</span>.</li>
+<li>Oublier <span class="m">volatile</span>, le <span class="m">0x</span>, ou mettre un <span class="m">;</span> à la fin d'un <span class="m">#define</span>.</li>
+<li>N° d'exception dans ISER (faux) ou n° d'IRQ sans +16 pour l'adresse du vecteur (faux).</li>
+<li>Ne pas effacer le flag dans l'ISR → boucle infinie d'interruptions.</li>
+<li>Nom du handler différent de celui du fichier startup → jamais appelé.</li>
+</ul>
+<h3>Erreurs dans les supports</h3>
+<div class="tw"><table>
+<tr><th>Où</th><th>Écrit</th><th>Correct</th></tr>
+<tr><td>Ch1 diapos 41–43</td><td>/CE = A9</td><td>A11 (N = 12)</td></tr>
+<tr><td>Ch1 8255</td><td>switch sans break</td><td>ajouter les break</td></tr>
+<tr><td>Ch2 diapos 38/42, Ch3 FWL</td><td>RCC |= 0x04 « GPIOC »</td><td>0x04 = GPIOA ; GPIOC = 0x10</td></tr>
+<tr><td>Ch2 diapos 44/50</td><td>GPIOA_IDR = 0x40010800</td><td>0x40010808</td></tr>
+<tr><td>Exercice01</td><td>LED via BSRR_B, afficheur via BSRR_A</td><td>LED : BSRR_A ; afficheur : BSRR_B/BRR_B</td></tr>
+<tr><td>Exercice01 p.8</td><td>CRH_B = 0x4444</td><td>CRH_B |= 0x4444</td></tr>
+<tr><td>Ch3 diapos 36–38</td><td>&amp;= ~0x0Fu &lt;&lt; s</td><td>&amp;= ~(0x0Fu &lt;&lt; s)</td></tr>
+<tr><td>Ch3 diapo 24</td><td>HAL_GPIO_Init(GPIOA, GPIO_InitStruct)</td><td>&amp;GPIO_InitStruct</td></tr>
+<tr><td>Ch4 diapos 16–17</td><td>i = 1…5, huart2, sizeof</td><td>i = 0…4, &amp;huart2, 5 octets</td></tr>
+<tr><td>Ch4 diapo 22</td><td>bouton PA5, LED PC13</td><td>bouton PC13, LED PA5 (Nucleo)</td></tr>
+<tr><td>Ch4 diapo 35</td><td>HAL_I2C_MemWrite</td><td>HAL_I2C_Mem_Write</td></tr>
+</table></div>
 </section>
 </main>
 
-<footer>
-  <div class="footer-ornament">◆ ◆ ◆</div>
-  v1 · 27 octobre 2026 · Sources : cours E. Damergi Ch0–3 (slides), Document_Cours (interruptions, NVIC, EXTI), Examen 2021 GL3 + correction. Ch4–5 reconstruits depuis le document de cours (slides absentes du Drive).<br>
-  Fait par Adam Bhouri avec Claude · INSAT GL3
-</footer>
+<!-- ================= CODE SHEET ================= -->
+<aside>
+<div class="sheet">
+<h2>Code</h2>
+<p style="font-size:13px;margin-bottom:6px">Toute la syntaxe C / HAL des chapitres I à V.</p>
+
+<details open><summary>Pointeur sur registre</summary>
+<pre><span class="k">#define</span> REG ((<span class="k">volatile</span> uint32_t*) <span class="n">0x40011004</span>)  <span class="c">// pas de ;</span>
+*REG = val;        <span class="c">// écrire</span>
+x = *REG;          <span class="c">// lire</span>
+<span class="c">// struct (header) : GPIOC-&gt;CRH, RCC-&gt;APB2ENR</span></pre></details>
+
+<details open><summary>Masquage</summary>
+<pre>REG |=  (<span class="n">1u</span> &lt;&lt; n);            <span class="c">// bit n = 1</span>
+REG &amp;= ~(<span class="n">1u</span> &lt;&lt; n);            <span class="c">// bit n = 0</span>
+REG ^=  (<span class="n">1u</span> &lt;&lt; n);            <span class="c">// inverser</span>
+REG &amp;= ~(<span class="n">0xFu</span> &lt;&lt; s);          <span class="c">// effacer un champ</span>
+REG |=  (val &lt;&lt; s);           <span class="c">// puis écrire</span>
+<span class="k">if</span> (REG &amp; (<span class="n">1u</span> &lt;&lt; n)) {…}      <span class="c">// tester</span>
+v = (REG &amp; <span class="n">0x0F00</span>) &gt;&gt; <span class="n">8</span>;     <span class="c">// extraire bits 8–11</span>
+<span class="c">// 2^n : bit4=0x10, bit9=0x200, bit13=0x2000</span></pre></details>
+
+<details open><summary>GPIO registres (F1)</summary>
+<pre><span class="k">#define</span> RCC_APB2ENR ((<span class="k">volatile</span> uint32_t*)<span class="n">0x40021018</span>)
+<span class="k">#define</span> GPIOC_CRH   ((<span class="k">volatile</span> uint32_t*)<span class="n">0x40011004</span>)
+<span class="k">#define</span> GPIOC_BSRR  ((<span class="k">volatile</span> uint32_t*)<span class="n">0x40011010</span>)
+<span class="k">#define</span> GPIOC_BRR   ((<span class="k">volatile</span> uint32_t*)<span class="n">0x40011014</span>)
+<span class="k">#define</span> GPIOA_CRL   ((<span class="k">volatile</span> uint32_t*)<span class="n">0x40010800</span>)
+<span class="k">#define</span> GPIOA_IDR   ((<span class="k">volatile</span> uint32_t*)<span class="n">0x40010808</span>)
+
+*RCC_APB2ENR |= <span class="n">0x14</span>;          <span class="c">// GPIOA(b2)+GPIOC(b4)</span>
+*GPIOC_CRH &amp;= ~(<span class="n">0xFu</span> &lt;&lt; <span class="n">4</span>);   <span class="c">// PC9</span>
+*GPIOC_CRH |=  (<span class="n">0x2u</span> &lt;&lt; <span class="n">4</span>);   <span class="c">// sortie PP 2MHz</span>
+*GPIOA_CRL &amp;= ~(<span class="n">0xFu</span> &lt;&lt; <span class="n">8</span>);   <span class="c">// PA2</span>
+*GPIOA_CRL |=  (<span class="n">0x4u</span> &lt;&lt; <span class="n">8</span>);   <span class="c">// entrée flottante</span>
+<span class="k">while</span> (<span class="n">1</span>) {
+  <span class="k">if</span> (*GPIOA_IDR &amp; <span class="n">0x04</span>) *GPIOC_BSRR = <span class="n">1u</span> &lt;&lt; <span class="n">9</span>;
+  <span class="k">else</span>                    *GPIOC_BRR  = <span class="n">1u</span> &lt;&lt; <span class="n">9</span>;
+}</pre></details>
+
+<details><summary>GPIO HAL</summary>
+<pre>GPIO_InitTypeDef s;
+__HAL_RCC_GPIOD_CLK_ENABLE();
+s.Pin   = GPIO_PIN_12 | GPIO_PIN_13;
+s.Mode  = GPIO_MODE_OUTPUT_PP;   <span class="c">// INPUT, OUTPUT_OD, AF_PP…</span>
+s.Pull  = GPIO_NOPULL;           <span class="c">// PULLUP, PULLDOWN</span>
+s.Speed = GPIO_SPEED_FREQ_LOW;
+HAL_GPIO_Init(GPIOD, &amp;s);
+
+GPIO_PinState b = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1);
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);  <span class="c">// ou 1</span>
+HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+HAL_Delay(<span class="n">500</span>);                                     <span class="c">// ms</span></pre></details>
+
+<details><summary>HAL_GPIO_Init maison (F1)</summary>
+<pre><span class="k">void</span> HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *S){
+  uint8_t  cfg = (S-&gt;Mode &lt;&lt; <span class="n">2</span>) | S-&gt;Speed;
+  uint32_t mL=<span class="n">0</span>, cL=<span class="n">0</span>, mH=<span class="n">0</span>, cH=<span class="n">0</span>;
+  <span class="k">for</span> (<span class="k">int</span> p = <span class="n">0</span>; p &lt; <span class="n">16</span>; p++)
+    <span class="k">if</span> (S-&gt;Pin &amp; (<span class="n">1u</span> &lt;&lt; p)) {
+      <span class="k">if</span> (p &lt;= <span class="n">7</span>) { mL |= <span class="n">0xFu</span>&lt;&lt;<span class="n">4</span>*p;     cL |= cfg&lt;&lt;<span class="n">4</span>*p; }
+      <span class="k">else</span>        { mH |= <span class="n">0xFu</span>&lt;&lt;<span class="n">4</span>*(p-<span class="n">8</span>); cH |= cfg&lt;&lt;<span class="n">4</span>*(p-<span class="n">8</span>); }
+    }
+  GPIOx-&gt;CRL &amp;= ~mL;  GPIOx-&gt;CRL |= cL;   <span class="c">// 8 accès au total</span>
+  GPIOx-&gt;CRH &amp;= ~mH;  GPIOx-&gt;CRH |= cH;
+}</pre></details>
+
+<details><summary>UART HAL (polling)</summary>
+<pre><span class="c">// broche TX : PA2 en fonction alternative</span>
+s.Pin = GPIO_PIN_2;  s.Mode = GPIO_MODE_AF_PP;
+s.Pull = GPIO_PULLUP; s.Alternate = GPIO_AF7_USART2;
+HAL_GPIO_Init(GPIOA, &amp;s);
+
+UART_HandleTypeDef huart2;
+__HAL_RCC_USART2_CLK_ENABLE();
+huart2.Instance          = USART2;
+huart2.Init.BaudRate     = <span class="n">9600</span>;
+huart2.Init.WordLength   = UART_WORDLENGTH_8B;
+huart2.Init.StopBits     = UART_STOPBITS_1;
+huart2.Init.Parity       = UART_PARITY_NONE;
+huart2.Init.Mode         = UART_MODE_TX_RX;
+huart2.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
+huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+HAL_UART_Init(&amp;huart2);
+
+uint8_t msg[] = <span class="n">"Hello"</span>;
+HAL_UART_Transmit(&amp;huart2, msg, <span class="n">5</span>, <span class="n">10</span>);   <span class="c">// timeout ms</span>
+<span class="k">if</span> (HAL_UART_Receive(&amp;huart2, buf, <span class="n">5</span>, <span class="n">5000</span>) == HAL_OK) {…}
+
+<span class="c">// polling à la main</span>
+<span class="k">while</span> (!(USART2-&gt;SR &amp; <span class="n">0x80</span>));   <span class="c">// attendre TXE (bit 7)</span>
+USART2-&gt;DR = msg[i];</pre></details>
+
+<details><summary>I2C HAL</summary>
+<pre>hi2c1.Instance = I2C1;  <span class="c">// ClockSpeed = 100000…</span>
+HAL_I2C_Init(&amp;hi2c1);
+HAL_I2C_IsDeviceReady(&amp;hi2c1, <span class="n">0x3A</span>, <span class="n">3</span>, <span class="n">10</span>);
+<span class="c">//               handle  adr  reg  taille_reg data taille timeout</span>
+HAL_I2C_Mem_Write(&amp;hi2c1, <span class="n">0x3A</span>, <span class="n">0x20</span>, <span class="n">1</span>, tx, <span class="n">1</span>, <span class="n">10</span>);
+HAL_I2C_Mem_Read (&amp;hi2c1, <span class="n">0x3A</span>, <span class="n">0x2C</span>, <span class="n">1</span>, rx, <span class="n">2</span>, <span class="n">10</span>);
+HAL_I2C_Master_Transmit(&amp;hi2c1, adr, data, n, tmo);
+HAL_I2C_Master_Receive (&amp;hi2c1, adr, data, n, tmo);
+<span class="c">// adresse HAL = adresse 7 bits &lt;&lt; 1 (0x1D → 0x3A)</span></pre></details>
+
+<details><summary>NVIC registres (CMSIS)</summary>
+<pre>uint8_t n = <span class="n">37</span>;                          <span class="c">// USART1_IRQn (F1)</span>
+NVIC-&gt;ISER[n &gt;&gt; <span class="n">5</span>] = <span class="n">1u</span> &lt;&lt; (n &amp; <span class="n">0x1F</span>);   <span class="c">// autoriser</span>
+NVIC-&gt;ICER[n &gt;&gt; <span class="n">5</span>] = <span class="n">1u</span> &lt;&lt; (n &amp; <span class="n">0x1F</span>);   <span class="c">// interdire</span>
+NVIC-&gt;ISPR[n &gt;&gt; <span class="n">5</span>] = <span class="n">1u</span> &lt;&lt; (n &amp; <span class="n">0x1F</span>);   <span class="c">// pending</span>
+NVIC-&gt;ICPR[n &gt;&gt; <span class="n">5</span>] = <span class="n">1u</span> &lt;&lt; (n &amp; <span class="n">0x1F</span>);   <span class="c">// annuler</span>
+NVIC-&gt;STIR = n;                           <span class="c">// déclencher par logiciel</span>
+
+<span class="c">// groupe 2 (PRIGROUP 101), clé 0x05FA</span>
+SCB-&gt;AIRCR = (SCB-&gt;AIRCR &amp; <span class="n">0x0000F8FF</span>) | (<span class="n">0x05FAu</span> &lt;&lt; <span class="n">16</span>) | (<span class="n">5u</span> &lt;&lt; <span class="n">8</span>);
+<span class="c">// préemption 1, sous-priorité 2 → 01|10 en bits 7–4</span>
+NVIC-&gt;IP[n] &amp;= <span class="n">0x0F</span>;
+NVIC-&gt;IP[n] |= ((<span class="n">1</span> &lt;&lt; <span class="n">2</span>) | <span class="n">2</span>) &lt;&lt; <span class="n">4</span>;        <span class="c">// = 0x60</span>
+
+SCB-&gt;ICSR = <span class="n">1u</span> &lt;&lt; <span class="n">28</span>;                   <span class="c">// PendSV</span>
+<span class="k">void</span> USART1_IRQHandler(<span class="k">void</span>) {          <span class="c">// nom du startup</span>
+  <span class="c">// … traiter, puis EFFACER LE FLAG</span>
+}</pre></details>
+</div>
+</aside>
+</div>
+
+<footer>v2 · 2026-10-31 · sources : Classroom 2026 (Chap01–Chap05 diapo 52, Exercice01) · erreurs des diapos relevées dans l'onglet Pièges</footer>
+</div>
 
 <script>
 (function(){
-/* ─── Tabs ─── */
-const btns=document.querySelectorAll('.tab-btn'),tabs=document.querySelectorAll('.tab-content');
-function show(id,scroll){btns.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));tabs.forEach(t=>t.classList.toggle('active',t.id===id));
-  try{history.replaceState(null,'','#'+id)}catch(e){}
-  if(scroll!==false)window.scrollTo({top:document.querySelector('.tabs-wrapper').offsetTop-4,behavior:'smooth'})}
-btns.forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
-const h=(location.hash||'').slice(1);
-if(h){if(document.getElementById(h)&&document.getElementById(h).classList.contains('tab-content'))show(h,false);
-  else if(/^m\d+$/.test(h)){show('methods',false);setTimeout(()=>document.getElementById(h)&&document.getElementById(h).scrollIntoView(),50)}}
-document.querySelectorAll('.method-index a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth',block:'start'})}));
-const hex=(v,w)=>'0x'+(v>>>0).toString(16).toUpperCase().padStart(w||1,'0');
-const size=b=>b>=2**30?(b/2**30)+' Go':b>=2**20?(b/2**20)+' Mo':b>=1024?(b/1024)+' Ko':b+' o';
-
-/* ─── VIZ 1 : interfaçage mémoire ─── */
-(function(){
-  const $=id=>document.getElementById(id);if(!$('memlab'))return;
-  function run(){
-    const N=+$('ml-N').value,M=+$('ml-M').value,n=+$('ml-n').value,m=+$('ml-m').value;
-    const out=$('ml-out'),wire=$('ml-wire'),svg=$('ml-svg');
-    const k=Math.log2(M/8);
-    const stat=(a,b)=>`<div class="viz-stat"><span class="viz-stat-key">${a}</span><span class="viz-stat-val">${b}</span></div>`;
-    if(m>M){out.innerHTML='<p style="color:var(--burgundy)">m &gt; M : mémoire plus large que le bus, hors programme.</p>';wire.innerHTML='';svg.innerHTML='';return}
-    if(n>N-k){out.innerHTML=stat('capacité CPU',size(2**N))+'<p style="color:var(--burgundy);font-size:13px">La mémoire ('+size(2**n*m/8)+' × '+(M/m)+') dépasse l\'espace d\'adressage : n doit être ≤ N − '+k+' = '+(N-k)+'.</p>';wire.innerHTML='';svg.innerHTML='';return}
-    const W=M/m,bank=2**n*M/8,free=N-k-n,banks=2**free;
-    out.innerHTML=stat('capacité CPU','2^'+N+' = '+size(2**N))+stat('k = log₂(M/8)',k)+stat('taille 1 puce','2^'+n+'×'+m+'/8 = '+size(2**n*m/8))+stat('puces en largeur (M/m)',W)+stat('taille d\'un banc',size(bank))+stat('lignes libres → /CE',free)+stat('bancs pour tout remplir',banks)+stat('puces au total',W*banks);
-    let w=`<p style="margin:0 0 6px"><strong>Adresse</strong> : CPU A${k+n-1}…A${k} → mém. A${n-1}…A0${k?` · <strong>A${k-1}…A0</strong> → byte select`:''}</p>`;
-    w+='<p style="margin:0 0 6px"><strong>Données</strong> : '+[...Array(W)].map((_,j)=>`puce ${j} ← D${(j+1)*m-1}…D${j*m}`).join(' · ')+'</p>';
-    if(free===0)w+='<p style="margin:0"><strong>/CE</strong> = 0 (un seul banc, tout l\'espace)</p>';
-    else{const hiL=[...Array(free)].map((_,i)=>'A'+(N-1-i));
-      w+='<p style="margin:0 0 4px"><strong>/CE</strong> (lignes '+hiL.join(',')+') :</p>'+[...Array(Math.min(banks,4))].map((_,z)=>{const bits=z.toString(2).padStart(free,'0');
-        const expr=free===1?(z?'¬'+hiL[0]:hiL[0]):'0 ssi '+hiL.map((l,i)=>l+'='+bits[i]).join(', ');
-        return`<div style="font-family:'JetBrains Mono',monospace;font-size:12px">banc ${z} : /CE${z} = ${expr} · ${hex(z*bank,4)}–${hex((z+1)*bank-1,4)}</div>`}).join('')+(banks>4?'<div style="font-size:12px;color:var(--ink-faint)">… '+(banks-4)+' autres bancs</div>':'');}
-    wire.innerHTML=w;
-    // svg
-    const rows=Math.min(banks,4),cw=Math.min(110,440/W-10);let s='<rect x="20" y="70" width="110" height="120" rx="6" fill="#7B2D26"/><text x="75" y="125" text-anchor="middle" style="fill:#FBF8F0;font-family:Instrument Serif,serif;font-style:italic;font-size:20px">CPU</text><text x="75" y="146" text-anchor="middle" style="fill:#F7E8B8;font-size:11px;font-family:JetBrains Mono,monospace">N='+N+' M='+M+'</text>';
-    const rh=Math.min(50,200/rows-8);
-    for(let r=0;r<rows;r++)for(let c=0;c<W;c++){const x=220+c*(cw+10),y=20+r*(rh+8);
-      s+=`<rect x="${x}" y="${y}" width="${cw}" height="${rh}" rx="4" fill="#FBF8F0" stroke="${r===0?'#2C5664':'#C9BFAC'}"/><text x="${x+cw/2}" y="${y+rh/2-2}" text-anchor="middle" style="font-size:11px;font-family:JetBrains Mono,monospace;fill:#1F1A14">Mem${r*W+c}</text><text x="${x+cw/2}" y="${y+rh/2+12}" text-anchor="middle" style="font-size:9.5px;font-family:JetBrains Mono,monospace;fill:#8A7D6B">D${(c+1)*m-1}…D${c*m}</text>`;}
-    s+=`<path d="M130,110 L210,110" stroke="#B8924A" stroke-width="2"/><text x="170" y="102" text-anchor="middle" style="font-size:10px;font-family:JetBrains Mono,monospace;fill:#8A7D6B">A${k+n-1}…A${k}</text>`;
-    s+=`<path d="M130,150 L210,150" stroke="#2C5664" stroke-width="2"/><text x="170" y="166" text-anchor="middle" style="font-size:10px;font-family:JetBrains Mono,monospace;fill:#8A7D6B">D${M-1}…D0</text>`;
-    if(free)s+=`<text x="170" y="200" text-anchor="middle" style="font-size:10px;font-family:JetBrains Mono,monospace;fill:#7B2D26">A${N-1}…A${k+n} → /CE</text>`;
-    svg.setAttribute('viewBox','0 0 700 '+Math.max(230,30+rows*(rh+8)));svg.innerHTML=s;
+  const btns=document.querySelectorAll('.tab-btn');
+  function show(id){
+    btns.forEach(b=>b.classList.toggle('active',b.dataset.t===id));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.id===id));
+    try{localStorage.setItem('bn-tab',id)}catch(e){}
   }
-  ['ml-N','ml-M','ml-n','ml-m'].forEach(i=>$(i).addEventListener('input',run));
-  document.querySelectorAll('#memlab [data-ex]').forEach(b=>b.onclick=()=>{const [a,bb,c,d]=b.dataset.ex.split(',');$('ml-N').value=a;$('ml-M').value=bb;$('ml-n').value=c;$('ml-m').value=d;run()});
-  run();
-})();
+  btns.forEach(b=>b.addEventListener('click',()=>show(b.dataset.t)));
+  try{const s=localStorage.getItem('bn-tab');if(s&&document.getElementById(s))show(s)}catch(e){}
 
-/* ─── VIZ 2 : configurateur GPIO ─── */
-(function(){
-  const $=id=>document.getElementById(id);if(!$('gpiolab'))return;
-  const BASE={A:0x40010800,B:0x40010C00,C:0x40011000,D:0x40011400,E:0x40011800},BIT={A:2,B:3,C:4,D:5,E:6};
-  const HALM={2:['GPIO_Mode_Out_PP','GPIO_Speed_2MHz'],1:['GPIO_Mode_Out_PP','GPIO_Speed_10MHz'],3:['GPIO_Mode_Out_PP','GPIO_Speed_50MHz'],6:['GPIO_Mode_Out_OD','GPIO_Speed_2MHz'],4:['GPIO_Mode_IN_FLOATING',null],8:['GPIO_Mode_IPU / GPIO_Mode_IPD',null],0:['GPIO_Mode_AIN',null],11:['GPIO_Mode_AF_PP','GPIO_Speed_50MHz']};
-  $('gp-pin').innerHTML=[...Array(16)].map((_,i)=>`<option${i===9?' selected':''}>${i}</option>`).join('');
-  function run(){
-    const P=$('gp-port').value,p=+$('gp-pin').value,v=+$('gp-mode').value,st=$('gp-style').value;
-    const reg=p<8?'CRL':'CRH',off=p<8?0:4,sh=4*(p%8),addr=BASE[P]+off,isOut=[1,2,3,6,11].includes(v);
-    const nib=v.toString(2).padStart(4,'0');
-    let cells='';for(let b=31;b>=0;b--){const inN=b>=sh&&b<sh+4;const val=inN?(v>>(b-sh))&1:null;cells+=`<div class="${inN?'hi':''} ${val?'one':''}">${inN?val:'·'}</div>`}
-    let lbl='';for(let b=31;b>=0;b--)lbl+=`<div class="lbl">${b%4===0||b===31?b:''}</div>`;
-    $('gp-reg').innerHTML=`<div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft)">GPIO${P}_${reg} @ ${hex(addr,8)} — quartet de P${P}${p} = bits ${sh+3}..${sh} = <b style="color:var(--burgundy)">${nib}</b> (CNF=${nib.slice(0,2)}, MODE=${nib.slice(2)})</div><div class="regbits">${lbl}</div><div class="regbits">${cells}</div>`;
-    const pin=1<<p;let code;
-    if(st==='reg'){
-      code=`<span class="k">#define</span> RCC_APB2ENR ((<span class="n">volatile</span> uint32_t*) 0x40021018)
-<span class="k">#define</span> GPIO${P}_${reg}  ((<span class="n">volatile</span> uint32_t*) ${hex(addr,8)})
-${isOut?`<span class="k">#define</span> GPIO${P}_BSRR ((<span class="n">volatile</span> uint32_t*) ${hex(BASE[P]+0x10,8)})
-<span class="k">#define</span> GPIO${P}_BRR  ((<span class="n">volatile</span> uint32_t*) ${hex(BASE[P]+0x14,8)})`:`<span class="k">#define</span> GPIO${P}_IDR  ((<span class="n">volatile</span> uint32_t*) ${hex(BASE[P]+0x08,8)})`}
+  // GPIO calculator
+  const bases={A:0x40010800,B:0x40010C00,C:0x40011000,D:0x40011400};
+  const gn=document.getElementById('gn');
+  for(let i=0;i<16;i++){const o=document.createElement('option');o.value=i;o.textContent='Pin '+i;if(i===9)o.selected=true;gn.appendChild(o);}
+  const hx=(n,w)=>'0x'+n.toString(16).toUpperCase().padStart(w||1,'0');
+  function gdraw(){
+    const P=document.getElementById('gp').value,p=+gn.value,m=+document.getElementById('gm').value;
+    const reg=p<8?'CRL':'CRH',sh=4*(p%8),addr=bases[P]+(p<8?0:4),rb=2+'ABCD'.indexOf(P);
+    document.getElementById('gcap').textContent=`GPIO${P}_${reg} = ${hx(addr,8)} · pin ${p} → bits ${sh+3}–${sh}`;
+    let q='';for(let k=7;k>=0;k--){const pin=(p<8?0:8)+k;q+=`<div class="${pin===p?'on':''}">P${pin}<br>${pin===p?m.toString(2).padStart(4,'0'):'····'}</div>`;}
+    document.getElementById('gq').innerHTML=q;
+    const out=(m&3)!==0;
+    document.getElementById('gcode').textContent=
+`*RCC_APB2ENR |= ${hx(1<<rb,2)};             // horloge GPIO${P} (bit ${rb})
+*GPIO${P}_${reg} &= ~(0xFu << ${sh});        // effacer pin ${p}
+*GPIO${P}_${reg} |=  (${hx(m)}u << ${sh});        // écrire ${m.toString(2).padStart(4,'0')}
+`+(out?`*GPIO${P}_BSRR = 1u << ${p};   *GPIO${P}_BRR = 1u << ${p};`:`if (*GPIO${P}_IDR & (1u << ${p})) { … }   // ${hx(1<<p)}`);
+  }
+  ['gp','gn','gm'].forEach(id=>document.getElementById(id).addEventListener('change',gdraw));gdraw();
 
-*RCC_APB2ENR |= 1u &lt;&lt; ${BIT[P]};            <span class="c">// ${hex(1<<BIT[P],2)} : horloge GPIO${P}</span>
-*GPIO${P}_${reg} &amp;= ~(0xFu &lt;&lt; ${sh});          <span class="c">// effacer le quartet de P${P}${p}</span>
-*GPIO${P}_${reg} |=  (${hex(v)}u &lt;&lt; ${sh});          <span class="c">// ${nib}</span>
-${isOut?`*GPIO${P}_BSRR = 1u &lt;&lt; ${p};               <span class="c">// P${P}${p} = 1  (${hex(pin,4)})</span>
-*GPIO${P}_BRR  = 1u &lt;&lt; ${p};               <span class="c">// P${P}${p} = 0</span>`:`<span class="k">if</span> (*GPIO${P}_IDR &amp; (1u &lt;&lt; ${p})) { <span class="c">/* P${P}${p} = 1 */</span> }   <span class="c">// masque ${hex(pin,4)}</span>`}`;
-    }else{const [m,sp]=HALM[v];
-      code=`GPIO_InitTypeDef GPIO_InitStructure;
-RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIO${P}, ENABLE);
-GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_${p};          <span class="c">// = ${hex(pin,4)}</span>
-GPIO_InitStructure.GPIO_Mode = ${m};
-${sp?`GPIO_InitStructure.GPIO_Speed = ${sp};
-`:''}GPIO_Init(GPIO${P}, &amp;GPIO_InitStructure);
-${isOut?`GPIO_SetBits  (GPIO${P}, GPIO_Pin_${p});     <span class="c">// → GPIO${P}-&gt;BSRR = ${hex(pin,4)}</span>
-GPIO_ResetBits(GPIO${P}, GPIO_Pin_${p});     <span class="c">// → GPIO${P}-&gt;BRR  = ${hex(pin,4)}</span>`:`<span class="k">if</span> (GPIO_ReadInputDataBit(GPIO${P}, GPIO_Pin_${p})) { <span class="c">/* … */</span> }`}`;}
-    $('gp-code').innerHTML=code;
-    const stat=(a,b)=>`<div class="viz-stat"><span class="viz-stat-key">${a}</span><span class="viz-stat-val">${b}</span></div>`;
-    $('gp-calc').innerHTML=stat('registre',reg+(p<8?' (broches 0–7)':' (broches 8–15)'))+stat('décalage','4 × ('+p+' mod 8) = '+sh)+stat('masque effacement',hex((0xF<<sh)>>>0,8))+stat('valeur écrite',hex((v<<sh)>>>0,8))+stat('bit RCC','IOP'+P+'EN = bit '+BIT[P])+stat(isOut?'BSRR/BRR':'masque IDR',hex(pin,4));
+  // IRQ converter
+  const L=[["NMI",-14],["HardFault",-13],["SVCall",-5],["PendSV",-2],["SysTick",-1],["WWDG",0],["EXTI0",6],["EXTI1",7],["EXTI4",10],["DMA1_Channel1",11],["EXTI9_5",23],["TIM2",28],["USART1",37],["USART2",38],["EXTI15_10",40],["UART4",52],["OTG_FS",67]];
+  const iq=document.getElementById('iq');
+  L.forEach((x,i)=>{const o=document.createElement('option');o.value=i;o.textContent=x[0]+' (IRQn '+x[1]+')';if(x[0]==='USART1')o.selected=true;iq.appendChild(o);});
+  function idraw(){
+    const [nm,n]=L[+iq.value],e=n+16,o=document.getElementById('iqout');
+    let h=`<strong>${nm}</strong> · IRQn <span class="m">${n}</span> · exception <span class="m">${e}</span> · vecteur à <span class="m">VTOR + ${hx(4*e,2)}</span><br>`;
+    h+= n<0 ? 'Exception du cœur : pas dans ISER/IP (gérée par le SCB'+(['NMI','HardFault'].includes(nm)?', priorité fixe':'')+').'
+            : `<span class="m">NVIC-&gt;ISER[${n>>5}]</span> bit <span class="m">${n&31}</span> · priorité <span class="m">NVIC-&gt;IP[${n}]</span> bits 7–4 · <span class="m">STIR = ${n}</span> · handler <span class="m">${nm}_IRQHandler</span>`;
+    o.innerHTML=h;
   }
-  ['gp-port','gp-pin','gp-mode','gp-style'].forEach(i=>$(i).addEventListener('change',run));
-  run();
-})();
-
-/* ─── VIZ 3 : chronogramme d'interruptions ─── */
-(function(){
-  const $=id=>document.getElementById(id);if(!$('irqlab'))return;
-  const PRE={
-    ds:{S:[['SysTick',0,6],['EXTI3',1,10],['EXTI9_5',2,10],['EXTI15_10',3,6]],E:[[3,16],[2,30],[0,55]],
-      note:'Extrait du DS 2021 : EXTI15_10 servi à 28, EXTI9_5 arrive à 30, SysTick à 55. On retrouve 42–52, 61–67 et 28–83 du corrigé.'},
-    tc:{S:[['IRQ A',1,10],['IRQ B',2,8]],E:[[0,0],[1,15]],note:'B arrive pendant A (moins prioritaire) : à la fin de A, TC de 6 cycles au lieu de POP + PUSH.'},
-    late:{S:[['High',1,6],['Low',2,8]],E:[[1,0],[0,5]],note:'High arrive pendant le PUSH de Low : un seul PUSH, High est servie d\'abord (late arrival), puis TC vers Low.'},
-    nest:{S:[['High',1,6],['Low',2,20]],E:[[1,0],[0,20]],note:'High préempte le handler de Low : PUSH, High, POP, puis Low reprend là où il était.'}
-  };
-  let S,E,note;
-  function load(k){S=PRE[k].S.map(a=>({n:a[0],p:a[1],d:a[2]}));E=PRE[k].E.map(a=>({s:a[0],t:a[1]}));note=PRE[k].note;edit();sim()}
-  function edit(){
-    $('irq-src').innerHTML=S.map((s,i)=>`<div class="evrow" style="grid-template-columns:1fr 70px 70px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px">${s.n}</span><input type="number" min="0" max="15" value="${s.p}" data-i="${i}" data-f="p" title="priorité"><input type="number" min="1" max="60" value="${s.d}" data-i="${i}" data-f="d" title="durée"></div>`).join('');
-    $('irq-ev').innerHTML=E.map((e,j)=>`<div class="evrow"><select data-j="${j}">${S.map((s,i)=>`<option value="${i}"${i===e.s?' selected':''}>${s.n}</option>`).join('')}</select><input type="number" min="0" max="250" value="${e.t}" data-j="${j}"><button data-del="${j}" aria-label="supprimer">×</button></div>`).join('');
-    $('irq-src').querySelectorAll('input').forEach(x=>x.oninput=()=>{S[x.dataset.i][x.dataset.f]=Math.max(+x.value||0,x.dataset.f==='d'?1:0);sim()});
-    $('irq-ev').querySelectorAll('select').forEach(x=>x.onchange=()=>{E[x.dataset.j].s=+x.value;sim()});
-    $('irq-ev').querySelectorAll('input').forEach(x=>x.oninput=()=>{E[x.dataset.j].t=Math.max(0,+x.value||0);sim()});
-    $('irq-ev').querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{E.splice(+x.dataset.del,1);edit();sim()});
-  }
-  function simulate(){
-    let mode='thr',cnt=0;const stack=[],pend=new Set(),ph=[],ex=S.map(()=>[]),log=[];
-    const top=()=>stack[stack.length-1];
-    const elig=i=>!stack.length||S[i].p<S[top().s].p;
-    const best=c=>{let b=-1;pend.forEach(i=>{if(c(i)&&(b<0||S[i].p<S[b].p||(S[i].p===S[b].p&&i<b)))b=i});return b};
-    const lastEv=Math.max(0,...E.map(e=>e.t));
-    for(let t=0;t<320;t++){
-      E.forEach(e=>{if(e.t===t){pend.add(e.s);log.push(`t=${t} : IRQ ${S[e.s].n}`)}});
-      if(mode==='thr'&&pend.size){mode='push';cnt=12;log.push(`t=${t} : PUSH (${t}–${t+12})`)}
-      else if(mode==='run'){const b=best(i=>S[i].p<S[top().s].p);if(b>=0){mode='push';cnt=12;log.push(`t=${t} : ${S[b].n} préempte ${S[top().s].n} → PUSH`)}}
-      else if(mode==='pop'){const b=best(elig);if(b>=0){mode='tc';cnt=6;log.push(`t=${t} : POP interrompu par ${S[b].n} → TC (${t}–${t+6})`)}}
-      ph[t]={m:mode,s:mode==='run'?top().s:null};
-      if(mode==='push'||mode==='tc'){if(--cnt===0){const b=best(elig);if(b>=0){pend.delete(b);stack.push({s:b,r:S[b].d});ex[b].push([t+1,null]);mode='run';log.push(`t=${t+1} : début ${S[b].n}`)}else mode=stack.length?'run':'thr'}}
-      else if(mode==='pop'){if(--cnt===0)mode=stack.length?'run':'thr'}
-      else if(mode==='run'){const tp=top();if(--tp.r===0){stack.pop();const e=ex[tp.s];e[e.length-1][1]=t+1;log.push(`t=${t+1} : fin ${S[tp.s].n}`);
-          const b=best(elig);if(b>=0){mode='tc';cnt=6;log.push(`t=${t+1} : TC vers ${S[b].n} (${t+1}–${t+7})`)}else{mode='pop';cnt=12;log.push(`t=${t+1} : POP (${t+1}–${t+13})${stack.length?' → reprise '+S[top().s].n:''}`)}}}
-      if(t>lastEv&&mode==='thr'&&!pend.size){ph.length=t+4;for(let k=t+1;k<t+4;k++)ph[k]={m:'thr'};break}
-    }
-    return{ph,ex,log};
-  }
-  function sim(){
-    const {ph,ex,log}=simulate();const T=Math.max(60,ph.length);const L=118,W=885-L,sx=t=>L+t*W/T;
-    const lanes=S.length+1,lh=30,H=30+lanes*(lh+10)+20;const svg=$('irq-svg');svg.setAttribute('viewBox','0 0 900 '+H);
-    let s='';const yl=i=>20+i*(lh+10);
-    s+=`<text x="8" y="${yl(0)+19}">CPU</text><rect class="lane" x="${L}" y="${yl(0)}" width="${W}" height="${lh}"/>`;
-    S.forEach((x,i)=>s+=`<text x="8" y="${yl(i+1)+19}">${x.n} (p${x.p})</text><rect class="lane" x="${L}" y="${yl(i+1)}" width="${W}" height="${lh}"/>`);
-    let t0=0;for(let t=1;t<=ph.length;t++){const a=ph[t0],b=ph[t];if(!b||b.m!==a.m||b.s!==a.s){
-        const cls={push:'push',pop:'pop',tc:'tc',run:'run',thr:'thr'}[a.m];
-        if(a.m!=='thr'){s+=`<rect class="${cls}" x="${sx(t0)}" y="${yl(0)+4}" width="${sx(t)-sx(t0)}" height="${lh-8}"/>`;
-          if(sx(t)-sx(t0)>22)s+=`<text x="${(sx(t0)+sx(t))/2}" y="${yl(0)+19}" text-anchor="middle" style="fill:${a.m==='run'?'#FBF8F0':'#1F1A14'};font-size:9.5px">${a.m==='run'?'':a.m.toUpperCase()}</text>`;}
-        if(a.m==='run')s+=`<rect class="run" x="${sx(t0)}" y="${yl(a.s+1)+4}" width="${sx(t)-sx(t0)}" height="${lh-8}"/>`;
-        t0=t}}
-    E.forEach(e=>s+=`<line class="irq" x1="${sx(e.t)}" y1="${yl(e.s+1)-2}" x2="${sx(e.t)}" y2="${yl(e.s+1)+lh+2}"/>`);
-    const step=T>150?20:10;for(let t=0;t<=T;t+=step)s+=`<line x1="${sx(t)}" y1="${H-22}" x2="${sx(t)}" y2="${H-17}" stroke="#8A7D6B"/><text x="${sx(t)}" y="${H-5}" text-anchor="middle">${t}</text>`;
-    svg.innerHTML=s;
-    $('irq-tab').innerHTML='<table class="mat" style="width:100%"><tr><th>handler</th><th>exécutions (début → fin)</th></tr>'+S.map((x,i)=>`<tr><td>${x.n}</td><td>${ex[i].map(e=>e[0]+' → '+(e[1]??'…')).join(' · ')||'—'}</td></tr>`).join('')+'</table>';
-    $('irq-log').innerHTML='<em>'+note+'</em><br>'+log.join('<br>');
-  }
-  $('irq-add').onclick=()=>{E.push({s:0,t:0});edit();sim()};
-  document.querySelectorAll('#irq-presets [data-p]').forEach(b=>b.onclick=()=>{document.querySelectorAll('#irq-presets [data-p]').forEach(x=>x.classList.toggle('btn-active',x===b));load(b.dataset.p)});
-  load('ds');
-})();
-
-/* ─── Flashcards ─── */
-const CARDS=[
- ['Von Neumann vs Harvard','VN : un seul bus pour code + données. Harvard : deux bus séparés (Cortex-M3).'],
- ['FC = ?','NRE / Q + UC (coût final par produit).'],
- ['Capacité d\'un CPU à N lignes','2ᴺ octets, espace 0 … 2ᴺ − 1.'],
- ['Taille d\'une mémoire n, m','2ⁿ × m/8 octets.'],
- ['/CE = 1 ?','Sorties en haute impédance : puce déconnectée du bus.'],
- ['Avant tout accès à un GPIO','Activer son horloge dans RCC_APB2ENR (GPIOA bit 2, B 3, C 4).'],
- ['PC9 en sortie PP 2 MHz','CRH, quartet bits 7..4 = 0010 (0x2 &lt;&lt; 4).'],
- ['BSRR / BRR','Écrire 1 au bit i met ODRᵢ à 1 / à 0, en une instruction.'],
- ['Durées CM3','PUSH 12 · POP 12 · TC 6 · préemption du POP 7–18.'],
- ['@ du handler i','VTOR + 4·i (0x00 = MSP initial).'],
- ['Qui préempte ?','Seulement un groupe (preemption priority) strictement plus prioritaire.'],
- ['EXTI 5–9 et 10–15','Interruptions groupées : EXTI9_5_IRQn (23), EXTI15_10_IRQn (40).']
-];
-const fg=document.getElementById('flash');
-if(fg){fg.innerHTML=CARDS.map(c=>'<div class="flash" tabindex="0"><div class="flash-in"><div class="flash-f">'+c[0]+'</div><div class="flash-b">'+c[1]+'</div></div></div>').join('');
-fg.querySelectorAll('.flash').forEach(f=>{f.onclick=()=>f.classList.toggle('flip');f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f.classList.toggle('flip')}}})}
+  iq.addEventListener('change',idraw);idraw();
 })();
 </script>
 </body>

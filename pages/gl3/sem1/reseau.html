@@ -229,6 +229,16 @@ footer .footer-ornament{color:var(--gold);font-size:10px;letter-spacing:.5em;mar
 .rip td.ch{background:var(--highlight);font-weight:600}
 .rip h6{font-family:'Instrument Serif',serif;font-style:italic;font-size:20px;color:var(--burgundy);margin:0 0 4px;font-weight:400}
 .net text:not([font-size]){font-family:'JetBrains Mono',monospace;font-size:11px}
+.pkbar{display:flex;height:46px;border-radius:4px;overflow:hidden;border:1px solid var(--rule);margin:4px 0 2px;transition:all .3s}
+.pkbar div{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#FCFAF3;min-width:58px;padding:0 4px;text-align:center;line-height:1.15;border-right:1px solid rgba(255,255,255,.35);transition:flex-grow .4s}
+.pkbar .b-data{color:var(--ink)}.pkbar .new{box-shadow:inset 0 0 0 3px #F7E8B8}
+#pk-sel .btn.active{background:var(--burgundy);color:#FCFAF3;border-color:var(--burgundy)}
+.pkcap{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);margin-bottom:8px}
+.pk-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.pk-fields table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-card)}
+.pk-fields th{text-align:left;font-family:'Instrument Serif',serif;font-size:18px;font-weight:400;padding:4px 8px;color:#FCFAF3}
+.pk-fields td{border-top:1px solid var(--rule-soft);padding:4px 8px;word-break:break-all}.pk-fields td:first-child{color:var(--ink-faint);width:44%;word-break:normal}
+.pk-fields td.ch{background:var(--highlight);font-weight:600;color:var(--ink)}
 pre.code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;background:#1F1A14;color:#ECE5D5;padding:14px 16px;border-radius:5px;overflow-x:auto;margin:12px 0}
 </style>
 </head>
@@ -444,6 +454,26 @@ pre.code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;b
     </div>
     <p style="font-size:14px;color:var(--ink-faint);margin-top:6px">Les notes écrivent « 2960 − 2 × 1232 = 486 » : c'est <strong>496</strong> (62 × 8 = 496 et 496 + 8 = 504 confirment).</p>
   </div>
+
+  <h2><span class="h-num">§ 2.5</span>Voyage d'un paquet IPv6</h2>
+  <div class="two-col">
+    <div class="box box-def" style="margin:0"><span class="box-label">40 fixes + 0 à n extensions</span><p>L'en-tête de base fait <strong>toujours 40 o</strong>. Derrière, on ajoute <strong>autant d'extensions que nécessaire</strong>, chaînées par Next Header, avant les données. Un paquet sans option = 40 o + données.</p></div>
+    <div class="box box-remark" style="margin:0"><span class="box-label">Taille des extensions</span><p><strong>Fragment = 8 o fixes.</strong> Hop-by-Hop, Destination, Routing : taille <strong>variable, multiple de 8 o</strong> (champ <em>Hdr Ext Len</em>, en unités de 8 o sans compter les 8 premiers). Chaque type apparaît <strong>au plus une fois</strong>, sauf Destination (2 fois max).</p></div>
+  </div>
+
+  <div class="viz-card" id="pklab">
+    <div class="viz-header"><div class="viz-title">Un paquet qui voyage : S → R1 → R2 → R3 → D</div><div class="viz-tag">construction · fragmentation · traversée · réassemblage</div></div>
+    <svg class="viz-svg" id="pk-svg" viewBox="0 0 860 110"></svg>
+    <div class="btn-group" style="margin:10px 0"><button class="btn" id="pk-prev">← étape précédente</button><button class="btn" id="pk-next">étape suivante →</button><button class="btn" id="pk-reset">recommencer</button><span id="pk-n" style="font-family:'JetBrains Mono',monospace;font-size:13px;align-self:center;margin-left:6px"></span></div>
+    <div id="pk-title" style="font-family:'Instrument Serif',serif;font-size:24px;color:var(--burgundy);margin:4px 0 2px"></div>
+    <p id="pk-text" style="margin:0 0 12px"></p>
+    <div id="pk-bars"></div>
+    <div id="pk-sel" class="btn-group" style="margin:8px 0"></div>
+    <div class="pk-fields" id="pk-fields"></div>
+    <div class="legend"><div class="legend-item"><span class="legend-swatch" style="background:#7B2D26"></span>en-tête de base (40 o)</div><div class="legend-item"><span class="legend-swatch" style="background:#B8924A"></span>Routing (NH 43)</div><div class="legend-item"><span class="legend-swatch" style="background:#2C5664"></span>Fragment (NH 44, 8 o)</div><div class="legend-item"><span class="legend-swatch" style="background:#5B4A3A"></span>UDP (8 o)</div><div class="legend-item"><span class="legend-swatch" style="background:#E6DCC4"></span>données</div><div class="legend-item"><span class="legend-swatch" style="background:var(--highlight)"></span>champ modifié à cette étape</div></div>
+  </div>
+  <div class="box box-remark"><span class="box-label">À retenir du voyage</span><p>un routeur ordinaire (R1, R3) ne touche qu'au <strong>Hop Limit</strong>. L'adresse destination ne change que chez un nœud listé dans l'extension <strong>Routing</strong> (R2). La taille du paquet ne change <strong>jamais</strong> en route : elle ne change qu'à la source (construction, fragmentation) et à la destination (réassemblage).</p></div>
+
 </section>
 
 <!-- ═══════════════════ III · ADRESSAGE ═══════════════════ -->
@@ -1022,6 +1052,65 @@ const clsOf=n=>{const a=n>>>24;return a<128?['A',8]:a<192?['B',16]:a<224?['C',24
    return'<div><h6>'+r+'</h6><table class="tt"><tr><th>rés.</th><th>via</th><th>coût</th></tr>'+rows+'</table></div>'}).join('');
   $('rip-prev').disabled=step===0;$('rip-next').disabled=step===T.length-1}
  $('rip-prev').onclick=()=>{if(step>0){step--;render()}};$('rip-next').onclick=()=>{if(step<T.length-1){step++;render()}};$('rip-end').onclick=()=>{step=T.length-1;render()};
+ render();
+})();
+
+/* ─── Voyage d'un paquet IPv6 ─── */
+(function(){
+ if(!$('pklab'))return;
+ const A={S:'2001:db8:1::10',R2:'2001:db8:2::1',D:'2001:db8:3::20'};
+ const COL={base:'#7B2D26',rt:'#B8924A',fr:'#2C5664',udp:'#5B4A3A',data:'#E6DCC4'};
+ const NAME={base:'Base',rt:'Routing',fr:'Fragment',udp:'UDP',data:'Données'};
+ const NODES=[['S',60],['R1',250],['R2',430],['R3',610],['D',800]];
+ /* état de départ */
+ const base=(o)=>Object.assign({plen:0,nh:'—',hl:64,src:A.S,dst:'—'},o);
+ const rt=(o)=>Object.assign({nh:17,len:'2 → 24 o',type:0,sl:1,addr:A.D},o);
+ const P=(blocks,fields,cap)=>({blocks,fields,cap});
+ const F1=(hl,dst,sl,addr,ch)=>P([['base',40],['rt',24],['fr',8],['udp',8],['data',1200]],
+   {base:base({plen:1240,nh:43,hl,dst}),rt:rt({nh:44,sl,addr}),fr:{nh:17,off:0,m:1,id:7},udp:{sp:5000,dp:53,len:2008}},'Fragment 1 · 1280 o (= MTU)');
+ const F2=(hl,dst,sl,addr)=>P([['base',40],['rt',24],['fr',8],['data',800]],
+   {base:base({plen:832,nh:43,hl,dst}),rt:rt({nh:44,sl,addr}),fr:{nh:17,off:151,m:0,id:7}},'Fragment 2 · 872 o');
+ const ST=[
+  {at:0,t:'1 · Les données',x:'L\'application de S veut envoyer <strong>2000 o</strong> à D. Pour l\'instant ce n\'est qu\'un bloc de données, aucun en-tête.',p:[P([['data',2000]],{},'2000 o')],ch:[]},
+  {at:0,t:'2 · + en-tête UDP (8 o)',x:'La couche transport ajoute son en-tête : ports et longueur. Le segment UDP fait maintenant 2008 o.',p:[P([['udp',8],['data',2000]],{udp:{sp:5000,dp:53,len:2008}},'2008 o')],ch:['udp'],nw:['udp']},
+  {at:0,t:'3 · + extension Routing (24 o)',x:'S veut que le paquet passe <strong>par R2</strong>. Elle ajoute une extension Routing qui garde la vraie destination (D) dans sa liste. Son Next Header = <strong>17</strong> : « après moi, de l\'UDP ». Taille : Hdr Ext Len = 2 → (2 + 1) × 8 = 24 o.',
+   p:[P([['rt',24],['udp',8],['data',2000]],{rt:rt({}),udp:{sp:5000,dp:53,len:2008}},'2032 o')],ch:['rt'],nw:['rt']},
+  {at:0,t:'4 · + en-tête de base (40 o)',x:'Enfin les 40 o fixes. Attention : la <strong>destination = R2</strong> (le premier point de passage), pas D. Next Header = <strong>43</strong> (Routing suit). Payload Length = 24 + 8 + 2000 = <strong>2032</strong> (les 40 o ne comptent pas). Paquet complet : 2072 o.',
+   p:[P([['base',40],['rt',24],['udp',8],['data',2000]],{base:base({plen:2032,nh:43,dst:A.R2}),rt:rt({}),udp:{sp:5000,dp:53,len:2008}},'2072 o')],ch:['base.plen','base.nh','base.hl','base.src','base.dst'],nw:['base']},
+  {at:0,t:'5 · Trop gros → S fragmente (MTU 1280)',x:'2072 &gt; 1280 et les routeurs IPv6 ne fragmentent jamais : c\'est S qui découpe. La <strong>partie non fragmentable</strong> (base + Routing = 64 o) est <strong>recopiée dans chaque fragment</strong>, puis S insère l\'extension <strong>Fragment (8 o)</strong> et le Next Header de Routing passe de 17 à <strong>44</strong>. Place pour les données : 1280 − 64 − 8 = <strong>1208 o</strong> (151 blocs). Seul le fragment 1 contient l\'en-tête UDP.',
+   p:[F1(64,A.R2,1,A.D),F2(64,A.R2,1,A.D)],ch:['base.plen','rt.nh','fr.nh','fr.off','fr.m','fr.id'],nw:['fr']},
+  {at:1,t:'6 · R1 : routeur ordinaire',x:'R1 ne lit que les <strong>40 o de base</strong> : destination R2 ≠ moi → table de routage, <strong>Hop Limit 64 → 63</strong>, on transmet. Il n\'ouvre ni Routing ni Fragment, ne recalcule aucun checksum, la taille ne change pas.',
+   p:[F1(63,A.R2,1,A.D),F2(63,A.R2,1,A.D)],ch:['base.hl']},
+  {at:2,t:'7 · R2 : nœud listé dans Routing',x:'Ici la destination est <strong>R2 lui-même</strong>. R2 suit Next Header = 43 et lit l\'extension Routing : Segments Left = 1, il reste un nœud. Il <strong>échange</strong> la destination (R2) avec l\'adresse de la liste (D), fait Segments Left 1 → <strong>0</strong>, Hop Limit 63 → 62, et renvoie le paquet vers D. Seul cas où une adresse change en route.',
+   p:[F1(62,A.D,0,A.R2),F2(62,A.D,0,A.R2)],ch:['base.hl','base.dst','rt.sl','rt.addr']},
+  {at:3,t:'8 · R3 : routeur ordinaire',x:'Destination D ≠ moi → Hop Limit 62 → <strong>61</strong>, transmis. Même travail minimal que R1.',
+   p:[F1(61,A.D,0,A.R2),F2(61,A.D,0,A.R2)],ch:['base.hl']},
+  {at:4,t:'9 · D : réassemblage',x:'D est la destination : elle lit toute la chaîne. Routing : Segments Left = 0 → rien à faire. Fragment : même <strong>ID 7</strong>, offsets 0 et 151, M = 0 sur le dernier → complet. D retire les extensions Fragment, recolle 8 + 1200 + 800 = 2008 o, Payload Length redevient 2032 et Next Header de Routing redevient 17. UDP reçoit ses <strong>2000 o</strong>.',
+   p:[P([['base',40],['rt',24],['udp',8],['data',2000]],{base:base({plen:2032,nh:43,hl:61,dst:A.D}),rt:rt({nh:17,sl:0,addr:A.R2}),udp:{sp:5000,dp:53,len:2008}},'paquet reconstitué · 2072 o')],ch:['base.plen','rt.nh']}
+ ];
+ let i=0,sel=0;
+ const svg=$('pk-svg');
+ function drawNet(){let g='<line x1="60" y1="55" x2="800" y2="55" stroke="#9C8E74" stroke-width="2"/>';
+  ['MTU 1280','MTU 1280','MTU 1280','MTU 1280'].forEach((m,k)=>{const x=(NODES[k][1]+NODES[k+1][1])/2;g+='<text x="'+x+'" y="95" text-anchor="middle" font-size="10" fill="#9C8E74">'+m+'</text>'});
+  NODES.forEach(([n,x],k)=>{const host=k===0||k===4;g+=host?'<rect x="'+(x-24)+'" y="37" width="48" height="36" rx="5" fill="#2C5664"/>':'<circle cx="'+x+'" cy="55" r="20" fill="#7B2D26"/>';
+   g+='<text x="'+x+'" y="61" text-anchor="middle" fill="#FCFAF3" font-size="15" font-family="Instrument Serif, serif">'+n+'</text>'});
+  const x=NODES[ST[i].at][1];g+='<g style="transition:transform .5s" transform="translate('+x+',0)"><rect x="-17" y="6" width="34" height="18" rx="3" fill="#B8924A" stroke="#7B2D26"/><text x="0" y="19" text-anchor="middle" font-size="10" fill="#1F1A14">'+(ST[i].p.length>1?'F1 F2':'pkt')+'</text></g>';
+  svg.innerHTML=g}
+ const row=(k,v,key,ch)=>'<tr><td>'+k+'</td><td'+(ch.indexOf(key)>=0?' class="ch"':'')+'>'+v+'</td></tr>';
+ function render(){const s=ST[i],ch=s.ch.slice();if(sel>=s.p.length)sel=0;
+  $('pk-n').textContent='étape '+(i+1)+' / '+ST.length;$('pk-title').textContent=s.t;$('pk-text').innerHTML=s.x;
+  $('pk-bars').innerHTML=s.p.map(pk=>{const tot=pk.blocks.reduce((a,b)=>a+b[1],0);
+   return '<div class="pkbar">'+pk.blocks.map(b=>'<div class="b-'+b[0]+((s.nw||[]).indexOf(b[0])>=0?' new':'')+'" style="flex-grow:'+Math.max(b[1],60)+';background:'+COL[b[0]]+'">'+NAME[b[0]]+'<br>'+b[1]+' o</div>').join('')+'</div><div class="pkcap">'+pk.cap+(tot!==parseInt(pk.cap.replace(/\D/g,''))?'':'')+'</div>'}).join('');
+  $('pk-sel').innerHTML=s.p.length>1?s.p.map((pk,k)=>'<button class="btn'+(k===sel?' active':'')+'" data-k="'+k+'">champs du fragment '+(k+1)+'</button>').join(''):'';
+  $('pk-sel').querySelectorAll('button').forEach(b=>b.onclick=()=>{sel=+b.dataset.k;render()});
+  const f=s.p[sel].fields;let h='';
+  if(f.base)h+='<table><tr><th colspan="2" style="background:'+COL.base+'">En-tête de base · 40 o</th></tr>'+row('Version',6,'base.v',ch)+row('Payload Length',f.base.plen,'base.plen',ch)+row('Next Header',f.base.nh+(f.base.nh===43?' (Routing)':''),'base.nh',ch)+row('Hop Limit',f.base.hl,'base.hl',ch)+row('Source',f.base.src,'base.src',ch)+row('Destination',f.base.dst,'base.dst',ch)+'</table>';
+  if(f.rt)h+='<table><tr><th colspan="2" style="background:'+COL.rt+'">Routing · NH 43</th></tr>'+row('Next Header',f.rt.nh+(f.rt.nh===44?' (Fragment)':' (UDP)'),'rt.nh',ch)+row('Hdr Ext Len',f.rt.len,'rt.len',ch)+row('Routing Type',f.rt.type,'rt.type',ch)+row('Segments Left',f.rt.sl,'rt.sl',ch)+row('Adresse [1]',f.rt.addr,'rt.addr',ch)+'</table>';
+  if(f.fr)h+='<table><tr><th colspan="2" style="background:'+COL.fr+'">Fragment · NH 44 · 8 o</th></tr>'+row('Next Header',f.fr.nh+' (UDP)','fr.nh',ch)+row('Offset',f.fr.off+(f.fr.off?' (= 1208 / 8)':''),'fr.off',ch)+row('M',f.fr.m,'fr.m',ch)+row('Identification',f.fr.id,'fr.id',ch)+'</table>';
+  if(f.udp)h+='<table><tr><th colspan="2" style="background:'+COL.udp+'">UDP · 8 o</th></tr>'+row('Port source',f.udp.sp,'udp',ch)+row('Port destination',f.udp.dp,'udp',ch)+row('Longueur',f.udp.len,'udp',ch)+'</table>';
+  $('pk-fields').innerHTML=h||'<p style="color:var(--ink-faint);font-size:14px">Pas encore d\'en-tête.</p>';
+  $('pk-prev').disabled=i===0;$('pk-next').disabled=i===ST.length-1;drawNet()}
+ $('pk-prev').onclick=()=>{if(i>0){i--;render()}};$('pk-next').onclick=()=>{if(i<ST.length-1){i++;render()}};$('pk-reset').onclick=()=>{i=0;sel=0;render()};
  render();
 })();
 
