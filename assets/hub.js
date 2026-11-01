@@ -29,7 +29,7 @@
     const discoveredPages = githubPages.length ? githubPages : directoryPages;
     const seedPages = discoveredPages.length ? mergeFallbackMetadata(discoveredPages) : fallbackPages;
     state.source = githubPages.length ? "github" : (directoryPages.length ? "directory" : "local");
-    state.pages = await enrichPages(dedupePages(seedPages.map(normalizePage).filter(Boolean)));
+    state.pages = attachSources(await enrichPages(dedupePages(seedPages.map(normalizePage).filter(Boolean))));
 
     populateFilters();
     updateRepoLink();
@@ -194,6 +194,8 @@
     const slug = fileName.replace(/\.html$/i, "");
     const programKey = folders[0] || "general";
     const termKey = folders[1] || "cours";
+    // Convention: pages/<level>/<sem>/<subject>/*.html = "Autres sources" of pages/<level>/<sem>/<subject>.html
+    const parentSlug = folders.length >= 3 ? folders[2] : null;
 
     const explicitSummary = cleanText(page.summary);
     const explicitTopics = Array.isArray(page.topics) ? page.topics.map(cleanText).filter(Boolean) : [];
@@ -206,6 +208,8 @@
       slug,
       programKey,
       termKey,
+      parentSlug,
+      sources: [],
       program: labelSegment(programKey),
       term: labelSegment(termKey),
       title: cleanText(page.title) || titleFromSlug(slug),
@@ -240,6 +244,23 @@
       if (page && page.path && !known.has(normalizePath(page.path))) merged.push(page);
     });
     return merged;
+  }
+
+  // Group "other sources" (pages/<level>/<sem>/<subject>/x.html) under their main subject page.
+  function attachSources(pages) {
+    const mains = pages.filter(function (page) { return !page.parentSlug; });
+    const byKey = new Map();
+    mains.forEach(function (page) { byKey.set(page.programKey + "/" + page.termKey + "/" + page.slug, page); });
+    const orphans = [];
+    pages.filter(function (page) { return page.parentSlug; }).forEach(function (source) {
+      const parent = byKey.get(source.programKey + "/" + source.termKey + "/" + source.parentSlug);
+      if (parent) parent.sources.push(source);
+      else orphans.push(source);
+    });
+    mains.forEach(function (page) {
+      page.sources.sort(function (a, b) { return a.title.localeCompare(b.title); });
+    });
+    return mains.concat(orphans).sort(comparePages);
   }
 
   function normalizePath(path) {
@@ -323,7 +344,8 @@
       page.program,
       page.term,
       page.path,
-      page.topics.join(" ")
+      page.topics.join(" "),
+      (page.sources || []).map(function (source) { return source.title + " " + source.summary + " " + source.topics.join(" "); }).join(" ")
     ].join(" ").toLowerCase().includes(query);
 
     const matchesProgram = state.filters.program === "all" || page.programKey === state.filters.program;
@@ -380,7 +402,7 @@
       }).forEach(function (termKey) {
         const termItem = document.createElement("li");
         termItem.className = "tree-node";
-        termItem.innerHTML = "<strong>" + escapeHtml(labelSegment(termKey)) + "</strong><span>" + programNode[termKey].map(function (page) { return page.slug; }).join(", ") + "</span>";
+        termItem.innerHTML = "<strong>" + escapeHtml(labelSegment(termKey)) + "</strong><span>" + programNode[termKey].map(function (page) { return page.slug + (page.sources && page.sources.length ? " (+" + page.sources.length + ")" : ""); }).join(", ") + "</span>";
         termList.appendChild(termItem);
       });
 
@@ -429,15 +451,29 @@
   }
 
   function renderCard(page) {
-    const card = document.createElement("a");
+    const card = document.createElement("article");
     card.className = "subject-card";
-    card.href = page.href;
+    const sources = page.sources || [];
+    const sourcesHtml = sources.length ? [
+      "<div class=\"card-sources\">",
+      "<span class=\"card-sources-title\">Autres sources · " + sources.length + "</span>",
+      "<ul>",
+      sources.map(function (source) {
+        return "<li><a href=\"" + escapeHtml(source.href) + "\"><strong>" + escapeHtml(source.title) + "</strong>"
+          + (source.summary ? "<span>" + escapeHtml(source.summary) + "</span>" : "") + "</a></li>";
+      }).join(""),
+      "</ul>",
+      "</div>"
+    ].join("") : "";
     card.innerHTML = [
+      "<a class=\"card-main\" href=\"" + escapeHtml(page.href) + "\">",
       "<span class=\"card-path\">" + escapeHtml(page.path) + "</span>",
       "<h3 class=\"card-title\">" + escapeHtml(page.title) + "</h3>",
       "<p class=\"card-summary\">" + escapeHtml(page.summary || summaryForSlug(page.slug)) + "</p>",
       "<div class=\"topic-list\">" + topicsHtml(page.topics, page.slug) + "</div>",
-      "<div class=\"card-footer\"><span>Ouvrir la fiche</span><span aria-hidden=\"true\">HTML</span></div>"
+      "</a>",
+      sourcesHtml,
+      "<a class=\"card-footer\" href=\"" + escapeHtml(page.href) + "\"><span>Ouvrir la fiche</span><span aria-hidden=\"true\">HTML</span></a>"
     ].join("");
     return card;
   }
