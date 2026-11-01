@@ -441,7 +441,7 @@
       const grid = document.createElement("div");
       grid.className = "subject-grid";
       group.pages.forEach(function (page) {
-        grid.appendChild(renderCard(page));
+        grid.appendChild(renderSubjectBlock(page));
       });
 
       section.appendChild(head);
@@ -451,31 +451,48 @@
   }
 
   function renderCard(page) {
-    const card = document.createElement("article");
+    const card = document.createElement("a");
     card.className = "subject-card";
-    const sources = page.sources || [];
-    const sourcesHtml = sources.length ? [
-      "<div class=\"card-sources\">",
-      "<span class=\"card-sources-title\">Autres sources · " + sources.length + "</span>",
-      "<ul>",
-      sources.map(function (source) {
-        return "<li><a href=\"" + escapeHtml(source.href) + "\"><strong>" + escapeHtml(source.title) + "</strong>"
-          + (source.summary ? "<span>" + escapeHtml(source.summary) + "</span>" : "") + "</a></li>";
-      }).join(""),
-      "</ul>",
-      "</div>"
-    ].join("") : "";
+    card.href = page.href;
     card.innerHTML = [
-      "<a class=\"card-main\" href=\"" + escapeHtml(page.href) + "\">",
       "<span class=\"card-path\">" + escapeHtml(page.path) + "</span>",
       "<h3 class=\"card-title\">" + escapeHtml(page.title) + "</h3>",
       "<p class=\"card-summary\">" + escapeHtml(page.summary || summaryForSlug(page.slug)) + "</p>",
       "<div class=\"topic-list\">" + topicsHtml(page.topics, page.slug) + "</div>",
-      "</a>",
-      sourcesHtml,
-      "<a class=\"card-footer\" href=\"" + escapeHtml(page.href) + "\"><span>Ouvrir la fiche</span><span aria-hidden=\"true\">HTML</span></a>"
+      "<div class=\"card-footer\"><span>Ouvrir la fiche</span><span aria-hidden=\"true\">" + ((page.sources || []).length ? "+" + page.sources.length + " docs" : "HTML") + "</span></div>"
     ].join("");
     return card;
+  }
+
+  // A subject with additional docs = one big card + a row of small cards underneath (full grid row).
+  function renderSubjectBlock(page) {
+    const sources = page.sources || [];
+    if (!sources.length) return renderCard(page);
+    const block = document.createElement("div");
+    block.className = "subject-block";
+    const main = renderCard(page);
+    main.classList.add("subject-card--main");
+    block.appendChild(main);
+    const label = document.createElement("span");
+    label.className = "source-label";
+    label.textContent = "Additional docs · " + sources.length;
+    block.appendChild(label);
+    const grid = document.createElement("div");
+    grid.className = "source-grid";
+    sources.forEach(function (source) {
+      const small = document.createElement("a");
+      small.className = "source-card";
+      small.href = source.href;
+      small.innerHTML = [
+        "<span class=\"source-kicker\">" + escapeHtml(page.title) + "</span>",
+        "<strong>" + escapeHtml(source.title) + "</strong>",
+        source.summary ? "<span class=\"source-summary\">" + escapeHtml(source.summary) + "</span>" : "",
+        "<span class=\"source-open\">Ouvrir →</span>"
+      ].join("");
+      grid.appendChild(small);
+    });
+    block.appendChild(grid);
+    return block;
   }
 
   function groupPages(pages) {
