@@ -95,3 +95,18 @@ For best catalogue cards, each subject page should include:
 
 The hub will read those headings when it can and turn them into topic chips.
 
+
+## Autres sources (fichiers secondaires d'une matière)
+
+Chaque matière a sa fiche principale `pages/<niveau>/<semestre>/<matiere>.html`.
+Tout fichier HTML placé dans le dossier du même nom, `pages/<niveau>/<semestre>/<matiere>/*.html`,
+est affiché comme **« Autres sources »** dans la carte de cette matière (simulateurs, vidéos, corrigés…).
+
+```text
+pages/gl3/sem1/
+├── modelisation.html            ← fiche principale
+└── modelisation/                ← autres sources
+    ├── drones-simulateur.html
+    ├── feux-controleur.html
+    └── ds-2025-video.html (+ ds-2025-corrige.mp4)
+```
