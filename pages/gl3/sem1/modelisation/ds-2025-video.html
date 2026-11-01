@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corrigé vidéo · DS Modélisation 2025</title>
+<link rel="icon" type="image/svg+xml" href="../../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4EFE4;--card:#FBF8F0;--ink:#1F1A14;--soft:#4A3F32;--faint:#8A7D6B;--bur:#7B2D26;--teal:#2C5664;--rule:#C9BFAC}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'Newsreader',Georgia,serif;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px 48px}
+.hub-back{display:inline-flex;margin-top:14px;padding:6px 11px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;text-decoration:none}
+header{text-align:center;padding:14px 0 12px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--bur)}
+h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(32px,5vw,50px);margin:6px 0 2px}h1 em{color:var(--bur)}
+.subtitle{font-style:italic;color:var(--soft);margin:0}
+video{width:100%;border-radius:10px;border:1px solid var(--rule);margin-top:18px;background:#000}
+.chap{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px;margin-top:14px}
+.chap button{text-align:left;font-family:inherit;font-size:15px;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;cursor:pointer}
+.chap button:hover{border-color:var(--bur)}.chap b{display:block;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--bur)}
+</style>
+</head>
+<body><div class="wrap">
+<a class="hub-back" href="../../../../index.html">← Hub</a>
+<header><div class="eyebrow">Modélisation · DS 10/11/2025 · corrigé animé</div>
+<h1>Corrigé <em>vidéo</em> du DS 2025</h1>
+<p class="subtitle">Digicode (machine à états), drones + station (automates temporisés), réseaux de Petri : chaque schéma se dessine étape par étape, sous-titré.</p></header>
+<video id="v" controls preload="metadata" src="ds-2025-corrige.mp4"></video>
+<div class="chap">
+<button data-t="9"><b>0:09</b>Ex. 1 · Digicode 23A14</button>
+<button data-t="73"><b>1:13</b>Ex. 2 · Automate d’un drone</button>
+<button data-t="137"><b>2:17</b>Ex. 2 · Station de contrôle + C1–C6</button>
+<button data-t="195"><b>3:15</b>Ex. 3 · Marquage et matrices d’incidence</button>
+<button data-t="275"><b>4:35</b>Ex. 3 · Atelier vélo (Petri)</button>
+<button data-t="363"><b>6:03</b>Récapitulatif</button>
+</div>
+</div>
+<script>document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const v=document.getElementById('v');v.currentTime=+b.dataset.t;v.play()});</script>
+</body></html>
