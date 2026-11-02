@@ -256,6 +256,21 @@ pre.code .k{color:#E8C77B}pre.code .c{color:#8A7D6B;font-style:italic}pre.code .
 .scn .fb{font-size:14.5px;margin-top:8px;min-height:20px}
 .scn .fb.ok{color:var(--teal)}.scn .fb.ko{color:var(--burgundy)}
 </style>
+<style>
+.add-docs{max-width:1200px;margin:28px auto 0;padding:0 32px;position:relative;z-index:1}
+@media(max-width:600px){.add-docs{padding:0 16px}}
+.add-docs h2{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:30px;margin:0 0 4px;color:var(--ink)}
+.add-docs h2::after{display:none}
+.add-docs h2 .k{display:block;font-family:'JetBrains Mono',monospace;font-style:normal;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.add-docs p.lead{font-style:italic;color:var(--ink-soft);margin:0 0 14px}
+.add-docs .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px}
+.add-doc{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:10px;background:var(--bg-card);color:var(--ink);text-decoration:none;transition:transform .15s,border-color .15s}
+.add-doc:hover{transform:translateY(-2px);border-color:var(--burgundy)}
+.add-doc .t{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.add-doc strong{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:22px;line-height:1.15}
+.add-doc span.d{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.add-doc span.o{margin-top:auto;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--burgundy)}
+</style>
 </head>
 <body>
 
@@ -271,6 +286,13 @@ pre.code .k{color:#E8C77B}pre.code .c{color:#8A7D6B;font-style:italic}pre.code .
     <span class="pill pill-gold">Adapter · Bridge · Composite · Decorator · Facade · Flyweight · Proxy</span>
   </div>
 </header>
+<section class="add-docs" id="additional-docs" aria-labelledby="add-docs-title">
+  <h2 id="add-docs-title"><span class="k">Additional docs</span>Docs additionnelles</h2>
+  <p class="lead">Entraînement et examens blancs, rangés dans <code>pages/gl3/sem1/conception/</code>.</p>
+  <div class="grid">
+    <a class="add-doc" href="conception/qcm-examen.html"><span class="t">QCM · Examen blanc · Ch1–Ch4</span><strong>QCM blanc, avec explications</strong><span class="d">80 questions : QCU, QCM multi-réponses, vrai/faux, scénarios, lecture de code, sorties, associations, intrus, calculs. Mode entraînement ou examen chronométré, note /20.</span><span class="o">Ouvrir →</span></a>
+  </div>
+</section>
 
 <main>
 <div class="tabs-wrapper">

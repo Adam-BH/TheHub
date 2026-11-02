@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM blanc · Conception & design patterns</title>
+<link rel="icon" type="image/svg+xml" href="../../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4EFE4;--deep:#ECE5D5;--card:#FBF8F0;--ink:#1F1A14;--soft:#4A3F32;--faint:#8A7D6B;--bur:#7B2D26;--teal:#2C5664;--gold:#B8924A;--rule:#C9BFAC;--rule2:#DDD3BF;--hl:#F7E8B8;--ok:#3E6B3A;--okbg:#E6EFE1;--kobg:#F5E1DD;--code:#221D17;
+--serif:'Instrument Serif',Georgia,serif;--body:'Newsreader',Georgia,serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;overflow-x:hidden}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 120px}
+.topnav{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hub-back{display:inline-flex;padding:6px 11px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;text-decoration:none}
+.hub-back:hover{border-color:var(--bur)}
+header{text-align:center;padding:14px 0 16px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--bur)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6vw,54px);margin:6px 0 4px;line-height:1.05}
+h1 em{color:var(--bur)}
+.sub{font-style:italic;color:var(--soft);margin:0 auto;max-width:680px}
+code,.m{font-family:var(--mono);font-size:.86em;background:rgba(184,146,74,.13);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+
+/* panel */
+.panel{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;margin:18px 0}
+.panel h2{font-family:var(--serif);font-weight:400;font-size:26px;margin:0 0 4px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.lab{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);min-width:86px}
+.chip{font-family:var(--mono);font-size:12px;border:1px solid var(--rule);background:#fff;color:var(--soft);padding:6px 10px;border-radius:999px;cursor:pointer}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.chip:hover:not(.on){border-color:var(--bur);color:var(--bur)}
+.btn{font-family:var(--mono);font-size:12px;border:1px solid var(--rule);background:#fff;color:var(--ink);padding:8px 13px;border-radius:6px;cursor:pointer}
+.btn:hover:not(:disabled){border-color:var(--bur);color:var(--bur)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:var(--bur);border-color:var(--bur);color:#fff}
+.btn.pri:hover:not(:disabled){color:#fff;opacity:.9}
+select.sel{font-family:var(--mono);font-size:12px;padding:6px 8px;border:1px solid var(--rule);border-radius:6px;background:#fff;color:var(--ink);max-width:100%}
+.hint{font-size:14.5px;color:var(--faint);font-style:italic;margin:6px 0 0}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:6px;margin-top:8px}
+.legend div{font-size:14px;color:var(--soft);border-left:3px solid var(--gold);padding:2px 8px;background:#fff;border-radius:0 4px 4px 0}
+.legend b{font-family:var(--mono);font-size:11px;color:var(--teal);font-weight:600;display:block;text-transform:uppercase;letter-spacing:.06em}
+
+/* result */
+#result{display:none}
+#result.show{display:block}
+.score{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.score .big{font-family:var(--serif);font-size:58px;line-height:1;color:var(--bur)}
+.score .note{font-family:var(--mono);font-size:13px;color:var(--soft)}
+.bars{display:grid;gap:6px;margin-top:10px}
+.bar{display:grid;grid-template-columns:150px 1fr 56px;gap:8px;align-items:center;font-size:14px}
+.bar .tr{height:10px;background:var(--deep);border-radius:6px;overflow:hidden}
+.bar .fi{height:100%;background:var(--teal)}
+.bar .v{font-family:var(--mono);font-size:12px;text-align:right;color:var(--soft)}
+@media(max-width:520px){.bar{grid-template-columns:96px 1fr 48px;font-size:13px}}
+
+/* questions */
+.q{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;margin:14px 0;scroll-margin-top:12px}
+.q.ok{border-left:4px solid var(--ok)}
+.q.ko{border-left:4px solid var(--bur)}
+.qh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.qn{font-family:var(--mono);font-size:12px;background:var(--ink);color:#fff;border-radius:999px;padding:2px 9px}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid var(--rule2);color:var(--teal);background:#fff}
+.tag.ch{color:var(--bur)}
+.tag.multi{background:var(--hl);border-color:var(--gold);color:var(--ink)}
+.qt{margin:4px 0 10px}
+pre.code{background:var(--code);color:#EDE6D6;font-family:var(--mono);font-size:13px;line-height:1.5;padding:12px 14px;border-radius:8px;overflow-x:auto;margin:6px 0 12px;white-space:pre}
+.opts{display:grid;gap:7px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;font-family:var(--body);font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--rule);border-radius:8px;padding:9px 11px;cursor:pointer;line-height:1.4}
+.opt:hover:not(:disabled){border-color:var(--bur)}
+.opt .L{flex:none;font-family:var(--mono);font-size:12px;width:24px;height:24px;border:1px solid var(--rule);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--soft);margin-top:1px}
+.q.multi .opt .L{border-radius:5px}
+.opt.sel{border-color:var(--teal);background:#EEF3F3}
+.opt.sel .L{background:var(--teal);color:#fff;border-color:var(--teal)}
+.opt:disabled{cursor:default}
+.opt.good{border-color:var(--ok);background:var(--okbg)}
+.opt.good .L{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bur);background:var(--kobg)}
+.opt.bad .L{background:var(--bur);border-color:var(--bur);color:#fff}
+.opt.miss{border-style:dashed;border-color:var(--ok)}
+.tfrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.match{display:grid;gap:8px}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px;align-items:center;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:8px 10px}
+.mrow .k{font-weight:600}
+.mrow select{width:100%}
+.mrow.good{background:var(--okbg);border-color:var(--ok)}
+.mrow.bad{background:var(--kobg);border-color:var(--bur)}
+.mrow .fix{grid-column:1/-1;font-size:14px;color:var(--ok);font-family:var(--mono)}
+@media(max-width:560px){.mrow{grid-template-columns:1fr}}
+.qa{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.verdict{font-family:var(--mono);font-size:12.5px}
+.verdict.ok{color:var(--ok)}.verdict.ko{color:var(--bur)}
+.exp{display:none;margin-top:12px;padding:10px 13px;border-left:3px solid var(--gold);background:rgba(184,146,74,.08);border-radius:0 6px 6px 0;font-size:15.5px;color:var(--soft)}
+.exp.show{display:block}
+.exp b{color:var(--ink)}
+.exp .k{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.empty{text-align:center;color:var(--faint);font-style:italic;padding:30px 0}
+
+/* sticky bar */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(251,248,240,.96);border-top:1px solid var(--rule);backdrop-filter:blur(6px)}
+.dock .in{max-width:900px;margin:0 auto;padding:9px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.dock .st{font-family:var(--mono);font-size:12.5px;color:var(--soft)}
+.dock .st b{color:var(--bur)}
+.prog{flex:1 1 120px;height:6px;background:var(--deep);border-radius:4px;overflow:hidden;min-width:80px}
+.prog i{display:block;height:100%;background:var(--bur);width:0}
+.timer{font-family:var(--mono);font-size:13px;color:var(--teal)}
+.timer.low{color:var(--bur);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="topnav">
+  <a class="hub-back" href="../../../../index.html">← Hub</a>
+  <a class="hub-back" href="../conception.html">← Résumé conception</a>
+</nav>
+<header>
+  <div class="eyebrow">INSAT · GL3 · S1 · Conception des logiciels · Examen QCM</div>
+  <h1>QCM <em>blanc</em></h1>
+  <p class="sub">Ch1 Introduction · Ch2 SOLID · Ch3 Création (5) · Ch4 Structure (7). Chaque question a son explication : pourquoi la bonne réponse, et pourquoi les pièges n'en sont pas.</p>
+</header>
+
+<section class="panel" id="setup">
+  <h2>Réglages</h2>
+  <div class="row"><span class="lab">Mode</span>
+    <button class="chip on" data-mode="train">Entraînement · correction immédiate</button>
+    <button class="chip" data-mode="exam">Examen blanc · correction à la fin</button>
+  </div>
+  <div class="row"><span class="lab">Chapitres</span><span id="chFilters" class="row" style="margin:0"></span></div>
+  <div class="row"><span class="lab">Types</span><span id="tyFilters" class="row" style="margin:0"></span></div>
+  <div class="row" id="examOpts" style="display:none"><span class="lab">Examen</span>
+    <select class="sel" id="nbQ"><option value="20">20 questions</option><option value="30" selected>30 questions</option><option value="40">40 questions</option><option value="0">Toutes</option></select>
+    <select class="sel" id="tLim"><option value="0">Sans chrono</option><option value="1" selected>1 min / question</option><option value="1.5">1 min 30 / question</option></select>
+  </div>
+  <div class="row"><span class="lab"></span>
+    <button class="btn pri" id="start">Générer la copie</button>
+    <button class="btn" id="shuffleBtn">Mélanger</button>
+    <button class="btn" id="wrongBtn" disabled>Refaire mes erreurs</button>
+  </div>
+  <p class="hint" id="poolInfo"></p>
+  <details style="margin-top:8px"><summary class="lab" style="cursor:pointer">Les types de questions</summary>
+  <div class="legend">
+    <div><b>QCU</b>une seule bonne réponse</div>
+    <div><b>QCM</b>plusieurs bonnes réponses : il faut toutes les cocher, et rien d'autre</div>
+    <div><b>Vrai / Faux</b>affirmation de cours, souvent piégée</div>
+    <div><b>Scénario</b>un énoncé → quel patron / principe ?</div>
+    <div><b>Code</b>lire un extrait → identifier patron, rôle ou violation</div>
+    <div><b>Sortie</b>que produit / affiche ce code ?</div>
+    <div><b>Association</b>relier chaque élément à son rôle</div>
+    <div><b>Intrus</b>trouver celui qui n'appartient pas au groupe</div>
+    <div><b>Calcul</b>compter des classes, de la mémoire, un prix</div>
+  </div></details>
+  <p class="hint">Barème : 1 point par question, tout ou rien (y compris les QCM à plusieurs réponses et les associations).</p>
+</section>
+
+<section class="panel" id="result">
+  <h2>Résultat</h2>
+  <div class="score"><span class="big" id="scBig">0/0</span><span class="note" id="scNote"></span></div>
+  <div class="bars" id="scBars"></div>
+  <div class="row" style="margin-top:12px"><button class="btn pri" id="toFirstWrong">Aller à la 1ʳᵉ erreur</button><button class="btn" id="again">Nouvelle copie</button></div>
+</section>
+
+<div id="list"></div>
+</div>
+
+<div class="dock"><div class="in">
+  <span class="st" id="dockSt">—</span>
+  <span class="prog"><i id="dockProg"></i></span>
+  <span class="timer" id="timer"></span>
+  <button class="btn pri" id="submit" style="display:none">Rendre la copie</button>
+</div></div>
+
+<script>
+/* ============================================================
+   Banque de questions
+   ch : I intro · II SOLID · III création · IV structure · X transversal
+   t  : single | multi | tf | match
+   k  : étiquette affichée (Scénario, Code, Sortie, Calcul, Intrus…)
+   ============================================================ */
+const Q = [
+/* ---------------- I · Introduction ---------------- */
+{ch:'I',t:'single',k:'Cours',q:`Une <b>bonne conception</b> logicielle vise :`,
+ o:["Une cohésion forte et un couplage faible","Une cohésion faible et un couplage fort","Une cohésion forte et un couplage fort","Une cohésion faible et un couplage faible"],a:[0],
+ e:`La règle d'or du chapitre 1 : <b>cohésion maximale + couplage minimal</b>. Cohésion = à l'intérieur d'un module (tout sert le même but). Couplage = entre modules (changer A ne doit pas forcer à changer B). Les deux vont souvent ensemble : une classe cohésive a moins besoin des autres.`},
+{ch:'I',t:'single',k:'Cours',q:`La <b>cohésion</b> d'une classe mesure :`,
+ o:["Le nombre de classes dont elle dépend","À quel point ses attributs et méthodes servent une même responsabilité","Le nombre de sous-classes qui en héritent","La vitesse d'exécution de ses méthodes"],a:[1],
+ e:`Cohésion = <b>dans</b> la classe. Exemple de faible cohésion : une <code>Facture</code> qui calcule, génère le PDF, envoie l'email et sauvegarde en base. La réponse A décrit le <b>couplage</b> (entre classes), c'est le piège classique.`},
+{ch:'I',t:'multi',k:'QCM',q:`Parmi ces critères de qualité, lesquels sont <b>internes</b> (vus par le développeur) ?`,
+ o:["Lisible","Testable","Ergonomie","Réutilisable","Convivialité"],a:[0,1,3],
+ e:`Internes (développeur) : documenté, <b>lisible</b>, portable, extensible, <b>réutilisable</b>, interopérable, traçable, <b>testable</b>. Externes (utilisateur) : fiabilité, robustesse, efficacité, <b>convivialité</b>, documentation, <b>ergonomie</b>, sécurité, adéquation, intégrité.`},
+{ch:'I',t:'single',k:'Cours',q:`Le catalogue du <b>GoF</b> contient :`,
+ o:["23 patrons : 5 de création, 7 de structure, 11 de comportement","23 patrons : 7 de création, 5 de structure, 11 de comportement","12 patrons : 5 de création, 7 de structure","24 patrons : 8 par catégorie"],a:[0],
+ e:`Gang of Four (Gamma, Helm, Johnson, Vlissides) : <b>23</b> patrons. Création <b>5</b> (Singleton, Factory Method, Abstract Factory, Builder, Prototype), structure <b>7</b> (Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy), comportement <b>11</b>. Le piège B inverse 5 et 7 : retiens « 5 façons de créer, 7 façons d'assembler ».`},
+{ch:'I',t:'tf',k:'Vrai / Faux',q:`Un design pattern est un morceau de code prêt à l'emploi qu'on copie-colle dans son projet.`,a:[1],
+ e:`<b>Faux.</b> Un patron est une <b>solution conceptuelle</b> à un problème récurrent de conception dans un contexte donné : une capitalisation de l'expérience. On l'adapte à chaque cas (noms de classes, méthodes), on ne le copie pas.`},
+{ch:'I',t:'multi',k:'QCM',q:`Selon le cours, un <b>bon patron</b> :`,
+ o:["Résout un problème","Est un concept éprouvé","Propose une solution évidente","Décrit une collaboration entre objets","Est lié à un langage de programmation précis"],a:[0,1,3],
+ e:`Les 4 critères : résout un problème · concept éprouvé · la solution <b>n'est pas évidente</b> · décrit une collaboration entre objets. Un patron de conception est indépendant du langage (ce qui est lié au langage, ce sont les <b>idiomes</b>).`},
+{ch:'I',t:'single',k:'Cours',q:`Dans le cours, un <b>logiciel</b> est défini comme :`,
+ o:["Le code source uniquement","Le code exécutable + les bibliothèques associées + la documentation","Le cahier des charges et les diagrammes UML","L'ensemble des tests"],a:[1],
+ e:`Logiciel = <b>code exécutable + bibliothèques + documentation</b>. Le piège A oublie la documentation, qui fait partie du produit livré.`},
+{ch:'I',t:'match',k:'Association',q:`Associe chaque tâche du génie logiciel à son contenu.`,
+ m:[["Spécifier","Besoins, cahier des charges"],["Vérifier","Tests (fonctionnels, fiabilité, sûreté)"],["Valider","Recette, conformité au cahier des charges"],["Maintenir","Corrections et évolutions"]],
+ e:`Les 9 tâches : spécifier · concevoir · implanter · intégrer · documenter · <b>vérifier</b> (tester : « le produit est-il bien fait ? ») · <b>valider</b> (recette : « est-ce le bon produit, conforme au cahier des charges ? ») · déployer · maintenir. La confusion vérifier/valider est le piège classique.`},
+{ch:'I',t:'single',k:'Cours',q:`La <b>portabilité</b> appartient à quelle famille de critères généraux ?`,
+ o:["Opérationnel","Transitionnel (changement de plateforme)","Maintenance","Aucune : c'est un critère externe"],a:[1],
+ e:`Transitionnel = ce qui compte quand on change de plateforme : <b>portabilité</b>, interopérabilité, réutilisation, adaptabilité. Opérationnel : budget, utilisabilité, efficacité, exactitude, fiabilité, sécurité. Maintenance : maintenabilité, modularité, flexibilité, évolutivité.`},
+{ch:'I',t:'single',k:'Cours',q:`Les patrons de <b>structure</b> s'intéressent à :`,
+ o:["La manière de créer, initialiser et configurer les objets","La manière de connecter les objets pour que ces connexions résistent aux évolutions","Les interactions dynamiques et la répartition des responsabilités à l'exécution","L'architecture réseau du système"],a:[1],
+ e:`Création = comment un objet est <b>créé / configuré</b> (A). Structure = comment <b>connecter / assembler</b> classes et objets, découpler interface et implémentation (B). Comportement = interactions dynamiques (C, hors programme du DS).`},
+{ch:'I',t:'tf',k:'Vrai / Faux',q:`Analyse = examen de l'existant ; conception = définition de la future application.`,a:[0],
+ e:`<b>Vrai</b>, ce sont les définitions du cours. L'analyse regarde le <b>quoi</b> (l'existant, les besoins), la conception le <b>comment</b> (l'application à construire).`},
+{ch:'I',t:'multi',k:'QCM',q:`Parmi ces éléments, lesquels font partie des <b>8 principes du génie logiciel</b> du cours ?`,
+ o:["Modularité","Abstraction","Construction incrémentale","Optimisation prématurée","Vérification"],a:[0,1,2,4],
+ e:`Les 8 : rigueur · généralisation · structuration · <b>modularité</b> · <b>abstraction</b> · <b>construction incrémentale</b> · documentation · <b>vérification</b>. « Optimisation prématurée » est au contraire un anti-principe célèbre.`},
+
+/* ---------------- II · SOLID ---------------- */
+{ch:'II',t:'match',k:'Association',q:`Associe chaque symptôme de mauvaise conception à sa description.`,
+ m:[["Rigidité","Un changement en entraîne beaucoup d'autres"],["Fragilité","Ça casse à des endroits sans lien apparent"],["Immobilité","Impossible de réutiliser un module ailleurs"],["Viscosité","Faire « bien » est plus dur que faire un hack"],["Opacité","Le code est illisible, n'exprime pas son intention"]],
+ e:`Images du cours : rigidité = château de cartes · fragilité = vase fissuré · immobilité = meuble collé au mur · viscosité = avancer dans la boue · opacité = roman aux chapitres mélangés.`},
+{ch:'II',t:'single',k:'Code',q:`Quel principe est violé ?`,
+ c:`class Facture {
+    void calculerTotal()     { ... }
+    void imprimerFacture()   { ... }
+    void sauvegarderEnBase() { ... }
+}`,
+ o:["SRP","OCP","LSP","DIP"],a:[0],
+ e:`Trois raisons de changer : le <b>métier</b> (calcul), le <b>format</b> (impression), la <b>persistance</b> (base). <b>SRP</b> : une seule raison de changer. Correction : <code>Facture</code> / <code>FacturePrinter</code> / <code>FactureRepository</code>.`},
+{ch:'II',t:'single',k:'Code',q:`Quel principe est violé ?`,
+ c:`double calculerArea(Object forme) {
+    if (forme instanceof Cercle)       { ... }
+    else if (forme instanceof Carre)   { ... }
+    else if (forme instanceof Triangle){ ... }
+}`,
+ o:["SRP","OCP","ISP","DIP"],a:[1],
+ e:`Chaque nouvelle forme oblige à <b>modifier</b> cette méthode : le code n'est pas fermé à la modification. Signal d'alarme <b>OCP</b> : chaîne de <code>instanceof</code> ou <code>switch</code> sur un type. Correction : interface <code>Forme { double calculerArea(); }</code> + polymorphisme.`},
+{ch:'II',t:'single',k:'Code',q:`Quel principe est <b>principalement</b> violé ?`,
+ c:`interface Machine { void imprimer(); void faxer(); void scanner(); }
+
+class ImprimanteAncienne implements Machine {
+    public void imprimer() { ... }
+    public void faxer()   { throw new UnsupportedOperationException(); }
+    public void scanner() { throw new UnsupportedOperationException(); }
+}`,
+ o:["ISP","SRP","OCP","DIP"],a:[0],
+ e:`<b>ISP</b> : « aucun client ne devrait dépendre de méthodes qu'il n'utilise pas ». L'interface est trop grosse ; on la découpe en <code>Imprimante</code>, <code>Faxeuse</code>, <code>Scanneuse</code>. (Remarque : ces exceptions cassent aussi la substituabilité, donc LSP en souffre, mais la cause racine est l'interface trop large.)`},
+{ch:'II',t:'single',k:'Code',q:`Quel principe est violé ?`,
+ c:`class ServiceClient {
+    private MySQLDatabase db = new MySQLDatabase();
+    void enregistrer(Client c) { db.save(c); }
+}`,
+ o:["SRP","LSP","ISP","DIP"],a:[3],
+ e:`Un module de <b>haut niveau</b> (ServiceClient) dépend directement d'un <b>détail</b> de bas niveau (MySQL). <b>DIP</b> : dépendre d'abstractions. Correction : <code>interface Database</code> + injection par le constructeur.`},
+{ch:'II',t:'single',k:'Sortie',q:`<code>Carre</code> hérite de <code>Rectangle</code> et redéfinit <b>les deux</b> setters pour garder largeur = hauteur. Que retourne <code>aire()</code> ?`,
+ c:`Rectangle r = new Carre();
+r.setLargeur(5);
+r.setHauteur(4);
+System.out.println(r.aire());   // largeur * hauteur`,
+ o:["20","16","25","9"],a:[1],
+ e:`<code>setLargeur(5)</code> → 5×5, puis <code>setHauteur(4)</code> met <b>aussi</b> la largeur à 4 → 4×4 = <b>16</b>. Le client qui croit manipuler un Rectangle attend 20 : la sous-classe change le comportement attendu, c'est la violation de <b>LSP</b> du cours.`},
+{ch:'II',t:'tf',k:'Vrai / Faux',q:`Le principe d'inversion des dépendances (DIP) et l'injection de dépendances, c'est la même chose.`,a:[1],
+ e:`<b>Faux.</b> DIP est le <b>principe</b> (dépendre d'abstractions). L'injection (passer l'objet au constructeur) est une <b>technique</b> qui permet de le respecter. On peut injecter une classe concrète et violer quand même DIP.`},
+{ch:'II',t:'single',k:'Cours',q:`SRP signifie qu'une classe doit :`,
+ o:["N'avoir qu'une seule méthode publique","N'avoir qu'une seule raison de changer","N'avoir qu'un seul attribut","N'hériter que d'une seule classe"],a:[1],
+ e:`« Une classe devrait avoir <b>une et une seule raison de changer</b>. » Une classe peut avoir plusieurs méthodes, tant qu'elles servent la même responsabilité.`},
+{ch:'II',t:'single',k:'Scénario',q:`On ajoute <code>if (client.isFidele()) total *= 0.95;</code> dans un <code>FacturationService</code> de 2000 lignes. La facture s'affiche bien… mais le lendemain, les PDF ne partent plus. Quel symptôme ?`,
+ o:["Rigidité","Fragilité","Immobilité","Viscosité"],a:[1],
+ e:`Ça casse <b>ailleurs</b>, à un endroit sans lien apparent : <b>fragilité</b> (couplage invisible). La rigidité, c'est quand un changement oblige à en faire beaucoup d'autres ; ici le changement était petit, c'est la casse surprise qui compte.`},
+{ch:'II',t:'multi',k:'QCM',q:`Pour corriger le <code>ServiceClient</code> couplé à <code>MySQLDatabase</code>, que faut-il faire ?`,
+ o:["Créer une interface Database","Faire dépendre ServiceClient de Database et l'injecter par le constructeur","Rendre MySQLDatabase Singleton","Faire hériter ServiceClient de MySQLDatabase","Faire implémenter Database par MySQLDatabase"],a:[0,1,4],
+ e:`DIP : le haut niveau <b>et</b> le détail dépendent de l'abstraction → interface <code>Database</code>, <code>MySQLDatabase implements Database</code>, <code>ServiceClient(Database db)</code>. Un Singleton ne retire pas le couplage à la classe concrète ; l'héritage le renforce.`},
+{ch:'II',t:'single',k:'Cours',q:`Qui a formulé les principes SOLID ?`,
+ o:["Erich Gamma","Robert C. Martin (« Uncle Bob »)","Barbara Liskov","Martin Fowler"],a:[1],
+ e:`<b>Robert C. Martin</b>. Barbara Liskov a donné son nom au « L » (principe de substitution, 1987), mais l'ensemble SOLID vient d'Uncle Bob. Gamma fait partie du GoF.`},
+{ch:'II',t:'tf',k:'Vrai / Faux',q:`Selon DIP, les abstractions doivent dépendre des détails.`,a:[1],
+ e:`<b>Faux</b>, c'est l'inverse : « les abstractions ne dépendent pas des détails ; <b>les détails dépendent des abstractions</b> ».`},
+{ch:'II',t:'single',k:'Scénario',q:`Une boutique crée ses moyens de paiement via une fabrique : le service de commande ne contient plus aucun <code>new CarteBancaire()</code>. Quel principe en profite le plus directement ?`,
+ o:["DIP","LSP","ISP","SRP"],a:[0],
+ e:`Le service ne dépend plus d'une classe concrète mais d'une abstraction (<code>Paiement</code>) fournie par la fabrique : <b>DIP</b>. C'est pourquoi le cours dit « Factory → DIP (le client ne fait plus <code>new</code>) ».`},
+{ch:'II',t:'match',k:'Association',q:`Associe chaque correction au principe qu'elle restaure.`,
+ m:[["Découper une grosse interface en interfaces de rôle","ISP"],["Remplacer un switch sur le type par du polymorphisme","OCP"],["Séparer calcul, affichage et persistance","SRP"],["Supprimer un héritage abusif (Carré/Rectangle)","LSP"],["Injecter une interface au lieu d'un new concret","DIP"]],
+ e:`C'est la fiche M2 du résumé : une correction type par principe. En DS, une réponse complète = principe violé + ligne en cause + conséquence + correction.`},
+{ch:'II',t:'single',k:'Code',q:`Quel principe cette classe respecte-t-elle grâce à <code>Forme</code> ?`,
+ c:`interface Forme { double calculerArea(); }
+class Cercle   implements Forme { ... }
+class Triangle implements Forme { ... }   // ajoutée hier
+
+double total(List<Forme> fs) {
+    double s = 0;
+    for (Forme f : fs) s += f.calculerArea();
+    return s;
+}`,
+ o:["OCP : on a ajouté Triangle sans modifier total()","ISP : Forme a une seule méthode","SRP : total() n'a qu'une boucle","Aucun"],a:[0],
+ e:`Ajouter <code>Triangle</code> = <b>ajouter</b> une classe, sans <b>modifier</b> <code>total()</code> : ouvert à l'extension, fermé à la modification (<b>OCP</b>). Une interface d'une méthode n'est pas en soi la preuve d'ISP (qui parle de clients forcés de dépendre de méthodes inutiles).`},
+
+/* ---------------- III · Création ---------------- */
+{ch:'III',t:'single',k:'Code',q:`Dans ce Singleton, quelle ligne <b>empêche</b> d'écrire <code>new Singleton()</code> ailleurs ?`,
+ c:`public class Singleton {
+    private static Singleton INSTANCE = null;      // (1)
+    private Singleton() {}                         // (2)
+    public static Singleton getInstance() {        // (3)
+        if (INSTANCE == null) INSTANCE = new Singleton();   // (4)
+        return INSTANCE;
+    }
+}`,
+ o:["(1)","(2)","(3)","(4)"],a:[1],
+ e:`Le <b>constructeur privé</b> (2). (1) stocke l'instance, (3) est le point d'accès global, (4) est la création paresseuse (lazy). Sans (2), rien n'empêche de créer d'autres instances.`},
+{ch:'III',t:'single',k:'Sortie',q:`Avec le Singleton du cours, qu'affiche ce code ?`,
+ c:`Singleton a = Singleton.getInstance();
+Singleton b = Singleton.getInstance();
+System.out.println(a == b);`,
+ o:["true","false","Erreur de compilation","Dépend du ramasse-miettes"],a:[0],
+ e:`Le premier appel crée l'instance, le second retourne <b>la même référence</b> : <code>a == b</code> vaut <b>true</b>. (En monothread. Voir la question sur les threads.)`},
+{ch:'III',t:'multi',k:'QCM',q:`À propos du Singleton <b>tel qu'écrit dans le cours</b> (création paresseuse, sans <code>synchronized</code>) :`,
+ o:["Le constructeur est privé","L'instance est gardée dans un attribut statique","getInstance() est une méthode statique","Il est sûr en multithread","getInstance() crée une nouvelle instance à chaque appel"],a:[0,1,2],
+ e:`A, B, C : la recette. <b>D est faux</b> : deux threads peuvent passer le test <code>INSTANCE == null</code> en même temps et créer deux instances. Solutions : <code>synchronized</code> sur <code>getInstance()</code> ou <code>private static final Singleton INSTANCE = new Singleton();</code>. E est faux : création seulement au premier appel.`},
+{ch:'III',t:'single',k:'Cours',q:`Comment rendre le Singleton du cours sûr en multithread ?`,
+ o:["Rendre le constructeur public","Déclarer getInstance() synchronized, ou initialiser l'instance directement à la déclaration (static final)","Supprimer le mot-clé static","Appeler getInstance() deux fois"],a:[1],
+ e:`<code>synchronized</code> empêche deux threads d'exécuter le test en même temps ; l'initialisation statique (<i>eager</i>) crée l'instance au chargement de la classe, avant tout thread. Les autres réponses cassent le patron.`},
+{ch:'III',t:'single',k:'Scénario',q:`Un framework gère plusieurs types de documents. La classe <code>Application</code> sait ouvrir et sauver un document, mais ne peut pas savoir à l'avance <b>quelle classe</b> de document créer : ce sont ses sous-classes qui le décident.`,
+ o:["Factory Method","Abstract Factory","Builder","Prototype"],a:[0],
+ e:`« La classe ne peut pas anticiper la classe des objets à créer ; elle délègue à ses sous-classes » : c'est mot pour mot l'intention de <b>Factory Method</b>. Un seul type de produit (Document), choisi par héritage.`},
+{ch:'III',t:'single',k:'Scénario',q:`Une boîte à outils graphique doit supporter plusieurs <i>look-and-feel</i> (Motif, Presentation Manager). Boutons, fenêtres et menus d'un même thème doivent rester cohérents entre eux.`,
+ o:["Factory Method","Abstract Factory","Bridge","Decorator"],a:[1],
+ e:`<b>Familles</b> d'objets apparentés + cohérence entre produits → <b>Abstract Factory</b> (une fabrique concrète par thème : <code>creerBouton()</code>, <code>creerFenetre()</code>…). C'est l'exemple même du cours.`},
+{ch:'III',t:'single',k:'Cours',q:`Quel est le principal <b>inconvénient</b> d'Abstract Factory ?`,
+ o:["Elle expose les classes concrètes au client","Changer de famille de produits est difficile","Ajouter un nouveau <i>type</i> de produit oblige à modifier l'interface et toutes les fabriques","Elle impose plusieurs instances de chaque fabrique"],a:[2],
+ e:`Ajouter une <b>famille</b> est facile (une nouvelle fabrique concrète). Ajouter un <b>type de produit</b> (ex. <code>creerMenu()</code>) oblige à modifier <code>AbstractFactory</code> <b>et</b> toutes les fabriques. A et B sont justement ses avantages (isoler les classes concrètes, échanger les familles).`},
+{ch:'III',t:'match',k:'Association',q:`Exemple de la pizza (Builder) : associe chaque classe à son rôle.`,
+ m:[["Serveur","Directeur"],["MonteurPizza","Monteur (abstrait)"],["MonteurPizzaHawaii","Monteur concret"],["Pizza","Produit"]],
+ e:`Le <b>Directeur</b> (Serveur) appelle les étapes dans l'ordre (<code>creerNouvellePizza</code>, <code>monterPate</code>, <code>monterSauce</code>, <code>monterGarniture</code>). Le <b>Monteur concret</b> décide <i>comment</i> chaque étape est faite. Le <b>Produit</b> est l'objet complexe construit.`},
+{ch:'III',t:'match',k:'Association',q:`Exemple du convertisseur RTF (Builder) : associe chaque classe à son rôle.`,
+ m:[["RTFReader","Directeur"],["TextConverter","Monteur (abstrait)"],["ASCIIConverter","Monteur concret"],["ASCIIText","Produit"]],
+ e:`RTFReader lit les tokens et <b>dirige</b> ; TextConverter déclare les étapes (<code>convertCharacter</code>, <code>convertParagraph</code>…) ; ASCIIConverter les implémente et produit un <code>ASCIIText</code>. Même processus, représentations différentes (ASCII, TeX…).`},
+{ch:'III',t:'single',k:'Code',q:`Quel est le rôle de <code>AppTexte</code> ?`,
+ c:`abstract class Application {
+    abstract Document creerDocument();
+    void nouveau() { Document d = creerDocument(); d.ouvrir(); }
+}
+class AppTexte extends Application {
+    Document creerDocument() { return new DocTexte(); }
+}`,
+ o:["Creator","ConcreteCreator","ConcreteProduct","AbstractFactory"],a:[1],
+ e:`Factory Method : <code>Application</code> = <b>Creator</b> (déclare la méthode de fabrication), <code>AppTexte</code> = <b>ConcreteCreator</b> (la redéfinit), <code>Document</code> = Product, <code>DocTexte</code> = ConcreteProduct.`},
+{ch:'III',t:'single',k:'Scénario',q:`Dans un logiciel de dessin (DAO), l'utilisateur fait copier-coller sur une forme. Le code qui gère la copie ne connaît pas la classe exacte de l'élément (cercle, rectangle, polygone…).`,
+ o:["Prototype","Singleton","Factory Method","Flyweight"],a:[0],
+ e:`On crée un nouvel objet en <b>dupliquant</b> une instance existante via <code>clone()</code>, sans connaître sa classe : <b>Prototype</b>. Bonus : dupliquer est souvent plus rapide qu'instancier et reconfigurer.`},
+{ch:'III',t:'tf',k:'Vrai / Faux',q:`Avec une copie <b>superficielle</b> (shallow copy), les attributs objets sont partagés entre l'original et le clone.`,a:[0],
+ e:`<b>Vrai.</b> Superficielle : on copie les références, donc original et clone pointent vers les mêmes sous-objets (modifier l'un modifie l'autre). Profonde : on duplique aussi les sous-objets. C'est la mise en garde du cours sur Prototype.`},
+{ch:'III',t:'single',k:'Cours',q:`Dans l'implémentation d'Abstract Factory, le cours note que :`,
+ o:["Les fabriques concrètes sont souvent des Singletons, et chaque create…() est souvent une Factory Method","Les fabriques sont toujours des Prototypes","Le client instancie directement les produits concrets","On a besoin d'une fabrique par produit"],a:[0],
+ e:`Une seule fabrique concrète sert à l'exécution → <b>Singleton</b>. Chaque <code>createProduitX()</code> est redéfinie dans la sous-classe → <b>Factory Method</b>. Combiner deux patrons dans une réponse de DS = points en plus.`},
+{ch:'III',t:'single',k:'Cours',q:`Factory Method vs Abstract Factory : quelle phrase est juste ?`,
+ o:["FM s'appuie sur l'héritage (une méthode redéfinie) pour un produit ; AF sur un objet fabrique (composition) pour une famille","FM crée des familles, AF un seul produit","Les deux sont identiques, seul le nom change","AF n'utilise jamais de sous-classes"],a:[0],
+ e:`<b>FM</b> = une méthode redéfinie par les sous-classes du Creator, <b>un</b> type de produit. <b>AF</b> = un objet fabrique passé au client, qui crée une <b>famille</b> de produits. Question qui tranche : un seul produit, ou plusieurs qui vont ensemble ?`},
+{ch:'III',t:'single',k:'Cours',q:`Builder vs Abstract Factory : la différence clé est que…`,
+ o:["Builder construit un seul objet complexe pas à pas et le rend à la fin ; AF rend immédiatement des objets d'une famille","Builder crée plusieurs familles d'objets","AF construit les objets par étapes avec un Directeur","Builder clone un objet modèle"],a:[0],
+ e:`Builder : <b>étapes</b> pilotées par un Directeur, produit récupéré <b>à la fin</b> (<code>getResultat()</code>). AF : chaque appel <code>creerX()</code> rend <b>tout de suite</b> un produit complet de la famille.`},
+{ch:'III',t:'single',k:'Intrus',q:`Lequel n'est <b>pas</b> un patron de création ?`,
+ o:["Prototype","Builder","Bridge","Singleton"],a:[2],
+ e:`<b>Bridge</b> est un patron de <b>structure</b> (deux hiérarchies abstraction / implémentation). Les 5 de création : Singleton, Factory Method, Abstract Factory, Builder, Prototype.`},
+{ch:'III',t:'multi',k:'QCM',q:`Dans Builder, qui fait quoi ?`,
+ o:["Le client crée le monteur concret et le donne au directeur","Le directeur appelle les étapes de construction dans l'ordre","Le résultat est récupéré auprès du monteur","Le directeur connaît la classe concrète du produit construit","Chaque monteur concret peut produire une représentation différente"],a:[0,1,2,4],
+ e:`Le directeur ne manipule que l'interface <b>Monteur</b> : il ignore ce qui est construit (D faux). C'est ce qui permet au même processus de donner des représentations différentes (E).`},
+{ch:'III',t:'single',k:'Sortie',q:`Code du cours (RTFReader), <b>sans</b> <code>break</code>. Pour un token de type <code>CHAR</code>, quelles méthodes sont appelées ?`,
+ c:`switch (t.type) {
+    case CHAR: builder.convertCharacter(t.c);
+    case PARA: builder.convertParagraph();
+}`,
+ o:["convertCharacter seulement","convertCharacter puis convertParagraph","convertParagraph seulement","Aucune : erreur de compilation"],a:[1],
+ e:`Sans <code>break</code>, Java « tombe » dans le case suivant (<i>fall-through</i>) : <b>convertCharacter puis convertParagraph</b>. C'est un bug du code du cours ; si tu le réécris en DS, ajoute les <code>break</code>.`},
+{ch:'III',t:'single',k:'Scénario',q:`Une application a besoin d'un unique <b>journal</b> (logger) partagé par tous les modules, avec un point d'accès global.`,
+ o:["Singleton","Flyweight","Facade","Prototype"],a:[0],
+ e:`« Une seule instance » + « point d'accès global » = <b>Singleton</b>. Flyweight partage aussi des instances, mais <b>une par état intrinsèque</b>, pas une seule au total.`},
+
+/* ---------------- IV · Structure ---------------- */
+{ch:'IV',t:'tf',k:'Vrai / Faux',q:`L'héritage est une réutilisation « boîte blanche » qui rompt l'encapsulation.`,a:[0],
+ e:`<b>Vrai.</b> La sous-classe voit l'intérieur du parent et en dépend. La composition est « boîte noire » : on passe par l'interface de l'objet contenu, l'encapsulation est respectée.`},
+{ch:'IV',t:'single',k:'Cours',q:`La composition, contrairement à l'héritage, est définie :`,
+ o:["À la compilation, de façon statique","À l'exécution, de façon dynamique","Uniquement dans les interfaces","Seulement pour les classes abstraites"],a:[1],
+ e:`Héritage = statique (compilation), impossible de changer le code hérité à l'exécution. Composition = <b>dynamique</b> : on peut remplacer le composant par un autre de même interface pendant l'exécution. C'est pour ça que presque tous les patrons de structure l'utilisent.`},
+{ch:'IV',t:'single',k:'Scénario',q:`Ton application appelle <code>ILogger.ecrire(String)</code>. Tu veux utiliser une librairie externe qui offre <code>ExternalLog.write(int niveau, String msg)</code>, sans modifier ni ton code ni la librairie.`,
+ o:["Adapter","Facade","Proxy","Bridge"],a:[0],
+ e:`Interface existante attendue par le client (<b>Target</b> = ILogger) + classe existante incompatible (<b>Adaptee</b> = ExternalLog) → <b>Adapter</b>. Facade simplifierait un sous-système, sans interface cible imposée.`},
+{ch:'IV',t:'match',k:'Association',q:`Exercice du cours (IRépertoire / File) : associe chaque élément à son rôle dans Adapter.`,
+ m:[["IRepertoire","Target"],["java.io.File","Adaptee"],["RepertoireAdapter","Adapter"],["L'application","Client"]],
+ e:`Le client ne connaît que <b>Target</b>. <code>RepertoireAdapter implements IRepertoire</code> et délègue à un <code>File</code> (adaptateur par composition, le bon choix ici car <code>File</code> ne nous appartient pas).`},
+{ch:'IV',t:'multi',k:'QCM',q:`Quelles sont les deux variantes d'Adapter vues en cours ?`,
+ o:["Par héritage (adaptateur de classe)","Par composition (adaptateur d'objet)","Par clonage (adaptateur prototype)","Par façade (adaptateur de sous-système)"],a:[0,1],
+ e:`<b>Classe</b> : Adapter hérite d'Adaptee et implémente Target. <b>Objet</b> : Adapter contient une référence vers Adaptee et lui délègue (plus souple, l'adaptee peut changer à l'exécution).`},
+{ch:'IV',t:'single',k:'Calcul',q:`On a <b>4 formes</b> et <b>5 couleurs</b>. Combien de classes concrètes faut-il avec le patron <b>Bridge</b> (formes et couleurs séparées) ?`,
+ o:["9","20","5","4"],a:[0],
+ e:`Bridge : une hiérarchie de formes (4 classes) + une hiérarchie de couleurs (5 classes) = <b>4 + 5 = 9</b>. Par héritage seul, il en faudrait une par combinaison : 4 × 5 = 20. C'est l'argument du cours (3 × 3 = 9 classes contre 3 + 3 = 6).`},
+{ch:'IV',t:'single',k:'Code',q:`Quel patron, et qu'est-ce qui le prouve ?`,
+ c:`class Repertoire extends ElementFS {
+    private List<ElementFS> contenu = new ArrayList<>();
+    void effacer() {
+        for (ElementFS e : contenu) e.effacer();
+        parent.retirer(this);
+    }
+}
+class Fichier extends ElementFS {
+    void effacer() { parent.retirer(this); }
+}`,
+ o:["Composite : le composé délègue l'opération à tous ses fils (récursion), puis fait son traitement","Decorator : Repertoire enveloppe un ElementFS","Proxy : Repertoire contrôle l'accès aux fichiers","Flyweight : les fichiers partagent leur nom"],a:[0],
+ e:`<b>Composite</b> : <code>Repertoire</code> (composite) contient <b>plusieurs</b> <code>ElementFS</code> (0..*) et applique l'opération à chacun ; <code>Fichier</code> est la feuille. Le client appelle <code>effacer()</code> sans savoir s'il s'agit d'un fichier ou d'un répertoire. Un décorateur, lui, n'enveloppe qu'<b>un seul</b> composant.`},
+{ch:'IV',t:'match',k:'Association',q:`AWT/Swing est un Composite : associe chaque classe à son rôle.`,
+ m:[["Component","Component"],["Container","Composite"],["Button","Leaf"],["Le code qui affiche la fenêtre","Client"]],
+ e:`Un <code>Container</code> (panneau, fenêtre) contient des <code>Component</code>, y compris d'autres <code>Container</code> : arbre. <code>Button</code> ne contient rien : feuille. Le client manipule tout via <code>Component</code>.`},
+{ch:'IV',t:'single',k:'Sortie',q:`Que retourne l'appel suivant ? (<code>B</code> et <code>I</code> sont des décorateurs qui entourent le texte de balises.)`,
+ c:`TexteI t = new B(new I(new Texte("Exemple")));
+System.out.println(t.toHTML());`,
+ o:["&lt;B&gt;&lt;I&gt;Exemple&lt;/I&gt;&lt;/B&gt;","&lt;I&gt;&lt;B&gt;Exemple&lt;/B&gt;&lt;/I&gt;","&lt;B&gt;Exemple&lt;/B&gt;","Exemple"],a:[0],
+ e:`Le décorateur le plus <b>externe</b> (B) appelle <code>super.toHTML()</code> → I, qui appelle Texte → "Exemple" ; I ajoute ses balises, puis B ajoute les siennes <b>autour</b> : <code>&lt;B&gt;&lt;I&gt;Exemple&lt;/I&gt;&lt;/B&gt;</code>. Lire de l'extérieur vers l'intérieur.`, html:true},
+{ch:'IV',t:'single',k:'Calcul',q:`Distributeur de café (Decorator). Prix : Colombia 1 · Expresso 1,2 · Deca 0,8 · Lait 0,2 · Sucre 0,2 · Caramel 0,4 · Chantilly 0,8. Combien coûte :`,
+ c:`Boisson b = new Lait(new Chantilly(new Chantilly(new Deca())));
+System.out.println(b.cout());`,
+ o:["2,6 D","1,8 D","1,6 D","3,4 D"],a:[0],
+ e:`<code>cout()</code> de chaque décorateur = <code>boisson.cout() + prix</code> : 0,8 (Deca) + 0,8 + 0,8 (double chantilly) + 0,2 (lait) = <b>2,6 D</b>. Un même supplément peut être empilé deux fois : impossible proprement avec des sous-classes.`},
+{ch:'IV',t:'single',k:'Calcul',q:`Sans Decorator : 3 cafés, 4 suppléments, chaque supplément présent 0 ou 1 fois. Combien de sous-classes faudrait-il pour couvrir toutes les combinaisons ?`,
+ o:["48","12","7","81"],a:[0],
+ e:`Chaque café × 2⁴ = 16 combinaisons de suppléments → 3 × 16 = <b>48</b> classes (et encore plus avec les doubles doses). Avec Decorator : 3 cafés + 4 suppléments + les 2 classes abstraites, et un nouveau supplément = <b>une</b> classe (OCP).`},
+{ch:'IV',t:'tf',k:'Vrai / Faux',q:`Dans Decorator, le décorateur abstrait <b>hérite</b> du Composant <b>et contient</b> un Composant.`,a:[0],
+ e:`<b>Vrai</b> : c'est l'« alliance héritage + composition ». L'héritage donne la <b>même interface</b> (on peut décorer un décorateur), la composition donne l'objet enveloppé auquel on <b>délègue</b>.`},
+{ch:'IV',t:'single',k:'Code',q:`Quel patron ?`,
+ c:`class HomeTheater {
+    private Ampli a; private Projecteur p; private Lecteur l; private Lumieres lu;
+    void regarderFilm(String film) {
+        lu.tamiser(10); p.allumer(); a.allumer(); a.setVolume(5); l.jouer(film);
+    }
+}`,
+ o:["Facade","Adapter","Composite","Builder"],a:[0],
+ e:`Une méthode simple, <code>regarderFilm()</code>, qui cache l'enchaînement d'appels sur <b>plusieurs classes</b> d'un sous-système : <b>Facade</b>. Pas d'interface cible imposée (≠ Adapter), pas d'arbre (≠ Composite), pas de produit construit (≠ Builder).`},
+{ch:'IV',t:'multi',k:'QCM',q:`Conséquences de Facade selon le cours :`,
+ o:["Simplifie l'utilisation du sous-système","Diminue le couplage entre le client et le sous-système","Interdit obligatoirement l'accès direct aux classes du sous-système","L'interface unifiée peut être trop restrictive","Permet de modifier le sous-système sans toucher au client"],a:[0,1,3,4],
+ e:`La façade <b>ne masque pas forcément</b> le sous-système : un client avancé peut encore l'utiliser directement (C faux). Son défaut cité : une interface simplifiée peut ne pas suffire (trop restrictive).`},
+{ch:'IV',t:'multi',k:'QCM',q:`Jeu vidéo avec des milliers de balles (Flyweight). Quels attributs sont <b>intrinsèques</b> (partagés) ?`,
+ o:["Couleur","Sprite (image)","Position","Vitesse","Direction"],a:[0,1],
+ e:`<b>Intrinsèque</b> = indépendant du contexte, identique pour beaucoup d'objets → partagé (couleur, sprite). <b>Extrinsèque</b> = propre à chaque balle → stocké à part ou passé en paramètre (position, vitesse, direction).`},
+{ch:'IV',t:'single',k:'Cours',q:`Dans Flyweight, que fait la <b>fabrique</b> quand on lui demande un poids-mouche ?`,
+ o:["Elle retourne l'instance existante pour cette clé si elle existe, sinon la crée et la mémorise","Elle crée toujours une nouvelle instance","Elle clone une instance modèle","Elle retourne toujours la même instance unique"],a:[0],
+ e:`La fabrique tient une table (<code>Map</code>) clé → instance partagée. C'est elle qui garantit le partage. D décrit Singleton (une seule instance au total), C décrit Prototype.`},
+{ch:'IV',t:'single',k:'Calcul',q:`Une carte affiche <b>500 000 arbres</b> de <b>5 espèces</b>. Chaque espèce a une texture de 4 Mo. Avec Flyweight, combien de mémoire pour les textures ?`,
+ o:["20 Mo","2 000 000 Mo (≈ 2 To)","4 Mo","500 000 Mo"],a:[0],
+ e:`On partage une texture par espèce : 5 × 4 Mo = <b>20 Mo</b> (+ un petit contexte par arbre : position, taille). Sans Flyweight : 500 000 × 4 Mo = 2 000 000 Mo ≈ 2 To. Même raisonnement que l'exemple du cours (jeu qui plante faute de RAM).`},
+{ch:'IV',t:'match',k:'Association',q:`Associe chaque type de Proxy à son usage.`,
+ m:[["Virtual","Créer l'objet coûteux seulement quand on en a besoin"],["Remote","Représenter localement un objet distant (RMI, SOAP)"],["Protection","Vérifier les droits avant de déléguer"],["Cache","Garder les résultats fréquents"],["Counting","Compter / journaliser les appels avant et après"]],
+ e:`Tous ont la <b>même interface</b> que l'original et une référence vers lui ; ils diffèrent par le traitement fait avant/après l'appel. Autres types du cours : Firewall, Smart reference, Synchronisation.`},
+{ch:'IV',t:'single',k:'Code',q:`Quel patron, et de quel type ?`,
+ c:`class ImageProxy implements Image {
+    private String fichier; private ImageHD reelle;
+    ImageProxy(String f) { fichier = f; }
+    public void afficher() {
+        if (reelle == null) reelle = new ImageHD(fichier);   // chargement lourd
+        reelle.afficher();
+    }
+}`,
+ o:["Proxy virtuel","Decorator","Singleton","Proxy de protection"],a:[0],
+ e:`Même interface (<code>Image</code>) + référence vers l'original + création <b>différée</b> jusqu'au premier <code>afficher()</code> → <b>Proxy virtuel</b>. Ce n'est pas un Decorator : il n'ajoute aucun comportement au résultat, il contrôle quand l'objet existe.`},
+{ch:'IV',t:'single',k:'Cours',q:`Adapter, Decorator et Proxy enveloppent tous un objet. Lequel <b>change l'interface</b> vue par le client ?`,
+ o:["Adapter","Decorator","Proxy","Aucun des trois"],a:[0],
+ e:`<b>Adapter</b> change l'interface. Decorator garde l'interface et <b>ajoute</b> des responsabilités (empilables). Proxy garde l'interface et <b>contrôle l'accès</b>.`},
+{ch:'IV',t:'single',k:'Cours',q:`Lequel est prévu <b>dès la conception</b>, alors que l'autre répare après coup une incompatibilité ?`,
+ o:["Bridge (dès la conception) / Adapter (après coup)","Adapter (dès la conception) / Bridge (après coup)","Facade / Proxy","Composite / Decorator"],a:[0],
+ e:`Les deux délèguent à un objet « implémentation ». <b>Bridge</b> sépare volontairement deux hiérarchies dès le départ ; <b>Adapter</b> intervient quand des classes existantes ne collent pas.`},
+{ch:'IV',t:'tf',k:'Vrai / Faux',q:`Un décorateur enveloppe plusieurs composants à la fois, comme un composite.`,a:[1],
+ e:`<b>Faux.</b> Decorator enveloppe <b>un seul</b> composant (on forme une chaîne). Composite a <b>plusieurs</b> fils (on forme un arbre). Question qui tranche : arbre partie-tout ou chaîne d'options ?`},
+{ch:'IV',t:'single',k:'Scénario',q:`Une télécommande (basique, avancée) doit piloter plusieurs appareils (TV, radio, projecteur). On veut pouvoir ajouter une télécommande ou un appareil sans toucher à l'autre côté.`,
+ o:["Bridge","Composite","Adapter","Abstract Factory"],a:[0],
+ e:`Deux dimensions qui varient <b>indépendamment</b> (télécommande × appareil) → <b>Bridge</b> : l'abstraction <code>Telecommande</code> contient une référence vers l'implémentation <code>Appareil</code>.`},
+{ch:'IV',t:'single',k:'Scénario',q:`Un éditeur de menus : un menu contient des entrées et des sous-menus, qui contiennent eux-mêmes des entrées et des sous-menus. On veut appeler <code>afficher()</code> pareil sur une entrée ou sur un menu entier.`,
+ o:["Composite","Decorator","Builder","Flyweight"],a:[0],
+ e:`Arborescence + « traiter pareil le simple et le composé » → <b>Composite</b> (Menu = composite, Entrée = feuille, ÉlémentMenu = component).`},
+
+/* ---------------- X · Transversal / mélange ---------------- */
+{ch:'X',t:'match',k:'Association',q:`Quel patron pour chaque énoncé ?`,
+ m:[["Garnitures de pizza combinables, ajoutées à l'exécution","Decorator"],["Un rapport construit étape par étape, en PDF ou en HTML","Builder"],["Un thème sombre/clair dont tous les widgets doivent être cohérents","Abstract Factory"],["Dupliquer un document modèle déjà configuré","Prototype"],["Un service distant appelé comme un objet local","Proxy"]],
+ e:`Mots-clés : « combinables / à l'exécution » → Decorator · « étape par étape, représentations différentes » → Builder · « famille cohérente » → Abstract Factory · « dupliquer un modèle » → Prototype · « distant, même interface » → Proxy.`},
+{ch:'X',t:'single',k:'Intrus',q:`Lequel ne repose <b>pas</b> sur un objet qui en enveloppe un autre ?`,
+ o:["Adapter","Decorator","Proxy","Singleton"],a:[3],
+ e:`Adapter, Decorator et Proxy ont la même forme (un objet qui contient une référence vers un autre et lui délègue). <b>Singleton</b> contrôle seulement le nombre d'instances d'une classe.`},
+{ch:'X',t:'multi',k:'QCM',q:`Quels patrons gardent <b>la même interface</b> que l'objet qu'ils enveloppent ?`,
+ o:["Decorator","Proxy","Adapter","Facade"],a:[0,1],
+ e:`Decorator et Proxy sont substituables à l'objet enveloppé (même interface). Adapter <b>convertit</b> vers une autre interface ; Facade en <b>propose une nouvelle</b>, simplifiée.`},
+{ch:'X',t:'single',k:'Cours',q:`Singleton vs Flyweight : quelle phrase est juste ?`,
+ o:["Singleton : une seule instance au total ; Flyweight : une instance partagée par valeur d'état intrinsèque, gérée par une fabrique","Les deux garantissent une seule instance","Flyweight interdit le partage d'instances","Singleton utilise un état extrinsèque"],a:[0],
+ e:`Les deux partagent des instances, mais Singleton = <b>1 au total</b>, Flyweight = <b>1 par état intrinsèque</b> (un pool). Question qui tranche : une instance au total, ou une par valeur partagée ?`},
+{ch:'X',t:'single',k:'Intrus',q:`Lequel n'est <b>pas</b> un patron de structure ?`,
+ o:["Flyweight","Proxy","Facade","Builder"],a:[3],
+ e:`<b>Builder</b> est un patron de <b>création</b>. Les 7 de structure : Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy.`},
+{ch:'X',t:'single',k:'Cours',q:`Prototype vs Factory : la différence est que…`,
+ o:["Prototype crée par copie d'une instance existante ; Factory crée par instanciation d'une classe","Prototype crée des familles d'objets","Factory clone toujours un modèle","Il n'y a aucune différence"],a:[0],
+ e:`Les deux évitent le <code>new</code> côté client. Question qui tranche : part-on d'un <b>objet modèle</b> déjà configuré (Prototype) ou d'une <b>classe</b> (Factory) ?`},
+{ch:'X',t:'single',k:'Cours',q:`Quel lien entre SOLID et les design patterns ?`,
+ o:["SOLID dit quoi viser (faible couplage, forte cohésion) ; les patrons disent comment y arriver dans des situations récurrentes","Les patrons remplacent SOLID","SOLID est un patron de création","Aucun lien"],a:[0],
+ e:`C'est la phrase de synthèse du résumé. Exemples : Decorator applique <b>OCP</b> (un nouveau supplément = une nouvelle classe), les fabriques appliquent <b>DIP</b>, Adapter aide <b>DIP + ISP</b>.`},
+{ch:'X',t:'multi',k:'QCM',q:`Quels patrons sont fondés sur la <b>composition</b> (un objet contient une référence vers un autre et lui délègue) ?`,
+ o:["Bridge","Decorator","Composite","Singleton","Adapter d'objet"],a:[0,1,2,4],
+ e:`Bridge (abstraction → implémentation), Decorator (→ composant enveloppé), Composite (→ fils), Adapter d'objet (→ adaptee). Singleton n'assemble rien : il contrôle le nombre d'instances.`},
+{ch:'X',t:'single',k:'Scénario',q:`Une application doit gérer des <b>millions de caractères</b> dans un éditeur de texte ; chaque caractère a une police, une taille, un glyphe et une position.`,
+ o:["Flyweight","Composite","Prototype","Singleton"],a:[0],
+ e:`« Des millions de petits objets » + « mémoire » → <b>Flyweight</b>. Intrinsèque partagé : glyphe, police, taille. Extrinsèque : position (ligne, colonne).`},
+{ch:'X',t:'tf',k:'Vrai / Faux',q:`Une Facade peut être vue comme un Adapter, puisque les deux enveloppent des classes existantes : la seule différence est le nom.`,a:[1],
+ e:`<b>Faux.</b> Adapter <b>convertit</b> vers une interface <b>préexistante</b> (Target), souvent pour une seule classe, et le polymorphisme est utile. Facade <b>simplifie</b> un sous-système entier avec une interface <b>nouvelle</b>, sans interface cible imposée.`},
+];
+
+/* ============================================================
+   Moteur
+   ============================================================ */
+const CH = {I:'I · Introduction',II:'II · SOLID',III:'III · Création',IV:'IV · Structure',X:'Mix · Comparaisons'};
+const TYPES = ['Cours','QCM','Vrai / Faux','Scénario','Code','Sortie','Association','Intrus','Calcul'];
+Q.forEach((q,i)=>{q.id=i; if(q.t==='multi') q.k='QCM'; if(q.t==='single' && q.k==='QCM') q.k='Cours';});
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmt = s => esc(s).replace(/&lt;(\/?)i&gt;/g,'<$1i>').replace(/`([^`]+)`/g,'<code>$1</code>');
+const shuffle = a => {a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const $ = s => document.querySelector(s);
+
+let st = {mode:'train', ch:new Set(Object.keys(CH)), ty:new Set(TYPES), paper:[], answers:{}, done:{}, submitted:false, wrong:new Set(), timer:null, end:0};
+
+function buildFilters(){
+  $('#chFilters').innerHTML = Object.entries(CH).map(([k,v])=>`<button class="chip on" data-ch="${k}">${v} <span style="opacity:.6">(${Q.filter(q=>q.ch===k).length})</span></button>`).join('');
+  $('#tyFilters').innerHTML = TYPES.map(t=>`<button class="chip on" data-ty="${t}">${t}</button>`).join('');
+  document.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{toggle(st.ch,b.dataset.ch,b);});
+  document.querySelectorAll('[data-ty]').forEach(b=>b.onclick=()=>{toggle(st.ty,b.dataset.ty,b);});
+  poolInfo();
+}
+function toggle(set,k,b){ if(set.has(k)){ if(set.size===1) return; set.delete(k);} else set.add(k); b.classList.toggle('on',set.has(k)); poolInfo(); }
+function pool(){ return Q.filter(q=>st.ch.has(q.ch)&&st.ty.has(q.k)); }
+function poolInfo(){ $('#poolInfo').textContent = `${pool().length} question(s) disponible(s) sur ${Q.length} avec ces filtres.`; }
+
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{
+  st.mode=b.dataset.mode;
+  document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('on',x===b));
+  $('#examOpts').style.display = st.mode==='exam'?'flex':'none';
+});
+
+function makePaper(list, doShuffle){
+  stopTimer();
+  let qs = doShuffle ? shuffle(list) : list.slice();
+  if(st.mode==='exam'){ const n=+$('#nbQ').value; if(n>0) qs=shuffle(list).slice(0,n); }
+  st.paper = qs.map(q=>{
+    const p={q};
+    if(q.t==='single'||q.t==='multi') p.perm = shuffle(q.o.map((_,i)=>i));
+    if(q.t==='match'){ p.choices = shuffle(q.m.map(r=>r[1])); }
+    return p;
+  });
+  st.answers={}; st.done={}; st.submitted=false;
+  $('#result').classList.remove('show');
+  render();
+  if(st.mode==='exam'){
+    const per=+$('#tLim').value;
+    if(per>0){ st.end=Date.now()+Math.round(per*60*st.paper.length)*1000; st.timer=setInterval(tick,500); tick(); }
+  }
+  $('#list').scrollIntoView();
+}
+
+function render(){
+  const L=$('#list');
+  if(!st.paper.length){ L.innerHTML='<p class="empty">Aucune question avec ces filtres.</p>'; dock(); return; }
+  L.innerHTML = st.paper.map((p,n)=>card(p,n)).join('');
+  st.paper.forEach((p,n)=>wire(p,n));
+  dock();
+}
+
+function card(p,n){
+  const q=p.q;
+  let body='';
+  if(q.t==='single'||q.t==='multi'){
+    body=`<div class="opts">${p.perm.map((oi,j)=>`<button class="opt" data-o="${oi}"><span class="L">${'ABCDEFG'[j]}</span><span>${q.html?q.o[oi]:fmt(q.o[oi])}</span></button>`).join('')}</div>`;
+  } else if(q.t==='tf'){
+    body=`<div class="opts tfrow"><button class="opt" data-o="0"><span class="L">V</span><span>Vrai</span></button><button class="opt" data-o="1"><span class="L">F</span><span>Faux</span></button></div>`;
+  } else if(q.t==='match'){
+    body=`<div class="match">${q.m.map((r,i)=>`<div class="mrow" data-r="${i}"><span class="k">${fmt(r[0])}</span><select class="sel"><option value="">— choisir —</option>${p.choices.map(c=>`<option>${esc(c)}</option>`).join('')}</select></div>`).join('')}</div>`;
+  }
+  const train = st.mode==='train';
+  return `<article class="q ${q.t}" id="q${n}">
+    <div class="qh"><span class="qn">${n+1}</span><span class="tag ch">${CH[q.ch]}</span><span class="tag ${q.t==='multi'?'multi':''}">${q.t==='multi'?'QCM · plusieurs réponses':q.k}</span></div>
+    <div class="qt">${q.q}</div>
+    ${q.c?`<pre class="code">${esc(q.c)}</pre>`:''}
+    ${body}
+    <div class="qa">${train?`<button class="btn pri sm-v" data-v>Valider</button>`:''}<span class="verdict"></span></div>
+    <div class="exp"><span class="k">Explication</span>${q.e}</div>
+  </article>`;
+}
+
+function wire(p,n){
+  const el=$('#q'+n), q=p.q;
+  if(q.t==='match'){
+    el.querySelectorAll('select').forEach((s,i)=>s.onchange=()=>{ const a=st.answers[n]||[]; a[i]=s.value; st.answers[n]=a; dock(); });
+  } else {
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      if(st.done[n]) return;
+      const o=+b.dataset.o;
+      let a=st.answers[n]||[];
+      if(q.t==='multi'){ a = a.includes(o)? a.filter(x=>x!==o) : a.concat(o); }
+      else a=[o];
+      st.answers[n]=a;
+      el.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',a.includes(+x.dataset.o)));
+      dock();
+    });
+  }
+  const v=el.querySelector('[data-v]');
+  if(v) v.onclick=()=>{ if(!answered(n)) { el.querySelector('.verdict').textContent='Réponds d\'abord.'; el.querySelector('.verdict').className='verdict ko'; return; } grade(n); dock(); };
+}
+
+function answered(n){
+  const q=st.paper[n].q, a=st.answers[n];
+  if(!a) return false;
+  if(q.t==='match') return q.m.every((_,i)=>a[i]);
+  return a.length>0;
+}
+function isRight(n){
+  const q=st.paper[n].q, a=st.answers[n]||[];
+  if(q.t==='match') return q.m.every((r,i)=>a[i]===r[1]);
+  const exp=q.a.slice().sort().join(','), got=a.slice().sort().join(',');
+  return exp===got;
+}
+function grade(n){
+  const p=st.paper[n], q=p.q, el=$('#q'+n), ok=isRight(n), a=st.answers[n]||[];
+  st.done[n]=ok?1:0;
+  if(!ok) st.wrong.add(q.id); else st.wrong.delete(q.id);
+  el.classList.add(ok?'ok':'ko');
+  if(q.t==='match'){
+    el.querySelectorAll('.mrow').forEach((r,i)=>{
+      const s=r.querySelector('select'); s.disabled=true;
+      const good=a[i]===q.m[i][1];
+      r.classList.add(good?'good':'bad');
+      if(!good) r.insertAdjacentHTML('beforeend',`<span class="fix">→ ${esc(q.m[i][1])}</span>`);
+    });
+  } else {
+    el.querySelectorAll('.opt').forEach(b=>{
+      b.disabled=true; const o=+b.dataset.o, inA=q.a.includes(o), chosen=a.includes(o);
+      b.classList.remove('sel');
+      if(inA&&chosen) b.classList.add('good');
+      else if(chosen) b.classList.add('bad');
+      else if(inA) b.classList.add(q.t==='multi'?'miss':'good');
+    });
+  }
+  const vd=el.querySelector('.verdict');
+  let msg = ok?'✓ Correct':'✗ Incorrect';
+  if(!ok && q.t==='multi'){ const nGood=a.filter(x=>q.a.includes(x)).length; msg+=` · ${nGood}/${q.a.length} bonne(s) cochée(s)${a.length>nGood?`, ${a.length-nGood} en trop`:''}`; }
+  if(!ok && q.t==='match'){ msg+=` · ${q.m.filter((r,i)=>a[i]===r[1]).length}/${q.m.length} liaisons justes`; }
+  if(!answered(n) && !st.answers[n]) msg='— Sans réponse';
+  vd.textContent=msg; vd.className='verdict '+(ok?'ok':'ko');
+  const vb=el.querySelector('[data-v]'); if(vb) vb.remove();
+  el.querySelector('.exp').classList.add('show');
+  $('#wrongBtn').disabled = st.wrong.size===0;
+  $('#wrongBtn').textContent = `Refaire mes erreurs (${st.wrong.size})`;
+}
+
+function dock(){
+  const N=st.paper.length, ans=st.paper.filter((_,n)=>answered(n)).length;
+  const graded=Object.keys(st.done).length, score=Object.values(st.done).reduce((s,x)=>s+x,0);
+  if(!N){ $('#dockSt').textContent='Génère une copie pour commencer'; $('#dockProg').style.width='0'; $('#submit').style.display='none'; return; }
+  if(st.mode==='train'){
+    $('#dockSt').innerHTML=`Corrigées <b>${graded}</b>/${N} · score <b>${score}</b>/${graded||0}`;
+    $('#dockProg').style.width=(100*graded/N)+'%';
+    $('#submit').style.display='none';
+  } else {
+    $('#dockSt').innerHTML = st.submitted ? `Note <b>${score}/${N}</b>` : `Répondues <b>${ans}</b>/${N}`;
+    $('#dockProg').style.width=(100*ans/N)+'%';
+    $('#submit').style.display = st.submitted?'none':'inline-block';
+  }
+}
+
+function submit(auto){
+  if(st.submitted) return;
+  if(!auto){ const left=st.paper.length-st.paper.filter((_,n)=>answered(n)).length; if(left>0 && !confirmInline(left)) return; }
+  st.submitted=true; stopTimer();
+  st.paper.forEach((_,n)=>grade(n));
+  showResult(auto);
+  dock();
+}
+let confirmArmed=false;
+function confirmInline(left){
+  const b=$('#submit');
+  if(confirmArmed){ confirmArmed=false; return true; }
+  confirmArmed=true; b.textContent=`${left} sans réponse · confirmer ?`;
+  setTimeout(()=>{confirmArmed=false; b.textContent='Rendre la copie';},4000);
+  return false;
+}
+function showResult(auto){
+  const N=st.paper.length, score=Object.values(st.done).reduce((s,x)=>s+x,0);
+  const on20=(20*score/N);
+  $('#scBig').textContent=`${score}/${N}`;
+  $('#scNote').textContent=`soit ${on20.toFixed(2).replace('.',',')}/20${auto?' · temps écoulé':''}`;
+  const order=[...Object.keys(CH),...TYPES];
+  const by=(key,lab)=>{ const g={}; st.paper.forEach((p,n)=>{const k=key(p.q); g[k]=g[k]||[0,0]; g[k][1]++; g[k][0]+=st.done[n]||0;}); return Object.entries(g).sort((x,y)=>order.indexOf(x[0])-order.indexOf(y[0])).map(([k,[s,t]])=>`<div class="bar"><span>${lab(k)}</span><span class="tr"><span class="fi" style="width:${100*s/t}%;display:block"></span></span><span class="v">${s}/${t}</span></div>`).join(''); };
+  $('#scBars').innerHTML = `<div class="lab" style="margin-top:4px">Par chapitre</div>`+by(q=>q.ch,k=>CH[k])+`<div class="lab" style="margin-top:8px">Par type</div>`+by(q=>q.k,k=>k);
+  $('#result').classList.add('show');
+  $('#result').scrollIntoView();
+}
+function tick(){
+  const s=Math.max(0,Math.round((st.end-Date.now())/1000));
+  const t=$('#timer'); t.textContent=`⏱ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  t.classList.toggle('low',s<120);
+  if(s<=0) submit(true);
+}
+function stopTimer(){ if(st.timer) clearInterval(st.timer); st.timer=null; $('#timer').textContent=''; }
+
+$('#start').onclick=()=>makePaper(pool(), st.mode==='exam');
+$('#shuffleBtn').onclick=()=>makePaper(pool(), true);
+$('#wrongBtn').onclick=()=>{ const l=Q.filter(q=>st.wrong.has(q.id)); if(l.length){ st.mode='train'; document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('on',x.dataset.mode==='train')); $('#examOpts').style.display='none'; makePaper(l,true); } };
+$('#submit').onclick=()=>submit(false);
+$('#again').onclick=()=>{ $('#setup').scrollIntoView(); };
+$('#toFirstWrong').onclick=()=>{ const n=st.paper.findIndex((_,i)=>!st.done[i]); if(n>=0) $('#q'+n).scrollIntoView(); };
+
+buildFilters();
+makePaper(pool(), false);
+window.scrollTo(0,0);
+</script>
+</body>
+</html>
