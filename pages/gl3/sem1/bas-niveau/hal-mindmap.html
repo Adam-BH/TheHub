@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carte HAL GPIO · étape par étape</title>
+<link rel="icon" type="image/svg+xml" href="../../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4EFE4;--deep:#ECE5D5;--card:#FBF8F0;--ink:#1F1A14;--soft:#4A3F32;--faint:#8A7D6B;--bur:#7B2D26;--teal:#2C5664;--gold:#B8924A;--rule:#C9BFAC;--hl:#F7E8B8;--ok:#3E6B3A;--code:#221D17;
+--serif:'Instrument Serif',Georgia,serif;--body:'Newsreader',Georgia,serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1320px;margin:0 auto;padding:0 16px 48px}
+.hub-back{display:inline-flex;margin-top:14px;padding:6px 11px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;text-decoration:none}
+.hub-back:hover{border-color:var(--bur)}
+header{text-align:center;padding:12px 0 12px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--bur)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,5vw,48px);margin:6px 0 2px;line-height:1.05}
+h1 em{color:var(--bur)}
+.sub{font-style:italic;color:var(--soft);margin:0 auto;max-width:760px}
+h2.sec{font-family:var(--serif);font-weight:400;font-size:28px;margin:26px 0 4px;display:flex;gap:10px;align-items:baseline}
+h2.sec .k{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--bur)}
+.lead{color:var(--soft);margin:0 0 10px;font-style:italic}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:12px 14px}
+.card h3{font-family:var(--serif);font-style:italic;font-weight:400;font-size:21px;margin:0 0 6px;display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.card h3 .m{font-family:var(--mono);font-style:normal;font-size:11.5px;color:var(--faint)}
+.btn{font-family:var(--mono);font-size:12px;border:1px solid var(--rule);background:#fff;color:var(--ink);padding:8px 12px;border-radius:6px;cursor:pointer}
+.btn:hover:not(:disabled){border-color:var(--bur);color:var(--bur)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.pri{background:var(--bur);border-color:var(--bur);color:#fff}
+.btn.pri:hover:not(:disabled){color:#fff;opacity:.9}
+.btn.sm{padding:4px 9px;font-size:11.5px}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+.lab{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.m{font-family:var(--mono);font-size:.88em}
+
+/* ---------- map ---------- */
+.mapbox{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--card);-webkit-overflow-scrolling:touch}
+.mapbox svg{display:block;min-width:900px;width:100%;height:auto}
+.node{cursor:pointer}
+.node rect.b{fill:#fff;stroke:var(--rule);stroke-width:1.4;transition:all .15s}
+.node:hover rect.b{stroke:var(--bur)}
+.node.lib rect.b{fill:#EEF3F3}
+.node.prog rect.b{fill:#FBF3EE}
+.node.why rect.b{fill:#FBF4DF}
+.node.rel rect.b{stroke:var(--gold);stroke-width:2.4;stroke-dasharray:6 4}
+.node.sel rect.b{stroke:var(--bur);stroke-width:3}
+.node.live rect.b{fill:var(--hl)}
+.node .t{font-family:var(--mono);font-size:14px;font-weight:600;fill:var(--ink)}
+.node .s{font-family:var(--body);font-size:14.5px;fill:var(--soft)}
+.node .tag{font-family:var(--mono);font-size:11px;fill:var(--teal)}
+.node .badge{font-family:var(--mono);font-size:12px;font-weight:600;fill:#fff}
+.edge{fill:none;stroke:var(--rule);stroke-width:2}
+.edge.hot{stroke:var(--bur);stroke-width:3}
+.glab{font-family:var(--mono);font-size:12px;letter-spacing:.14em;fill:var(--faint)}
+.maphint{display:none;margin:0 0 4px;text-align:center}@media(max-width:900px){.maphint{display:block}}
+.root rect{fill:var(--ink)}
+.root text{fill:#fff}
+.tour{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0}
+.tour .txt{font-family:var(--mono);font-size:12px;color:var(--soft)}
+
+/* ---------- detail ---------- */
+.detail{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;margin-top:12px}
+@media(max-width:900px){.detail{grid-template-columns:minmax(0,1fr)}}
+.detail h3 .num{font-family:var(--mono);font-style:normal;font-size:12px;background:var(--bur);color:#fff;border-radius:999px;padding:2px 9px;margin-right:6px}
+.detail p{margin:6px 0}
+.detail ul{margin:6px 0;padding-left:20px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+pre.code{margin:0;background:var(--code);color:#EDE6D6;border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.55;overflow-x:auto;white-space:pre}
+.k-c{color:#9C9282;font-style:italic}.k-s{color:#C9D88E}.k-p{color:#E7A86B}.k-k{color:#E99C93}.k-n{color:#E9C97A}.k-M{color:#8FC3CF}.k-f{color:#F3E3B3}
+.box{border-left:3px solid var(--teal);background:#EEF3F3;padding:8px 10px;border-radius:0 6px 6px 0;margin:8px 0;font-size:15px}
+.box.trap{border-color:var(--bur);background:#F6E3DE}
+.box.tip{border-color:var(--gold);background:var(--hl)}
+.box b{color:var(--bur)}
+table.t{border-collapse:collapse;width:100%;font-size:14.5px;margin:6px 0}
+table.t th,table.t td{border-bottom:1px solid var(--rule);padding:4px 6px;text-align:left;vertical-align:top}
+table.t th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:500}
+.tw{overflow-x:auto}
+.layers{display:flex;flex-direction:column;gap:4px;margin:8px 0;max-width:360px}
+.layers div{border:1px solid var(--rule);border-radius:6px;padding:5px 10px;text-align:center;font-family:var(--mono);font-size:12px;background:#fff}
+.layers div.h{background:var(--hl);border-color:var(--gold)}
+.layers div.hw{background:var(--ink);color:#fff}
+.widget{border:1px dashed var(--gold);border-radius:8px;padding:8px 10px;margin:8px 0;background:#fff}
+.widget .wt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-family:var(--mono);font-size:11.5px;padding:3px 8px;border:1px solid var(--rule);border-radius:999px;background:#fff;cursor:pointer;color:var(--soft)}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.out{font-family:var(--mono);font-size:12.5px;margin-top:6px;background:var(--bg);padding:6px 8px;border-radius:6px;word-break:break-all}
+.out b{color:var(--bur)}
+
+/* ---------- simulator ---------- */
+.sim{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
+@media(max-width:980px){.sim{grid-template-columns:minmax(0,1fr)}}
+.listing{background:var(--code);border-radius:8px;padding:8px 0;font-family:var(--mono);font-size:12.5px;line-height:1.6;overflow-x:auto;color:#EDE6D6}
+.ln{display:flex;white-space:pre;padding:0 12px 0 0;border-left:3px solid transparent;min-width:max-content}
+.ln .no{width:34px;flex:none;text-align:right;padding-right:10px;color:#6E6555;user-select:none}
+.ln.cur{background:rgba(247,232,184,.18);border-left-color:var(--gold)}
+.ln.next .no{color:var(--gold)}
+.ln.off{opacity:.45;text-decoration:line-through}
+.ln.dim{opacity:.55}
+.expl{background:var(--hl);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;padding:8px 10px;font-size:15px;min-height:74px}
+.expl b{color:var(--bur)}
+.steppill{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--bur);color:var(--bur);background:#fff;cursor:pointer}
+.status{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pill{font-family:var(--mono);font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--rule);background:#fff}
+.pill.bad{background:#F6D6CF;border-color:var(--bur);color:var(--bur);font-weight:600}
+.pill.good{background:#E3EDDF;border-color:var(--ok);color:var(--ok)}
+.reg{margin-top:10px}
+.reg .rh{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:12px;margin-bottom:3px;flex-wrap:wrap}
+.reg .rh b{color:var(--ink)}
+.reg .rh span{color:var(--faint)}
+.bits{display:grid;gap:2px}
+.bit{font-family:var(--mono);font-size:11px;text-align:center;border:1px solid var(--rule);border-radius:4px;background:#fff;padding:2px 0;line-height:1.25}
+.bit small{display:block;font-size:9px;color:var(--faint)}
+.bit.one{background:var(--teal);border-color:var(--teal);color:#fff}
+.bit.one small{color:#D7E6EA}
+.bit.key{box-shadow:inset 0 0 0 1.5px var(--gold)}
+.bit.chg{animation:flash .7s}
+@keyframes flash{0%{background:var(--gold);color:#fff}100%{}}
+.decode{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:3px}
+table.st{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12px}
+table.st td{border-bottom:1px dotted var(--rule);padding:3px 4px}
+table.st td:first-child{color:var(--teal);white-space:nowrap}
+table.st tr.chg td{animation:flash .7s}
+input[type=range]{accent-color:var(--bur);width:110px}
+.tg{display:flex;gap:6px;align-items:center;font-size:14.5px;color:var(--soft)}
+.tg input{accent-color:var(--bur)}
+footer{margin-top:30px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--faint)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="hub-back" href="../../../../index.html">← Hub</a>
+<header>
+  <div class="eyebrow">Bas niveau · Chap. 3 · Firmware / HAL (ST Firmware Library)</div>
+  <h1>La HAL GPIO, <em>dans l'ordre</em></h1>
+  <p class="sub">À gauche ce que la librairie te donne déjà, à droite ce que tu écris dans <span class="m">main()</span>. Clique un nœud pour voir le code, puis lance le simulateur pour voir chaque ligne modifier les registres de GPIOC.</p>
+</header>
+
+<h2 class="sec"><span class="k">1 · Carte</span>Que faire en premier ?</h2>
+<p class="lead">Exemple fil rouge du cours : 2 LEDs sur PC13 et PC14, sortie push-pull, 2 MHz, qui clignotent.</p>
+<div class="tour">
+  <button class="btn" id="tprev">◀ Précédent</button>
+  <span class="txt" id="ttxt"></span>
+  <button class="btn pri" id="tnext">Suivant ▶</button>
+</div>
+<p class="lab maphint">← fais glisser la carte →</p>
+<div class="mapbox"><svg id="map" viewBox="0 0 1200 650" role="img" aria-label="Carte mentale des étapes HAL GPIO"></svg></div>
+
+<div class="detail" id="detail"></div>
+
+<h2 class="sec" id="simtop"><span class="k">2 · Simulateur</span>Exécuter le programme ligne par ligne</h2>
+<p class="lead">Même programme écrit de 3 façons (diapos 2 → 30). Coche « oublier l'horloge » pour voir l'erreur la plus classique.</p>
+<div class="sim">
+  <div class="card">
+    <h3>Le code <span class="m" id="pcinfo"></span></h3>
+    <div class="toolbar">
+      <span class="lab">Version :</span>
+      <button class="btn sm" data-v="raw">Registres bruts</button>
+      <button class="btn sm" data-v="spl">ST FWL (cours)</button>
+      <button class="btn sm" data-v="cube">HAL Cube</button>
+    </div>
+    <div class="listing" id="listing"></div>
+    <div class="toolbar" style="margin-top:10px">
+      <button class="btn" id="sreset">⟲ Reset</button>
+      <button class="btn pri" id="sstep">Exécuter la ligne ▶</button>
+      <button class="btn" id="splay">▶▶ Auto</button>
+      <span class="lab">vitesse</span><input type="range" id="sspeed" min="250" max="1500" value="800" step="50" aria-label="Vitesse">
+    </div>
+    <label class="tg"><input type="checkbox" id="forget"> Oublier l'horloge (sauter l'étape ②)</label>
+  </div>
+  <div class="card">
+    <h3>La carte <span class="m" id="cyc"></span></h3>
+    <div class="expl" id="expl"></div>
+    <div class="status" id="status"></div>
+    <svg id="board" viewBox="0 0 520 120" aria-label="Carte STM32 avec LEDs PC13 et PC14"></svg>
+    <div class="reg" id="regs"></div>
+  </div>
+</div>
+
+<footer>Source : DAMERGI Emir, « Programmation des GPIOs par utilisation de la ST Firmware Library », chap. 3 (STM32F1).</footer>
+</div>
+
+<script>
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s);
+const hex=(n,w=8)=>'0x'+(n>>>0).toString(16).toUpperCase().padStart(w,'0');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function hl(src){
+  const re=/(\/\/[^\n]*)|("[^"\n]*")|(#\s*(?:include|define))|\b(typedef|struct|enum|volatile|const|uint32_t|uint16_t|uint8_t|void|int|for|if|else|while|return|unsigned)\b|\b(0x[0-9A-Fa-f]+u?L?|\d+u?L?)\b|\b([A-Z][A-Z0-9_]{2,}[a-z0-9_]*)\b|\b([A-Za-z_]\w*)(?=\s*\()/g;
+  return esc(src).replace(re,(m,c,s,p,k,n,M,f)=>c?`<span class="k-c">${c}</span>`:s?`<span class="k-s">${s}</span>`:p?`<span class="k-p">${p}</span>`:k?`<span class="k-k">${k}</span>`:n?`<span class="k-n">${n}</span>`:M?`<span class="k-M">${M}</span>`:`<span class="k-f">${f}</span>`);
+}
+
+/* ================= mind-map data ================= */
+const N={
+why:{x:600,y:100,w:300,h:84,cls:'why',badge:'0',title:'Pourquoi une HAL ?',sub:['3 douleurs : adresses,','valeurs de config, masques'],rel:['lib1','lib2','lib4'],
+ body:`<p>Programmer GPIOC « à la main », c'est connaître :</p>
+ <div class="tw"><table class="t"><tr><th>Douleur</th><th>Supprimée par</th><th>Fichier</th></tr>
+ <tr><td>1 · les <b>adresses</b> des registres</td><td>struct + pointeur sur l'@ de base</td><td class="m">stm32f10x.h</td></tr>
+ <tr><td>2 · les <b>valeurs</b> des paramètres</td><td>constantes nommées</td><td class="m">stm32f10x_gpio.h</td></tr>
+ <tr><td>3 · les <b>shifts &amp; masques</b></td><td>fonctions</td><td class="m">stm32f10x_gpio.c</td></tr></table></div>
+ <div class="layers"><div>User Program (main.c)</div><div class="h">Firmware HAL · ST FWL drivers</div><div class="hw">Hardware STM32</div></div>
+ <div class="box"><b>Firmware</b> = logiciel (C/ASM) lié à une puce : « firm » entre hard et soft. Non portable vers une autre plateforme.</div>`,
+ tabs:[['Registres bruts',`#define RCC_APB2ENR (*(volatile uint32_t *) 0x40021018)
+#define GPIOC_CRH   (*(volatile uint32_t *) 0x40011004)
+#define GPIOC_BSRR  (*(volatile uint32_t *) 0x40011010)
+#define GPIOC_BRR   (*(volatile uint32_t *) 0x40011014)
+
+RCC_APB2ENR |= (1u << 4);         // 1- connaître les @
+GPIOC_CRH   &= ~(0x0Fu << 4);     // 2- connaître les valeurs
+GPIOC_CRH   |=  (0x01u << 4);     // 3- faire shifts + masques
+while (1) {
+    GPIOC_BSRR = 1u << 9;  Delay();   // PC9 = 1
+    GPIOC_BRR  = 1u << 9;  Delay();   // PC9 = 0
+}`],['Avec la librairie',`#include "stm32f10x.h"
+#include "stm32f10x_gpio.h"
+
+GPIO_InitTypeDef GPIO_InitStructure;
+RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_9;
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+GPIO_Init(GPIOC, &GPIO_InitStructure);
+while (1) {
+    GPIO_SetBits(GPIOC, GPIO_Pin_9);   Delay();
+    GPIO_ResetBits(GPIOC, GPIO_Pin_9); Delay();
+}`]]},
+
+lib1:{x:200,y:130,w:330,h:96,cls:'lib',badge:'L1',tag:'stm32f10x.h',title:'typedef struct GPIO_TypeDef',sub:['Les registres = une struct','+ un pointeur sur l\'@ de base'],rel:['s4','s5'],
+ body:`<p>On décrit le périphérique comme une <b>struct</b> dont les champs (4 octets chacun) sont <b>dans le même ordre</b> que les registres. Puis on caste l'adresse de base en pointeur sur cette struct.</p>
+ <p>Le compilateur traduit <span class="m">GPIOC-&gt;CRH</span> en <span class="m">*(base + offset du champ)</span>.</p>
+ <div class="widget"><div class="wt">Calcule une adresse</div>
+  <div class="chips" id="wport"></div><div class="chips" id="wreg" style="margin-top:4px"></div><div class="out" id="waddr"></div></div>
+ <div class="box trap"><b>Piège</b> : si un champ manque ou est dans le désordre, tous les offsets suivants sont faux. Et sans <span class="m">volatile</span>, le compilateur peut supprimer des lectures/écritures « inutiles ».</div>`,
+ tabs:[['stm32f10x.h (simplifié)',`typedef struct {
+    volatile uint32_t CRL;    // offset 0x00
+    volatile uint32_t CRH;    // offset 0x04
+    volatile uint32_t IDR;    // offset 0x08
+    volatile uint32_t ODR;    // offset 0x0C
+    volatile uint32_t BSRR;   // offset 0x10
+    volatile uint32_t BRR;    // offset 0x14
+    volatile uint32_t LCKR;   // offset 0x18
+} GPIO_TypeDef;
+
+#define PERIPH_BASE      0x40000000UL
+#define APB2PERIPH_BASE  (PERIPH_BASE + 0x10000)      // 0x40010000
+#define GPIOC_BASE       (APB2PERIPH_BASE + 0x1000)   // 0x40011000
+#define GPIOC            ((GPIO_TypeDef *) GPIOC_BASE)
+
+// usage :  Periph_Name -> Register_Name
+GPIOC->BSRR = 0x01 << 9;      // = *(0x40011000 + 0x10)`]]},
+
+lib2:{x:200,y:270,w:330,h:96,cls:'lib',badge:'L2',tag:'stm32f10x_gpio.h',title:'Constantes de config',sub:['GPIO_Pin_13, GPIO_Mode_Out_PP,','GPIO_Speed_2MHz…'],rel:['s3'],
+ body:`<p>Plus besoin de retenir les codes binaires : chaque valeur a un <b>nom</b>. Les pins sont des masques à <b>un seul bit à 1</b>, donc on les combine avec <span class="m">|</span>.</p>
+ <div class="widget"><div class="wt">Combine des pins (GPIO_Pin)</div><div class="chips" id="wpins"></div><div class="out" id="wpinout"></div></div>
+ <div class="box tip"><b>Astuce</b> : <span class="m">GPIO_Pin_13 | GPIO_Pin_14</span> = <span class="m">0x2000 | 0x4000</span> = <span class="m">0x6000</span> = <span class="m">0110 0000 0000 0000</span> (diapo 27).</div>`,
+ tabs:[['stm32f10x_gpio.h',`#define GPIO_Pin_0    ((uint16_t)0x0001)
+...
+#define GPIO_Pin_13   ((uint16_t)0x2000)
+#define GPIO_Pin_14   ((uint16_t)0x4000)
+#define GPIO_Pin_All  ((uint16_t)0xFFFF)
+
+typedef enum {
+    GPIO_Speed_10MHz = 1,
+    GPIO_Speed_2MHz,          // = 2
+    GPIO_Speed_50MHz          // = 3
+} GPIOSpeed_TypeDef;
+
+typedef enum {
+    GPIO_Mode_AIN         = 0x00,
+    GPIO_Mode_IN_FLOATING = 0x04,
+    GPIO_Mode_IPD         = 0x28,
+    GPIO_Mode_IPU         = 0x48,
+    GPIO_Mode_Out_OD      = 0x14,
+    GPIO_Mode_Out_PP      = 0x10,
+    GPIO_Mode_AF_OD       = 0x1C,
+    GPIO_Mode_AF_PP       = 0x18
+} GPIOMode_TypeDef;`]]},
+
+lib3:{x:200,y:410,w:330,h:96,cls:'lib',badge:'L3',tag:'stm32f10x_gpio.h',title:'typedef GPIO_InitTypeDef',sub:['La struct de CONFIG :','Pin, Speed, Mode'],rel:['s1','s3'],
+ body:`<p>Une deuxième struct, à ne pas confondre avec la première :</p>
+ <div class="tw"><table class="t"><tr><th></th><th>GPIO_TypeDef</th><th>GPIO_InitTypeDef</th></tr>
+ <tr><td>Représente</td><td>les <b>registres</b> du matériel</td><td>tes <b>souhaits</b> de config</td></tr>
+ <tr><td>Où ?</td><td>à l'@ 0x40011000 (périphérique)</td><td>en RAM (ta variable)</td></tr>
+ <tr><td>Qui l'écrit ?</td><td>les fonctions HAL</td><td>toi, champ par champ</td></tr>
+ <tr><td>Exemple</td><td class="m">GPIOC</td><td class="m">GPIO_InitStructure</td></tr></table></div>
+ <p>Même schéma pour tous les périphériques : <span class="m">PPP_InitTypeDef</span> → <span class="m">USART_InitTypeDef</span>, <span class="m">TIM_TimeBaseInitTypeDef</span>…</p>
+ <div class="box">Remplir cette struct <b>ne touche à aucun registre</b>. Rien ne bouge sur la carte tant que <span class="m">GPIO_Init()</span> n'est pas appelée (vois-le dans le simulateur).</div>`,
+ tabs:[['ST FWL',`typedef struct {
+    uint16_t          GPIO_Pin;     // GPIO_Pin_x  (combinables avec |)
+    GPIOSpeed_TypeDef GPIO_Speed;   // GPIO_Speed_10MHz / 2MHz / 50MHz
+    GPIOMode_TypeDef  GPIO_Mode;    // GPIO_Mode_Out_PP, _IPU, ...
+} GPIO_InitTypeDef;`],['HAL Cube',`typedef struct {
+    uint32_t Pin;        // GPIO_PIN_x
+    uint32_t Mode;       // GPIO_MODE_OUTPUT_PP, GPIO_MODE_INPUT, ...
+    uint32_t Pull;       // GPIO_NOPULL / GPIO_PULLUP / GPIO_PULLDOWN
+    uint32_t Speed;      // GPIO_SPEED_FREQ_LOW / MEDIUM / HIGH
+} GPIO_InitTypeDef;`]]},
+
+lib4:{x:200,y:550,w:330,h:96,cls:'lib',badge:'L4',tag:'stm32f10x_gpio.c',title:'Les fonctions',sub:['GPIO_Init() fait shifts + masques','SetBits / ResetBits → BSRR / BRR'],rel:['s4','s5'],
+ body:`<p><span class="m">GPIO_Init</span> lit ta struct de config et écrit le bon <b>quartet</b> (4 bits CNF:MODE) dans CRL (pins 0–7) ou CRH (pins 8–15).</p>
+ <div class="widget"><div class="wt">Quel quartet pour quel mode ?</div><div class="chips" id="wmode"></div><div class="chips" id="wspeed" style="margin-top:4px"></div><div class="out" id="wq"></div></div>
+ <div class="box trap"><b>Piège (diapos 36–38)</b> : <span class="m">&amp;= ~0x0Fu &lt;&lt; s</span> sans parenthèses : <span class="m">~</span> s'applique avant <span class="m">&lt;&lt;</span>, ça efface aussi les pins inférieures. Toujours <span class="m">~(0x0Fu &lt;&lt; s)</span>.</div>`,
+ tabs:[['GPIO_Init (simplifié)',`void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *init)
+{
+    // 1) le quartet CNF:MODE
+    uint32_t q = init->GPIO_Mode & 0x0F;          // CNF (déjà décalé de 2)
+    if (init->GPIO_Mode & 0x10)                   // bit 4 = "c'est une sortie"
+        q |= init->GPIO_Speed;                    // MODE = vitesse
+
+    // 2) pour chaque pin demandée
+    for (uint32_t pin = 0; pin < 16; pin++) {
+        if (init->GPIO_Pin & (1u << pin)) {
+            volatile uint32_t *reg = (pin < 8) ? &GPIOx->CRL : &GPIOx->CRH;
+            uint32_t s = 4 * (pin % 8);
+            *reg &= ~(0x0Fu << s);    // masque : effacer le quartet
+            *reg |=  (q << s);        // shift  : écrire le nouveau
+        }
+    }
+}`],['SetBits / ResetBits',`void GPIO_SetBits(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
+{
+    GPIOx->BSRR = GPIO_Pin;      // 1 = mettre à 1, 0 = ne rien changer
+}
+
+void GPIO_ResetBits(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
+{
+    GPIOx->BRR = GPIO_Pin;       // 1 = mettre à 0
+}
+
+uint8_t GPIO_ReadInputDataBit(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
+{
+    return (GPIOx->IDR & GPIO_Pin) ? 1 : 0;
+}`]]},
+
+s1:{x:1000,y:100,w:330,h:84,cls:'prog',badge:'①',title:'Déclarer la struct',sub:['GPIO_InitTypeDef GPIO_InitStructure;'],rel:['lib3'],
+ body:`<p>Première ligne de tout programme : une variable du type de config du périphérique.</p>
+ <p class="m">PPP_InitTypeDef PPP_InitStructure;</p>
+ <ul><li>GPIO → <span class="m">GPIO_InitTypeDef GPIO_InitStructure;</span></li><li>USART → <span class="m">USART_InitTypeDef USART_InitStructure;</span></li></ul>
+ <div class="box trap"><b>Piège</b> : en variable <b>locale</b> elle contient n'importe quoi. Globale = mise à 0 ; en HAL Cube on écrit <span class="m">= {0}</span> pour être sûr qu'aucun champ oublié ne vaut une valeur aléatoire.</div>`,
+ tabs:[['ST FWL',`#include "stm32f10x.h"
+#include "stm32f10x_gpio.h"
+
+GPIO_InitTypeDef GPIO_InitStructure;   // globale -> tous les champs à 0`],['HAL Cube',`#include "stm32f1xx_hal.h"
+
+GPIO_InitTypeDef GPIO_InitStruct = {0};`]]},
+
+s2:{x:1000,y:215,w:330,h:84,cls:'prog',badge:'②',title:'Activer l\'horloge',sub:['RCC_APB2PeriphClockCmd(...GPIOC, ENABLE)'],rel:['lib1'],
+ body:`<p>Chaque périphérique (sauf RCC) est éteint au reset pour économiser l'énergie. On l'alimente via le <b>RCC</b>, sur le <b>bus</b> où il est branché :</p>
+ <p class="m">RCC_BUSxPeriphClockCmd(RCC_BUSxPeriph_PPPx, ENABLE);</p>
+ <div class="tw"><table class="t"><tr><th>Puce</th><th>GPIO sur</th><th>Appel</th></tr>
+ <tr><td>STM32F1</td><td>APB2</td><td class="m">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE)</td></tr>
+ <tr><td>STM32F4</td><td>AHB1</td><td class="m">RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE)</td></tr></table></div>
+ <div class="box trap"><b>Piège n°1</b> : oublier cette ligne → toutes les écritures dans GPIOC sont ignorées, aucune erreur, rien ne s'allume. Essaie la case « oublier l'horloge ».<br><b>Coquilles des diapos</b> : diapo 30 mélange <span class="m">RCC_AHB1PeriphClockCmd</span> et <span class="m">RCC_APB2Periph_GPIOC</span> (le bus doit être le même des deux côtés) ; diapo 2, <span class="m">0x04</span> = bit 2 = IOPAEN (GPIOA). Pour GPIOC c'est le bit 4 : <span class="m">0x10</span>.</div>`,
+ tabs:[['ST FWL',`RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+// = RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;   (bit 4 = 0x10)`],['HAL Cube',`__HAL_RCC_GPIOC_CLK_ENABLE();`],['Registre',`RCC->APB2ENR |= (1u << 4);     // IOPCEN`]]},
+
+s3:{x:1000,y:330,w:330,h:84,cls:'prog',badge:'③',title:'Remplir les champs',sub:['.GPIO_Pin  .GPIO_Mode  .GPIO_Speed'],rel:['lib2','lib3'],
+ body:`<p><span class="m">PPP_InitStructure.propriété = valeur;</span> Les propriétés viennent de L3, les valeurs de L2.</p>
+ <div class="tw"><table class="t"><tr><th>Champ</th><th>Valeurs (F1, ST FWL)</th></tr>
+ <tr><td class="m">GPIO_Pin</td><td><span class="m">GPIO_Pin_0 … GPIO_Pin_15</span>, combinables avec |</td></tr>
+ <tr><td class="m">GPIO_Mode</td><td>Out_PP, Out_OD, AF_PP, AF_OD, IN_FLOATING, IPU, IPD, AIN</td></tr>
+ <tr><td class="m">GPIO_Speed</td><td>10MHz, 2MHz, 50MHz (sorties uniquement)</td></tr></table></div>
+ <div class="box tip">LED → <b>Out_PP</b> ; bouton → <b>IPU/IPD</b> ou IN_FLOATING ; broche d'USART/SPI → <b>AF_PP</b> ; ADC → <b>AIN</b>.</div>`,
+ tabs:[['ST FWL',`GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_13 | GPIO_Pin_14;
+GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;`],['HAL Cube',`GPIO_InitStruct.Pin   = GPIO_PIN_13 | GPIO_PIN_14;
+GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+GPIO_InitStruct.Pull  = GPIO_NOPULL;
+GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;     // 2 MHz sur F1`]]},
+
+s4:{x:1000,y:445,w:330,h:84,cls:'prog',badge:'④',title:'Initialiser',sub:['GPIO_Init(GPIOC, &GPIO_InitStructure);'],rel:['lib4','lib1'],
+ body:`<p><span class="m">PPP_Init(PPPx, &amp;PPP_InitStructure);</span> C'est <b>ici</b> que les registres changent : la fonction recopie ta config dans CRH.</p>
+ <div class="tw"><table class="t"><tr><th></th><th>GPIOC-&gt;CRH</th><th>PC14</th><th>PC13</th></tr>
+ <tr><td>Reset</td><td class="m">0x44444444</td><td>0100 entrée flottante</td><td>0100</td></tr>
+ <tr><td>Après Init</td><td class="m">0x42244444</td><td>0010 sortie PP 2 MHz</td><td>0010</td></tr></table></div>
+ <div class="box trap"><b>Piège</b> : on passe l'<b>adresse</b> de la struct : <span class="m">&amp;GPIO_InitStructure</span>. Oublier le <span class="m">&amp;</span> = erreur de compilation (ou pire, un warning ignoré).</div>`,
+ tabs:[['ST FWL',`GPIO_Init(GPIOC, &GPIO_InitStructure);`],['HAL Cube',`HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);`],['Équivalent registres',`GPIOC->CRH &= ~(0xFFu << 20);   // efface quartets PC13 (20..23) et PC14 (24..27)
+GPIOC->CRH |=  (0x22u << 20);   // 0010 = CNF 00 (PP) + MODE 10 (2 MHz)`]]},
+
+s5:{x:1000,y:560,w:330,h:84,cls:'prog',badge:'⑤',title:'Traiter (while 1)',sub:['GPIO_SetBits / GPIO_ResetBits + Delay()'],rel:['lib4','lib1'],
+ body:`<p>Une fois configuré, on n'utilise plus que les fonctions de traitement :</p>
+ <div class="tw"><table class="t"><tr><th>ST FWL</th><th>HAL Cube</th><th>Registre</th></tr>
+ <tr><td class="m">GPIO_SetBits</td><td class="m">HAL_GPIO_WritePin(..., SET)</td><td>BSRR</td></tr>
+ <tr><td class="m">GPIO_ResetBits</td><td class="m">HAL_GPIO_WritePin(..., RESET)</td><td>BRR (ou BSRR haut)</td></tr>
+ <tr><td class="m">GPIO_ReadInputDataBit</td><td class="m">HAL_GPIO_ReadPin</td><td>IDR</td></tr>
+ <tr><td class="m">GPIO_Write</td><td class="m">HAL_GPIO_TogglePin</td><td>ODR</td></tr></table></div>
+ <div class="box">BSRR/BRR : on n'écrit <b>que des 1</b> là où on veut agir, les autres pins ne bougent pas. Pas besoin de lire-modifier-écrire ODR.</div>`,
+ tabs:[['ST FWL',`while (1) {
+    GPIO_SetBits(GPIOC, GPIO_Pin_13 | GPIO_Pin_14);     // BSRR = 0x6000
+    Delay();
+    GPIO_ResetBits(GPIOC, GPIO_Pin_13 | GPIO_Pin_14);   // BRR  = 0x6000
+    Delay();
+}`],['HAL Cube',`while (1) {
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13 | GPIO_PIN_14, GPIO_PIN_SET);
+    HAL_Delay(500);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13 | GPIO_PIN_14, GPIO_PIN_RESET);
+    HAL_Delay(500);
+}`]]}
+};
+const ORDER=['why','lib1','lib2','lib3','lib4','s1','s2','s3','s4','s5'];
+const ROOT={x:600,y:345,w:230,h:84};
+let sel='why', tabSel={};
+
+/* ================= map render ================= */
+function drawMap(){
+  const svg=$('#map'); let h='';
+  h+=`<text class="glab" x="200" y="62" text-anchor="middle">LA LIBRAIRIE · CE QUI EXISTE DÉJÀ</text>`;
+  h+=`<text class="glab" x="1000" y="40" text-anchor="middle">TON PROGRAMME · DANS L'ORDRE</text>`;
+  for(const id of ORDER){
+    const n=N[id]; let d;
+    if(id==='why') d=`M${ROOT.x} ${ROOT.y-ROOT.h/2} L${n.x} ${n.y+n.h/2}`;
+    else if(n.x<ROOT.x){const x1=ROOT.x-ROOT.w/2,x2=n.x+n.w/2,mx=(x1+x2)/2;d=`M${x1} ${ROOT.y} C${mx} ${ROOT.y} ${mx} ${n.y} ${x2} ${n.y}`}
+    else{const x1=ROOT.x+ROOT.w/2,x2=n.x-n.w/2,mx=(x1+x2)/2;d=`M${x1} ${ROOT.y} C${mx} ${ROOT.y} ${mx} ${n.y} ${x2} ${n.y}`}
+    h+=`<path class="edge" id="e-${id}" d="${d}"/>`;
+  }
+  // order arrows between program steps
+  const P=['s1','s2','s3','s4','s5'];
+  for(let i=0;i<P.length-1;i++){const a=N[P[i]],b=N[P[i+1]];const y1=a.y+a.h/2+2,y2=b.y-b.h/2-3;
+    h+=`<path d="M${a.x+150} ${y1} L${a.x+150} ${y2}" stroke="var(--bur)" stroke-width="1.6" marker-end="url(#ar)" fill="none"/>`}
+  h=`<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--bur)"/></marker></defs>`+h;
+  h+=`<g class="root"><rect x="${ROOT.x-ROOT.w/2}" y="${ROOT.y-ROOT.h/2}" width="${ROOT.w}" height="${ROOT.h}" rx="14"/>
+      <text x="${ROOT.x}" y="${ROOT.y-6}" text-anchor="middle" font-family="Instrument Serif,serif" font-size="26">HAL · GPIO</text>
+      <text x="${ROOT.x}" y="${ROOT.y+20}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#D8CDB6">STM32F1 · ST Firmware Lib</text></g>`;
+  for(const id of ORDER){
+    const n=N[id],x=n.x-n.w/2,y=n.y-n.h/2;
+    let t=`<g class="node ${n.cls}" data-id="${id}" tabindex="0" role="button" aria-label="${n.title}">`;
+    t+=`<rect class="b" x="${x}" y="${y}" width="${n.w}" height="${n.h}" rx="10"/>`;
+    t+=`<rect x="${x+12}" y="${y+12}" width="${n.badge.length>1?30:24}" height="20" rx="10" fill="${n.cls==='lib'?'var(--teal)':n.cls==='why'?'var(--gold)':'var(--bur)'}"/>`;
+    t+=`<text class="badge" x="${x+12+(n.badge.length>1?15:12)}" y="${y+26.5}" text-anchor="middle">${n.badge}</text>`;
+    t+=`<text class="t" x="${x+(n.badge.length>1?50:44)}" y="${y+27}">${esc(n.title)}</text>`;
+    let yy=y+27;
+    if(n.tag){t+=`<text class="tag" x="${x+n.w-12}" y="${y+n.h-10}" text-anchor="end">${n.tag}</text>`}
+    n.sub.forEach((s,i)=>{t+=`<text class="s" x="${x+14}" y="${yy+22+i*19}">${esc(s)}</text>`});
+    t+='</g>'; h+=t;
+  }
+  svg.innerHTML=h;
+  svg.querySelectorAll('.node').forEach(g=>{
+    g.addEventListener('click',()=>select(g.dataset.id));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(g.dataset.id)}});
+  });
+}
+function paintMap(live){
+  document.querySelectorAll('#map .node').forEach(g=>{
+    const id=g.dataset.id;
+    g.classList.toggle('sel',id===sel);
+    g.classList.toggle('rel',N[sel].rel.includes(id));
+    g.classList.toggle('live',id===live);
+  });
+  document.querySelectorAll('#map .edge').forEach(p=>p.classList.toggle('hot',p.id==='e-'+sel));
+}
+function select(id,scroll){
+  sel=id; paintMap(liveNode); renderDetail();
+  const i=ORDER.indexOf(id);
+  $('#ttxt').textContent=`Étape ${i+1} / ${ORDER.length} · ${N[id].badge} ${N[id].title}`;
+  $('#tprev').disabled=i===0; $('#tnext').disabled=i===ORDER.length-1;
+  if(scroll) $('#map').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('#tprev').onclick=()=>select(ORDER[Math.max(0,ORDER.indexOf(sel)-1)]);
+$('#tnext').onclick=()=>select(ORDER[Math.min(ORDER.length-1,ORDER.indexOf(sel)+1)]);
+
+/* ================= detail ================= */
+function renderDetail(){
+  const n=N[sel], ti=tabSel[sel]||0;
+  const rel=n.rel.map(r=>`<button class="chip" data-go="${r}">${N[r].badge} ${esc(N[r].title)}</button>`).join('');
+  $('#detail').innerHTML=`<div class="card"><h3><span><span class="num">${n.badge}</span>${esc(n.title)}</span>${n.tag?`<span class="m">${n.tag}</span>`:''}</h3>${n.body}
+    ${rel?`<div class="lab" style="margin-top:8px">Lié à :</div><div class="chips">${rel}</div>`:''}</div>
+    <div class="card"><h3>Code <span class="m">${n.tabs.length>1?'choisis la version':''}</span></h3>
+    <div class="tabs">${n.tabs.map((t,i)=>`<button class="btn sm ${i===ti?'on':''}" data-tab="${i}">${t[0]}</button>`).join('')}</div>
+    <pre class="code">${hl(n.tabs[ti][1])}</pre></div>`;
+  $('#detail').querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tabSel[sel]=+b.dataset.tab;renderDetail()});
+  $('#detail').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>select(b.dataset.go));
+  mountWidgets();
+}
+
+/* ---- widgets ---- */
+const PORTS=[['GPIOA',0x40010800],['GPIOB',0x40010C00],['GPIOC',0x40011000],['GPIOD',0x40011400],['GPIOE',0x40011800]];
+const REGS=[['CRL',0],['CRH',4],['IDR',8],['ODR',0xC],['BSRR',0x10],['BRR',0x14],['LCKR',0x18]];
+let wP=2,wR=1,wPins=0x6000,wM='GPIO_Mode_Out_PP',wS=2;
+const MODES={GPIO_Mode_AIN:0x00,GPIO_Mode_IN_FLOATING:0x04,GPIO_Mode_IPD:0x28,GPIO_Mode_IPU:0x48,GPIO_Mode_Out_OD:0x14,GPIO_Mode_Out_PP:0x10,GPIO_Mode_AF_OD:0x1C,GPIO_Mode_AF_PP:0x18};
+function decodeQ(q){const mode=q&3,cnf=q>>2;
+  if(mode===0) return ['Entrée analogique','Entrée flottante','Entrée pull-up/down','(réservé)'][cnf];
+  return ['Sortie push-pull','Sortie open-drain','Alt. push-pull','Alt. open-drain'][cnf]+' '+['','10 MHz','2 MHz','50 MHz'][mode];}
+function mountWidgets(){
+  if($('#wport')){
+    const draw=()=>{
+      $('#wport').innerHTML=PORTS.map((p,i)=>`<button class="chip ${i===wP?'on':''}" data-i="${i}">${p[0]}</button>`).join('');
+      $('#wreg').innerHTML=REGS.map((r,i)=>`<button class="chip ${i===wR?'on':''}" data-i="${i}">${r[0]}</button>`).join('');
+      const [pn,pb]=PORTS[wP],[rn,ro]=REGS[wR];
+      $('#waddr').innerHTML=`${pn}-&gt;${rn} &nbsp;→&nbsp; *(${hex(pb)} + 0x${ro.toString(16).toUpperCase().padStart(2,'0')}) = <b>${hex(pb+ro)}</b>`;
+      $('#wport').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{wP=+b.dataset.i;draw()});
+      $('#wreg').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{wR=+b.dataset.i;draw()});
+    };draw();
+  }
+  if($('#wpins')){
+    const draw=()=>{
+      let s='';for(let i=15;i>=0;i--)s+=`<button class="chip ${wPins>>i&1?'on':''}" data-i="${i}">${i}</button>`;
+      $('#wpins').innerHTML=s;
+      const on=[];for(let i=0;i<16;i++)if(wPins>>i&1)on.push('GPIO_Pin_'+i);
+      const bin=(wPins>>>0).toString(2).padStart(16,'0').replace(/(.{4})(?=.)/g,'$1 ');
+      $('#wpinout').innerHTML=`${on.join(' | ')||'(aucune)'}<br>= <b>${hex(wPins,4)}</b> = ${bin}`;
+      $('#wpins').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{wPins^=1<<+b.dataset.i;draw()});
+    };draw();
+  }
+  if($('#wmode')){
+    const draw=()=>{
+      $('#wmode').innerHTML=Object.keys(MODES).map(k=>`<button class="chip ${k===wM?'on':''}" data-k="${k}">${k.replace('GPIO_Mode_','')}</button>`).join('');
+      $('#wspeed').innerHTML=[[1,'10MHz'],[2,'2MHz'],[3,'50MHz']].map(([v,l])=>`<button class="chip ${v===wS?'on':''}" data-v="${v}">Speed_${l}</button>`).join('');
+      const m=MODES[wM],out=!!(m&0x10),q=(m&0x0F)|(out?wS:0);
+      const b=q.toString(2).padStart(4,'0');
+      $('#wq').innerHTML=`${wM} = ${hex(m,2)} → ${hex(m,2)} &amp; 0x0F = ${hex(m&0x0F,1)}${out?` | Speed ${wS}`:' (entrée : vitesse ignorée)'}<br>quartet = <b>${b.slice(0,2)} ${b.slice(2)}</b> (CNF MODE) = ${hex(q,1)} → ${decodeQ(q)}${wM==='GPIO_Mode_IPU'?' · pull-up via BSRR':wM==='GPIO_Mode_IPD'?' · pull-down via BRR':''}`;
+      $('#wmode').querySelectorAll('.chip').forEach(x=>x.onclick=()=>{wM=x.dataset.k;draw()});
+      $('#wspeed').querySelectorAll('.chip').forEach(x=>x.onclick=()=>{wS=+x.dataset.v;draw()});
+    };draw();
+  }
+}
+
+/* ================= simulator ================= */
+const PIN1314=0x6000;
+const L=(c,n,e,op,extra)=>Object.assign({c,n,e,op},extra||{});
+const S=c=>({c,skip:true});
+const PROGS={
+raw:{struct:null,lines:[
+ S('// Version 1 du cours : accès direct aux registres'),
+ L('#define RCC_APB2ENR ((volatile uint32_t *) 0x40021018)','why','Il faut <b>connaître chaque adresse</b> (memory map) : RCC base 0x40021000 + offset 0x18, GPIOC base 0x40011000 + offsets 0x04 / 0x10 / 0x14. Ce sont des <span class="m">#define</span> : rien ne s\'exécute.',{t:'info'}),
+ S('#define GPIOC_CRH   ((volatile uint32_t *) 0x40011004)'),
+ S('#define GPIOC_BSRR  ((volatile uint32_t *) 0x40011010)'),
+ S('#define GPIOC_BRR   ((volatile uint32_t *) 0x40011014)'),
+ S(''),S('int main(void) {'),
+ L('  *RCC_APB2ENR |= (1u << 4);        // IOPCEN','s2','Bit 4 de APB2ENR = <b>IOPCEN</b> : GPIOC reçoit son horloge.',{t:'clk'}),
+ L('  *GPIOC_CRH &= ~(0xFFu << 20);     // masque','s4','<b>Masque</b> : on efface les quartets de PC13 (bits 20–23) et PC14 (bits 24–27). Les autres pins ne bougent pas.',{t:'and',v:~(0xFF<<20)}),
+ L('  *GPIOC_CRH |=  (0x22u << 20);     // shift','s4','<b>Shift</b> : on écrit 0010 (CNF=00 push-pull, MODE=10 2 MHz) dans les deux quartets.',{t:'or',v:0x22<<20}),
+ S('  while (1) {'),
+ L('    *GPIOC_BSRR = (1u << 13) | (1u << 14);','s5','Écrire 1 dans BSRR <b>met à 1</b> les bits correspondants de ODR → LEDs ON.',{t:'bsrr',v:PIN1314}),
+ L('    Delay();','s5','Attente : les LEDs restent allumées.',{t:'delay'}),
+ L('    *GPIOC_BRR  = (1u << 13) | (1u << 14);','s5','Écrire 1 dans BRR <b>met à 0</b> les bits correspondants de ODR → LEDs OFF.',{t:'brr',v:PIN1314}),
+ L('    Delay();','s5','Attente, puis retour au début de la boucle.',{t:'delay'},{next:11}),
+ S('  }'),S('}')]},
+spl:{struct:[['GPIO_Pin',4],['GPIO_Speed',1],['GPIO_Mode',2]],lines:[
+ L('#include "stm32f10x.h"       // GPIO_TypeDef, GPIOC, RCC','lib1','Ce header apporte la <b>struct des registres</b> <span class="m">GPIO_TypeDef</span> et le pointeur <span class="m">GPIOC</span> → fini les adresses.',{t:'info'}),
+ L('#include "stm32f10x_gpio.h"  // constantes + InitTypeDef','lib2','Celui-ci apporte les <b>constantes</b> (GPIO_Pin_13, GPIO_Mode_Out_PP…), la struct de config <span class="m">GPIO_InitTypeDef</span> et les prototypes des fonctions.',{t:'info'}),
+ S(''),
+ L('GPIO_InitTypeDef GPIO_InitStructure;            // ①','s1','<b>① Déclarer</b> la struct de config. Globale → tous ses champs valent 0. Elle vit en RAM : aucun registre ne change.',{t:'decl'}),
+ S(''),S('int main(void) {'),
+ L('  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE); // ②','s2','<b>② Horloge</b> : GPIOC est sur le bus APB2 → la fonction met le bit IOPCEN de RCC-&gt;APB2ENR à 1.',{t:'clk'}),
+ L('  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_13 | GPIO_Pin_14; // ③','s3','<b>③ Remplir</b> : 0x2000 | 0x4000 = 0x6000. Regarde : la struct change, <b>pas</b> le registre CRH.',{t:'set',f:'GPIO_Pin',v:PIN1314,lab:'GPIO_Pin_13 | GPIO_Pin_14'}),
+ L('  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;','s3','Mode sortie push-pull : <span class="m">GPIO_Mode_Out_PP = 0x10</span> (bit 4 = « sortie », CNF = 00).',{t:'set',f:'GPIO_Mode',v:0x10,lab:'GPIO_Mode_Out_PP'}),
+ L('  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;','s3','Vitesse 2 MHz : <span class="m">GPIO_Speed_2MHz = 2</span> = MODE 10.',{t:'set',f:'GPIO_Speed',v:2,lab:'GPIO_Speed_2MHz'}),
+ L('  GPIO_Init(GPIOC, &GPIO_InitStructure);          // ④','s4','<b>④ Init</b> : la fonction calcule le quartet (0x10 &amp; 0x0F) | 2 = 0010 et l\'écrit dans les quartets 13 et 14 de CRH (masque + shift faits pour toi).',{t:'init',k:'spl'}),
+ S('  while (1) {                                     // ⑤'),
+ L('    GPIO_SetBits(GPIOC, GPIO_Pin_13 | GPIO_Pin_14);','s5','<b>⑤ Traitement</b> : <span class="m">GPIO_SetBits</span> fait juste <span class="m">GPIOC-&gt;BSRR = 0x6000</span> → LEDs ON.',{t:'bsrr',v:PIN1314}),
+ L('    Delay();','s5','Attente : les LEDs restent allumées.',{t:'delay'}),
+ L('    GPIO_ResetBits(GPIOC, GPIO_Pin_13 | GPIO_Pin_14);','s5','<span class="m">GPIO_ResetBits</span> fait <span class="m">GPIOC-&gt;BRR = 0x6000</span> → LEDs OFF.',{t:'brr',v:PIN1314}),
+ L('    Delay();','s5','Attente, puis on reboucle sur SetBits.',{t:'delay'},{next:12}),
+ S('  }'),S('}')]},
+cube:{struct:[['Pin',4],['Mode',1],['Pull',1],['Speed',1]],lines:[
+ L('#include "stm32f1xx_hal.h"','lib1','Un seul include en HAL Cube : il tire la memory map, les constantes GPIO_PIN_x… et les fonctions HAL_GPIO_*.',{t:'info'}),
+ S(''),
+ L('GPIO_InitTypeDef GPIO_InitStruct = {0};          // ①','s1','<b>① Déclarer</b> et mettre tous les champs à 0 avec <span class="m">{0}</span>.',{t:'decl'}),
+ S(''),S('int main(void) {'),
+ L('  HAL_Init();','s2','Initialise la HAL (SysTick pour <span class="m">HAL_Delay</span>). Ne touche pas GPIOC.',{t:'info'}),
+ L('  __HAL_RCC_GPIOC_CLK_ENABLE();                   // ②','s2','<b>② Horloge</b> : macro qui fait <span class="m">RCC-&gt;APB2ENR |= IOPCEN</span>.',{t:'clk'}),
+ L('  GPIO_InitStruct.Pin   = GPIO_PIN_13 | GPIO_PIN_14; // ③','s3','<b>③ Remplir</b> : mêmes masques de pins (0x6000), noms en majuscules.',{t:'set',f:'Pin',v:PIN1314,lab:'GPIO_PIN_13 | GPIO_PIN_14'}),
+ L('  GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;','s3','Sortie push-pull.',{t:'set',f:'Mode',v:1,lab:'GPIO_MODE_OUTPUT_PP'}),
+ L('  GPIO_InitStruct.Pull  = GPIO_NOPULL;','s3','Champ en plus par rapport à la ST FWL : la résistance de tirage (ici aucune).',{t:'set',f:'Pull',v:0,lab:'GPIO_NOPULL'}),
+ L('  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;','s3','FREQ_LOW = 2 MHz sur STM32F1 (MODE 10).',{t:'set',f:'Speed',v:2,lab:'GPIO_SPEED_FREQ_LOW'}),
+ L('  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);         // ④','s4','<b>④ Init</b> : écrit 0010 dans les quartets 13 et 14 de CRH.',{t:'init',k:'cube'}),
+ S('  while (1) {                                     // ⑤'),
+ L('    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13 | GPIO_PIN_14, GPIO_PIN_SET);','s5','<b>⑤</b> WritePin SET → <span class="m">BSRR = 0x00006000</span> (moitié basse = set) → LEDs ON.',{t:'bsrr',v:PIN1314}),
+ L('    HAL_Delay(500);','s5','500 ms.',{t:'delay'}),
+ L('    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13 | GPIO_PIN_14, GPIO_PIN_RESET);','s5','WritePin RESET → <span class="m">BSRR = 0x60000000</span> (moitié haute = reset) → LEDs OFF.',{t:'bsrr',v:PIN1314<<16}),
+ L('    HAL_Delay(500);','s5','500 ms, puis on reboucle.',{t:'delay'},{next:14}),
+ S('  }'),S('}')]}
+};
+let ver='spl', M, timer=null, liveNode=null;
+function resetSim(){
+  M={apb2:0,crh:0x44444444,odr:0,clk:false,st:null,last:'—',pc:firstExec(0),cur:-1,offs:new Set(),cycles:0,chg:new Set(),msg:'Clique « Exécuter la ligne » : la ligne surlignée en or est la prochaine.',warn:null};
+  liveNode=null; renderSim(); paintMap(null);
+}
+function firstExec(i){const ls=PROGS[ver].lines;while(i<ls.length&&ls[i].skip)i++;return i<ls.length?i:-1}
+function gpioWrite(fn){if(!M.clk){M.warn='GPIOC sans horloge : écriture ignorée';return false}fn();return true}
+function step(){
+  const ls=PROGS[ver].lines; if(M.pc<0)return;
+  const i=M.pc,l=ls[i],o=l.op; M.cur=i; M.chg=new Set(); M.warn=null; let msg=l.e;
+  const forget=$('#forget').checked;
+  switch(o.t){
+    case 'clk': if(forget){M.offs.add(i);msg='<b>Ligne sautée</b> (horloge oubliée) : GPIOC n\'est pas alimenté. La suite va compiler et tourner… sans effet sur la carte.';}
+                else{M.apb2|=1<<4;M.clk=true;M.chg.add('apb2')} break;
+    case 'decl': M.st={};PROGS[ver].struct.forEach(([f])=>M.st[f]={v:0,lab:'0'});M.chg.add('st'); break;
+    case 'set': M.st[o.f]={v:o.v,lab:o.lab};M.chg.add('st:'+o.f); break;
+    case 'and': if(gpioWrite(()=>{M.crh&=o.v}))M.chg.add('crh'); M.last='CRH &= '+hex(o.v); break;
+    case 'or':  if(gpioWrite(()=>{M.crh|=o.v}))M.chg.add('crh'); M.last='CRH |= '+hex(o.v); break;
+    case 'init':{
+      const st=M.st; let q;
+      if(o.k==='spl'){const m=st.GPIO_Mode.v;q=(m&0x0F)|((m&0x10)?st.GPIO_Speed.v:0)}
+      else{q=st.Mode.v===1?(0<<2)|st.Speed.v:0x4}
+      const pins=(st.GPIO_Pin||st.Pin).v;
+      if(gpioWrite(()=>{for(let p=8;p<16;p++)if(pins>>p&1){const s=4*(p-8);M.crh=(M.crh&~(0xF<<s))|(q<<s)}}))M.chg.add('crh');
+      M.last='CRH ← quartet '+q.toString(2).padStart(4,'0')+' (pins 13, 14)'; break;}
+    case 'bsrr': if(gpioWrite(()=>{M.odr=(M.odr|(o.v&0xFFFF))&~(o.v>>>16)}))M.chg.add('odr'); M.last='BSRR = '+hex(o.v); break;
+    case 'brr':  if(gpioWrite(()=>{M.odr&=~o.v}))M.chg.add('odr'); M.last='BRR = '+hex(o.v,8); break;
+    case 'delay': if(l.next!==undefined)M.cycles++; break;
+  }
+  if(M.warn) M.last+=' (ignorée)';
+  M.msg=msg; liveNode=l.n;
+  M.pc=l.next!==undefined?l.next:firstExec(i+1);
+  renderSim(); paintMap(liveNode);
+}
+function led(on,x,label){
+  return `<g><circle cx="${x}" cy="62" r="17" fill="${on?'#3FA7FF':'#D9D2C2'}" stroke="${on?'#1C6FB8':'#B4AA96'}" stroke-width="2"/>
+  ${on?`<circle cx="${x}" cy="62" r="28" fill="#3FA7FF" opacity=".22"/>`:''}
+  <text x="${x}" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--soft)">${label}</text></g>`;
+}
+function renderSim(){
+  const P=PROGS[ver];
+  document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===ver));
+  $('#listing').innerHTML=P.lines.map((l,i)=>`<div class="ln ${i===M.cur?'cur':''} ${i===M.pc?'next':''} ${M.offs.has(i)?'off':''} ${l.skip?'dim':''}"><span class="no">${i===M.pc?'▸':''}${i+1}</span><span>${hl(l.c)||' '}</span></div>`).join('');
+  $('#pcinfo').textContent=M.pc>=0?`prochaine : ligne ${M.pc+1}`:'fin';
+  $('#cyc').textContent=M.cycles?`boucle n°${M.cycles+1}`:'';
+  const nn=liveNode?N[liveNode]:null;
+  $('#expl').innerHTML=M.msg+(nn?`<br><span class="steppill" id="gonode">voir ${nn.badge} ${esc(nn.title)} sur la carte ↑</span>`:'');
+  if(nn)$('#gonode').onclick=()=>select(liveNode,true);
+  const out13=((M.crh>>20)&3)!==0, out14=((M.crh>>24)&3)!==0;
+  const on13=M.clk&&out13&&(M.odr>>13&1), on14=M.clk&&out14&&(M.odr>>14&1);
+  let pills=`<span class="pill ${M.clk?'good':''}">horloge GPIOC : ${M.clk?'ON':'OFF'}</span><span class="pill">dernière écriture : ${M.last}</span>`;
+  if(M.warn)pills+=`<span class="pill bad">${M.warn}</span>`;
+  if($('#forget').checked&&M.pc>=0&&M.offs.size&&!M.warn)pills+=`<span class="pill bad">horloge oubliée</span>`;
+  $('#status').innerHTML=pills;
+  $('#board').innerHTML=`<rect x="4" y="16" width="512" height="100" rx="12" fill="#2F5D3A"/>
+    <rect x="30" y="34" width="150" height="64" rx="6" fill="#1E1B18"/><text x="105" y="62" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#D8CDB6">STM32F1</text>
+    <text x="105" y="80" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#8A7D6B">GPIOC ${M.clk?'●':'○'}</text>
+    <rect x="230" y="30" width="270" height="80" rx="8" fill="#FBF8F0"/>`+led(on13,300,'PC13')+led(on14,430,'PC14');
+  // registers
+  let r='';
+  let a='';const an=['AFIO','—','IOPA','IOPB','IOPC','IOPD','IOPE'];
+  for(let b=6;b>=0;b--)a+=`<div class="bit ${M.apb2>>b&1?'one':''} ${b===4?'key':''} ${M.chg.has('apb2')&&b===4?'chg':''}">${M.apb2>>b&1}<small>${an[b]}</small></div>`;
+  r+=`<div class="reg"><div class="rh"><b>RCC-&gt;APB2ENR</b><span>bits 6..0 · ${hex(M.apb2)}</span></div><div class="bits" style="grid-template-columns:repeat(7,1fr)">${a}</div></div>`;
+  let c='';for(let p=15;p>=8;p--){const q=(M.crh>>(4*(p-8)))&0xF;c+=`<div class="bit ${p===13||p===14?'key':''} ${M.chg.has('crh')&&(p===13||p===14)?'chg':''}">${q.toString(2).padStart(4,'0')}<small>PC${p}</small></div>`}
+  r+=`<div class="reg"><div class="rh"><b>GPIOC-&gt;CRH</b><span>quartets CNF:MODE · ${hex(M.crh)}</span></div><div class="bits" style="grid-template-columns:repeat(8,1fr)">${c}</div>
+     <div class="decode">PC14 : ${decodeQ((M.crh>>24)&0xF)} · PC13 : ${decodeQ((M.crh>>20)&0xF)}</div></div>`;
+  let d='';for(let p=15;p>=0;p--)d+=`<div class="bit ${M.odr>>p&1?'one':''} ${p===13||p===14?'key':''} ${M.chg.has('odr')&&(p===13||p===14)?'chg':''}">${M.odr>>p&1}<small>${p}</small></div>`;
+  r+=`<div class="reg"><div class="rh"><b>GPIOC-&gt;ODR</b><span>${hex(M.odr,4)}</span></div><div class="bits" style="grid-template-columns:repeat(16,1fr)">${d}</div></div>`;
+  // struct
+  if(!P.struct) r+=`<div class="reg"><div class="rh"><b>Struct de config</b><span>aucune : tout est en dur</span></div></div>`;
+  else{
+    const name=ver==='spl'?'GPIO_InitStructure':'GPIO_InitStruct';
+    if(!M.st) r+=`<div class="reg"><div class="rh"><b>${name}</b><span>(RAM) pas encore déclarée</span></div></div>`;
+    else r+=`<div class="reg"><div class="rh"><b>${name}</b><span>(RAM, pas un registre)</span></div><table class="st">${P.struct.map(([f,w])=>{const v=M.st[f];return `<tr class="${M.chg.has('st:'+f)||M.chg.has('st')?'chg':''}"><td>.${f}</td><td>${hex(v.v,w)}</td><td>${esc(v.lab)}</td></tr>`}).join('')}</table></div>`;
+  }
+  $('#regs').innerHTML=r;
+  $('#sstep').disabled=M.pc<0;
+  const cur=$('#listing .ln.cur'); if(cur){const box=$('#listing');const t=cur.offsetTop-box.offsetTop;if(t<box.scrollTop||t>box.scrollTop+box.clientHeight-20)box.scrollTop=t-40}
+}
+function stopPlay(){clearInterval(timer);timer=null;$('#splay').textContent='▶▶ Auto'}
+$('#sstep').onclick=()=>{stopPlay();step()};
+$('#sreset').onclick=()=>{stopPlay();resetSim()};
+$('#splay').onclick=()=>{if(timer){stopPlay();return}$('#splay').textContent='❚❚ Pause';timer=setInterval(()=>{if(M.pc<0){stopPlay();return}step()},+$('#sspeed').value)};
+$('#sspeed').oninput=()=>{if(timer){stopPlay();$('#splay').click()}};
+$('#forget').onchange=()=>{stopPlay();resetSim()};
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{stopPlay();ver=b.dataset.v;resetSim()});
+
+drawMap(); select('why'); resetSim();
+</script>
+</body>
+</html>
