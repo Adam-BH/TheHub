@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corrigé DS 2025 · Recherche Opérationnelle</title>
+<link rel="icon" type="image/svg+xml" href="../../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4EFE4;--deep:#ECE5D5;--card:#FBF8F0;--ink:#1F1A14;--soft:#4A3F32;--faint:#8A7D6B;--bur:#7B2D26;--teal:#2C5664;--gold:#B8924A;--rule:#C9BFAC;--rule2:#DDD3BF;--hl:#F7E8B8;--ok:#3E6B3A;--okb:#E3EDDD;--kob:#F6E6DF;
+--serif:'Instrument Serif',Georgia,serif;--body:'Newsreader',Georgia,serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;overflow-x:hidden}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 120px}
+.topnav{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hub-back{display:inline-flex;padding:6px 11px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;text-decoration:none}
+.hub-back:hover{border-color:var(--bur)}
+header{text-align:center;padding:14px 0 16px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--bur)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6vw,54px);margin:6px 0 4px;line-height:1.05}
+h1 em{color:var(--bur)}
+.sub{font-style:italic;color:var(--soft);margin:0 auto;max-width:680px}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;margin-bottom:8px}
+.btn{font-family:var(--mono);font-size:12px;padding:6px 11px;border:1px solid var(--rule);border-radius:4px;background:var(--card);color:var(--ink);cursor:pointer}
+.btn.on{background:var(--bur);border-color:var(--bur);color:#fff}
+.score{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--soft)}
+h2.part{font-family:var(--serif);font-weight:400;font-style:italic;font-size:30px;margin:30px 0 4px;border-bottom:1px solid var(--rule);padding-bottom:4px}
+h2.part .k{display:block;font-family:var(--mono);font-style:normal;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.q{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;padding:12px 14px;margin:12px 0}
+.q .n{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.08em}
+.q .t{margin:2px 0 8px;color:var(--ink)}
+.q .tag{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);background:var(--deep);border-radius:10px;padding:1px 7px;margin-left:6px}
+.lp{font-family:var(--mono);font-size:13.5px;background:var(--bg);border:1px solid var(--rule2);border-radius:4px;padding:8px 12px;margin:4px 0 8px;white-space:pre;overflow-x:auto}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.opts li{border:1px solid var(--rule2);border-radius:5px;padding:6px 10px;cursor:pointer;background:#fff8;font-size:16px}
+.opts li b{font-family:var(--mono);font-size:12px;color:var(--faint);margin-right:8px}
+.opts li:hover{border-color:var(--gold)}
+.q.done .opts li{cursor:default}
+.q.done .opts li.good{background:var(--okb);border-color:var(--ok)}
+.q.done .opts li.good b{color:var(--ok)}
+.q.done .opts li.bad{background:var(--kob);border-color:var(--bur)}
+.exp{display:none;margin-top:8px;font-size:15.5px;color:var(--soft);border-top:1px dashed var(--rule);padding-top:8px}
+.q.done .exp{display:block}
+.exp strong{color:var(--ink)}
+.exp .ans{font-family:var(--mono);font-size:12px;color:var(--ok);font-weight:600;margin-right:6px}
+.warn{display:block;margin-top:6px;background:var(--hl);border-radius:4px;padding:6px 9px;font-size:15px;color:var(--ink)}
+.warn::before{content:'⚠ ';color:var(--bur)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:100%;margin:6px 0}
+th,td{border-bottom:1px solid var(--rule2);padding:4px 6px;text-align:left}
+th{color:var(--faint);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;margin:10px 0}
+.grid a{font-family:var(--mono);font-size:12px;text-align:center;border:1px solid var(--rule);border-radius:4px;padding:5px 0;text-decoration:none;color:var(--ink);background:var(--card)}
+.grid a span{display:block;font-weight:600;color:var(--bur)}
+footer{text-align:center;font-family:var(--mono);font-size:11px;color:var(--faint);padding-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topnav"><a class="hub-back" href="../../../../index.html">← Hub</a><a class="hub-back" href="../recherche-operationnelle.html">← Résumé RO</a></div>
+<header>
+  <div class="eyebrow">INSAT · GL3–RT3 · DS 03/11/2025 · I. Ajili · 0.5 pt / question</div>
+  <h1>Corrigé du DS <em>RO</em> 2025</h1>
+  <p class="sub">Les 35 questions (41 avec les sous-questions) des pages 1 à 5, avec la réponse et le pourquoi. Mode entraînement : clique ta réponse avant de voir la correction.</p>
+</header>
+<div class="bar">
+  <button class="btn on" id="mTrain">Entraînement</button>
+  <button class="btn" id="mShow">Tout afficher</button>
+  <button class="btn" id="mReset">↺</button>
+  <span class="score" id="score"></span>
+</div>
+<div id="list"></div>
+<h2 class="part"><span class="k">Récap</span>Grille des réponses</h2>
+<div class="grid" id="grid"></div>
+<footer>TheHub · RO · Corrigé proposé (non officiel) du DS du 03/11/2025 · source : DS 2025-2026 (Drive), p. 1–5</footer>
+</div>
+<script>
+(function(){
+/* [num, tag, question, lp|null, [options], answerLetters, explanation, warning|null] */
+const Q=[
+['1','Graphique',"Méthode graphique : que se passe-t-il si les contraintes sont contradictoires ?",null,["La solution optimale est unique et à l'origine (0,0).","Le problème est non borné et Max Z tend vers l'infini.","Le problème admet des solutions multiples le long d'une arête.","La région admissible est vide : le problème est infaisable (irréalisable)."],'D',"Contraintes contradictoires ⇒ aucune solution ne les vérifie toutes ⇒ <strong>domaine réalisable vide</strong> ⇒ PL irréalisable."],
+['2','Intro RO',"L'objectif principal de la RO est de :",null,["Remplacer totalement la réflexion stratégique humaine.","Garantir l'absence totale de risque.","Supporter la prise de décision en appliquant des outils mathématiques et informatiques.","Créer des algorithmes non linéaires uniquement."],'C',"C'est la définition du cours (ORSA) : la RO <strong>aide à la décision</strong>, elle ne remplace pas le décideur."],
+['3','Écart',"Max, contrainte « ressource limitée » A x₁ + B x₂ ≤ C (C = capacité). À l'optimum, la variable d'écart est strictement positive. Signification ?",null,["La solution est infaisable.","La contrainte est saturée (active).","La ressource est épuisée mais le profit pourrait être amélioré.","La ressource C n'est pas entièrement utilisée ; il y a un surplus de S."],'D',"Écart e = C − (A x₁ + B x₂) &gt; 0 ⇒ il reste de la ressource : contrainte <strong>inactive</strong>. (Écart = 0 ⇔ active.)","Sur le scan le signe ressemble à « ≥ », mais « ressource limitée … capacité maximale » veut dire ≤ ; la réponse D ne change pas."],
+['4','Types de PL',"Si un PL est irréalisable, il doit avoir un domaine réalisable borné.",null,["Vrai","Faux"],'B',"Irréalisable = domaine <strong>vide</strong>. Il n'y a pas de domaine « borné » à décrire : l'affirmation n'a pas de lien logique avec l'irréalisabilité."],
+['5','Graphique',"Max : dans quelle situation le PL admet-il une infinité de solutions optimales ?",null,["Lorsque la région admissible est vide.","Lorsque la droite d'isoprofit coïncide avec une seule contrainte au niveau d'un sommet.","Lorsque la droite d'isoprofit a la même pente qu'une contrainte et que cette contrainte est la dernière arête touchée.","Lorsque l'optimum est au centre de la région."],'C',"Isoprofit <strong>parallèle</strong> à la dernière arête touchée ⇒ toute l'arête est optimale (<strong>arête optimale</strong>)."],
+['6','Forme standard',"Principale caractéristique de la forme standard ?",null,["La FO doit être de maximisation.","Toutes les contraintes doivent être de type ≤.","Toutes les variables sont ≥ 0 et toutes les contraintes sont des égalités.","Toutes les variables sont entières."],'C',"Forme standard = <strong>égalités</strong> (grâce aux variables d'écart) + <strong>non-négativité</strong>."],
+['7','Simplexe',"Simplexe (Max Z) : la variable entrante est…",null,["la variable de base au plus petit ratio.","la variable de base au plus petit coefficient dans Z.","la variable hors base au coefficient le plus négatif dans Z.","la variable hors base au coefficient le plus positif dans Z."],'D',"Étape 3 du cours : la <strong>VHB</strong> au <strong>plus grand coefficient positif</strong> de la ligne Z. (A décrit la variable <em>sortante</em>.)"],
+['8','Formulation',"Quand faut-il des variables de décision binaires ?",null,["Quand les coefficients de la FO sont entiers.","Quand la FO est non linéaire.","Quand une décision est un choix exclusif ou une réponse Oui/Non.","Quand il y a beaucoup de contraintes."],'C',"Binaire xᵢ ∈ {0,1} = « on fait / on ne fait pas » (sac à dos, implantation…)."],
+['9','Simplexe',"Objectif du test du ratio ?",null,["Déterminer si le problème est non borné.","Identifier la contrainte qui deviendrait inactive.","Garder toutes les variables ≥ 0 dans la nouvelle solution en prenant le plus petit ratio.","Calculer la nouvelle valeur de la FO."],'C',"Le plus petit ratio bᵢ/Eᵢc est la première contrainte qui devient <strong>active</strong> quand la variable entrante augmente : au-delà, une VB deviendrait négative."],
+['10','Simplexe',"Quand s'arrête le simplexe (Max Z) ?",null,["Quand toutes les VB ont une valeur positive.","Quand au moins un coefficient de Z est positif.","Quand le test du ratio échoue.","Quand tous les coefficients de Z des VHB sont ≥ 0.","Aucune réponse"],'E',"Dans la convention du cours (ligne Z = cⱼ), on s'arrête quand tous les coefficients sont <strong>nuls ou négatifs</strong> (≤ 0). D donne le signe inverse ; C correspond à un arrêt pour PL non borné, pas à l'optimum.","D serait juste dans la convention « Z − Σcⱼxⱼ = 0 » (coefficients −cⱼ). Le choix E existe uniquement sur cette question : c'est le piège voulu."],
+['11','Écart',"Conversion d'une contrainte ≤ en égalité : quelle variable, quel rôle ?",null,["Artificielle, pour la non-négativité.","À surplus, pour absorber l'excédent.","D'écart, représente la ressource inutilisée.","Binaire, contrainte active ou non."],'C',"≤ ⇒ <strong>+ variable d'écart</strong> (slack) = ressource non utilisée. La variable à surplus (excédent) est pour ≥."],
+['12','Solutions',"La solution optimale d'un PL, si elle existe, est toujours à l'intersection d'au moins deux contraintes.",null,["Vrai","Faux"],'B',"Faux (comme au Quiz 2) : avec une arête optimale, un point au milieu de l'arête est optimal avec une seule contrainte active."],
+['13','Types de PL',"Contraintes 5x₁ + 10x₂ ≥ 100 et 5x₁ + 10x₂ ≤ 50, x ≥ 0. Statut ?",null,["Non borné.","Solutions multiples (droites parallèles).","Infaisable : aucune région commune.","Optimal unique en (0,0)."],'C',"On demande 5x₁+10x₂ ≥ 100 et ≤ 50 en même temps : impossible ⇒ <strong>irréalisable</strong>. Les droites sont parallèles mais ça ne donne pas des solutions multiples."],
+['14','PLNE',"Pourquoi utiliser la PLNE plutôt que la PL ?",null,["Pour que la FO soit maximisée.","Parce que les variables représentent des unités indivisibles.","Pour garantir la convexité.","Parce que le solveur graphique ne fonctionne qu'en entiers."],'B',"Objets indivisibles (avions, employés, agences…) ⇒ variables <strong>entières</strong>."],
+['15a','Graphique',"Ce PL :","min z = 3x₁ + 2x₂\ns.c. x₁ + x₂ ≥ 5\n     2x₁ + 3x₂ ≥ 12\n     x₁, x₂ ≥ 0",["Possède une solution optimale unique","Possède plusieurs solutions optimales","Est irréalisable","Est non borné"],'A',"Sommets : (0,5) → z = <strong>10</strong> ; (3,2) → 13 ; (6,0) → 18. Domaine infini vers le haut mais on minimise avec c &gt; 0 ⇒ optimum fini, <strong>unique en (0,5)</strong>."],
+['15b','Active',"Si (4,1) est un sommet, quelle contrainte est active en ce point ?",null,["x₁ − x₂ ≤ 3","2x₁ + x₂ ≤ 9","x₂ ≥ 0","A et B","B et C","Aucune réponse"],'D',"4 − 1 = 3 ✓ (active) · 2·4 + 1 = 9 ✓ (active) · x₂ = 1 &gt; 0 (inactive). Un sommet en 2D = 2 contraintes actives ⇒ <strong>A et B</strong>."],
+['16','Types de PL',"Si l'objectif peut être augmenté indéfiniment sans violer les contraintes, le PL est non borné.",null,["Vrai","Faux"],'A',"C'est la définition d'un PL <strong>non borné</strong> (max)."],
+['17','Sac à dos',"Sac à dos : variables xᵢ ?",null,["Binaires, xᵢ ∈ {0,1}","Entières ≥ 0","Continues 0 ≤ xᵢ ≤ 1","Discrètes = poids"],'A',"Chaque article est pris ou laissé (indivisible). C est la variante portefeuille du cours."],
+['18','Base',"Équation 7x₁ + 3x₂ − 2x₃ + 5x₄ = 11 : combien de VB et de VHB ?",null,["1 VB, 3 VHB","3 VB, 1 VHB","4 VHB","4 VHB, 1 VB","Aucune"],'A',"Nombre de VB = nombre d'équations (m = 1) ; VHB = n − m = 4 − 1 = <strong>3</strong>."],
+['19','Max/Min',"Transformer un min en max équivalent :",null,["Remplacer xⱼ par −xⱼ","Inverser les inégalités","Ajouter des variables d'écart","Multiplier la FO par −1"],'D',"<strong>min f = −max(−f)</strong> : on multiplie la FO par −1, les contraintes ne bougent pas."],
+['20','Isoprofit',"Max, que représente la droite c₁x₁ + c₂x₂ = k ?",null,["Déplacement vers le bas = amélioration","Passe toujours par l'origine","Déplacement vers le haut = amélioration","La frontière du domaine","B et C","A et B"],'C',"Isoprofit = tous les points de même valeur k. Pour un max (avec c₁, c₂ &gt; 0, comme dans tous les exemples), on l'améliore en la poussant <strong>vers le haut / la droite</strong>, dans la direction (c₁, c₂). Elle ne passe par l'origine que si k = 0.","Rigoureusement, la bonne direction est celle du vecteur (c₁, c₂) ; « vers le haut » suppose des coefficients positifs."],
+['21a','Mélange',"Problème de mélange : variable de décision typique ?",null,["La demande globale","La quantité d'un ingrédient à utiliser dans le mélange","La teneur minimale légale en soufre","Le coût total par litre"],'B',"On décide <strong>combien</strong> de chaque ingrédient on met (comme les kg du DS GL 2025). Les autres sont des données ou la FO."],
+['21b','Mélange',"Application industrielle la plus courante du mélange ?",null,["Files d'attente","Investissements à long terme","Raffinage du pétrole / production d'essence","Workflow de bureau"],'C',"Exemple classique : mélanger des bruts pour produire des essences respectant des spécifications (octane, soufre)."],
+['21c','Mélange',"Pourquoi la FO du mélange est-elle le plus souvent minimisée ?",null,["Produire le mélange requis en minimisant le coût des matières premières","Les quantités sont déjà fixées","On ne peut pas maximiser en PL","Maximiser la qualité = minimiser les défauts"],'A',"La quantité et la qualité sont imposées par les contraintes ; il reste à le faire au <strong>coût minimal</strong>."],
+['21d','PLNE',"Contraintes logiques « si A est utilisé alors B aussi » : quel outil ?",null,["PLNE mixte (PLNE-M)","Optimisation non linéaire","PL simple","Théorie des jeux"],'A',"« Si… alors » se modélise avec des <strong>variables binaires</strong> (y_A ≤ y_B) liées aux quantités continues ⇒ programme <strong>mixte</strong>."],
+['22','Types de PL',"Un PL peut être à la fois non borné et non réalisable.",null,["Vrai","Faux"],'B',"Non borné suppose des solutions réalisables qui vont à l'infini ; irréalisable = aucune solution. Les deux sont exclusifs."],
+['23','Modélisation',"Le plus court chemin est un problème classique de…",null,["Théorie des graphes","Simulation","Programmation dynamique","Programmation linéaire","D et B","A et D"],'F',"Problème de <strong>graphes</strong> (Dijkstra, Bellman-Ford, ch. 4) qui se formule aussi comme un <strong>PL</strong> (flot sur les arcs) ⇒ A et D.","La programmation dynamique (Bellman) le résout aussi ; mais parmi les combinaisons proposées seule « A et D » est cohérente."],
+['24','Max/Min',"Un min devient un max en changeant le signe des coefficients dans…",null,["Les contraintes","La fonction objectif","A et B","Aucune réponse"],'B',"Seulement la <strong>FO</strong> : min cᵀx = −max(−c)ᵀx."],
+['25','PL',"Caractéristique distinctive d'un modèle PL ?",null,["Relation linéaire entre toutes les variables","Une FO et des contraintes uniques","Variables non négatives","Toutes les réponses","Aucune réponse"],'A',"Ce qui <strong>distingue</strong> un PL, c'est la <strong>linéarité</strong>. La non-négativité est fréquente mais pas obligatoire (variables libres), et il peut y avoir beaucoup de contraintes."],
+['26','Sac à dos',"Knapsack : type de variable le plus courant ?",null,["Entière ≥ 0","Binaire (0 ou 1)","Temps","Continue ≥ 0"],'B',"Version 0-1 du cours : xᵢ ∈ {0,1}."],
+['27','Simplexe',"Principe fondamental du simplexe ?",null,["Se déplacer d'un sommet à un autre en améliorant la FO","Une seule décomposition matricielle","Explorer tous les points","Seulement pour la minimisation"],'A',"Chaque itération = passage à un <strong>sommet adjacent</strong> meilleur (ou égal)."],
+['28','PL',"Dans un PL…",null,["Les contraintes doivent être linéaires","La FO doit être linéaire","Aucune","A et B"],'D',"Les <strong>deux</strong> doivent être linéaires."],
+['29','Domaine',"Région donnée par x − y ≤ 1 et x − y ≥ 2, x, y ≥ 0 ?",null,["Un triangle","Un rectangle","Une région illimitée","Une région vide"],'D',"On demande x − y ≤ 1 et x − y ≥ 2 : impossible ⇒ <strong>vide</strong>."],
+['30','Direction',"min z = 2x₁ − 5x₂ + 3x₃ : vecteur directeur d de l'hyperplan de la FO ?",null,["d(2, −5, 3)","d(−2, 5, −3)","d(2, 5, 3)","d(−2, −5, −3)"],'A',"Le vecteur associé à l'hyperplan 2x₁ − 5x₂ + 3x₃ = k est celui des coefficients <strong>c = (2, −5, 3)</strong> (le gradient de z). Pour un min, on pousse l'hyperplan dans le sens −c = (−2, 5, −3).","Si la question visait la direction d'amélioration du min, ce serait B. L'énoncé parle du vecteur de la FO ⇒ A."],
+['31','Sommets',"Sommets A(0,0), B(1,1), C(0,1), D(1,0). min Z = 2x − 2y ?",null,["Solution unique en C","Solution unique en D","Arête entre A et B","Solution illimitée"],'A',"Z(A) = 0, Z(B) = 0, Z(C) = <strong>−2</strong>, Z(D) = 2 ⇒ minimum unique en <strong>C</strong>."],
+['32','Écart',"Coefficient des variables d'écart dans la FO ?",null,["0","1","M","−M"],'A',"Elles ne rapportent ni ne coûtent rien : coefficient <strong>0</strong>. (±M concerne les variables artificielles.)"],
+['33a','Forme standard',"Forme standard de la 1ʳᵉ contrainte ?","max 5x₁ + 3x₂\ns.c. x₁ + x₂ ≤ 16\n     x₁ + 4x₂ ≤ 20\n     x₂ ≤ 8\n     x₁, x₂ ≥ 0",["x₁ + x₂ + x₃ ≤ 16","x₁ + x₂ + x₃ = 16","x₁ + x₂ − x₃ ≥ 16","x₁ + x₂ − x₃ = 16"],'B',"≤ ⇒ on <strong>ajoute</strong> l'écart x₃ ≥ 0 et on écrit une <strong>égalité</strong>."],
+['33b','Base',"Solutions de base de la forme standard : A VB et B VHB par solution, C solutions de base, D réalisables.",null,["A=3, B=2, C=10, D=4","A=2, B=3, C=10, D=4","A=2, B=3, C=9, D=4","A=3, B=2, C=4, D=9","Aucune des réponses"],'E',"m = 3 équations, n = 5 variables ⇒ <strong>3 VB, 2 VHB</strong>. On a C(5,3) = 10 choix de base, mais {x₁, x₃, x₄} est <strong>singulière</strong> (hors base x₂ = x₅ = 0, la 3ᵉ équation x₂ + x₅ = 8 devient 0 = 8 : aucune solution). Il reste donc <strong>9 solutions de base</strong>, dont <strong>4 réalisables</strong> : (0,0), (16,0), (44/3, 4/3), (0,5). Ces valeurs (3, 2, 9, 4) ne sont pas proposées ⇒ E.","Si l'on compte naïvement C(5,3) = 10 bases sans vérifier les déterminants, on coche A. Vérifie quelle réponse la prof attend : le calcul rigoureux donne E."],
+['33c','Optimum',"Solution optimale du LP original ?",null,["(8, 8)","(16, 0)","Irréalisable","Illimité","Aucune"],'B',"Sommets : (0,0) → 0 ; (16,0) → <strong>80</strong> ; (44/3, 4/3) → 77,3 ; (0,5) → 15. Max en <strong>(16, 0)</strong>, z* = 80. (8,8) viole x₁ + 4x₂ ≤ 20."],
+['34','Graphique',"Solution optimale ?","max 3x₁ + 5x₂\ns.c. x₁ + x₂ ≤ 16\n     x₁ + 4x₂ ≤ 20\n     2x₁ + x₂ ≥ 6\n     x₁, x₂ ≥ 0",["(16, 0)","(44/3, 4/3)","(4/7, 34/7)","(3, 0)","Aucune"],'B',"Sommets réalisables : (3,0) → 9 ; (16,0) → 48 ; (44/3, 4/3) → <strong>152/3 ≈ 50,7</strong> ; (4/7, 34/7) → 26. Max en <strong>(44/3, 4/3)</strong>, intersection de x₁+x₂ = 16 et x₁+4x₂ = 20. (Même PL qu'au Quiz 2, Q3.)"],
+['35','Types de PL',"PL à 2 variables : si la région est non bornée, le problème n'a pas de solution optimale.",null,["Vrai","Faux"],'B',"Faux : domaine non borné ≠ PL non borné (ex. Q15a : domaine infini mais minimum fini en (0,5))."]
+];
+const L='ABCDEF';
+const list=document.getElementById('list'),grid=document.getElementById('grid'),sc=document.getElementById('score');
+let mode='train',got={};
+function render(){
+  list.innerHTML='';grid.innerHTML='';
+  const parts=[['Page 1','1'],['Page 2','8'],['Page 3','16'],['Page 4','23'],['Page 5','32']];
+  Q.forEach((q,i)=>{
+    const [n,tag,t,lp,opts,ans,exp,warn]=q;
+    const p=parts.find(p=>p[1]===n);if(p){const h=document.createElement('h2');h.className='part';h.innerHTML=`<span class="k">DS p. ${p[0].slice(-1)}</span>${p[0]}`;list.appendChild(h);}
+    const d=document.createElement('div');d.className='q';d.id='q'+n;
+    d.innerHTML=`<div class="n">Q${n}<span class="tag">${tag}</span></div><p class="t">${t}</p>${lp?`<div class="lp">${lp}</div>`:''}<ul class="opts">${opts.map((o,j)=>`<li data-l="${L[j]}"><b>${L[j]}</b>${o}</li>`).join('')}</ul><div class="exp"><span class="ans">Réponse : ${ans.split('').join(', ')}</span>${exp}${warn?`<span class="warn">${warn}</span>`:''}</div>`;
+    const show=pick=>{d.classList.add('done');d.querySelectorAll('li').forEach(li=>{if(ans.includes(li.dataset.l))li.classList.add('good');else if(li.dataset.l===pick)li.classList.add('bad');});};
+    if(mode==='show')show();
+    else if(got[n]!==undefined)show(got[n]);
+    d.querySelectorAll('li').forEach(li=>li.addEventListener('click',()=>{if(d.classList.contains('done'))return;got[n]=li.dataset.l;show(li.dataset.l);upd();}));
+    list.appendChild(d);
+    grid.insertAdjacentHTML('beforeend',`<a href="#q${n}">Q${n}<span>${ans}</span></a>`);
+  });
+  upd();
+}
+function upd(){const k=Object.keys(got),ok=k.filter(n=>Q.find(q=>q[0]===n)[5].includes(got[n])).length;
+  sc.textContent=mode==='show'?`${Q.length} questions · réponses affichées`:`${k.length}/${Q.length} répondues · ${ok} justes · ${(ok*0.5).toFixed(1)} / ${(Q.length*0.5).toFixed(1)} pts`;}
+const bT=document.getElementById('mTrain'),bS=document.getElementById('mShow');
+bT.onclick=()=>{mode='train';bT.classList.add('on');bS.classList.remove('on');render();};
+bS.onclick=()=>{mode='show';bS.classList.add('on');bT.classList.remove('on');render();};
+document.getElementById('mReset').onclick=()=>{got={};render();};
+render();
+})();
+</script>
+</body>
+</html>
