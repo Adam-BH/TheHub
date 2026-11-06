@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="version" content="v1">
+<title>Recherche Opérationnelle · Programmation linéaire</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: parchment hub page — left = chapter tabs, right = sticky searchable glossary (stacks below on phones) */
+:root{
+  --bg:#F4EFE4;--bg-deep:#ECE5D5;--card:#FBF8F0;--ink:#1F1A14;--ink-soft:#4A3F32;--ink-faint:#8A7D6B;
+  --burgundy:#7B2D26;--teal:#2C5664;--gold:#B8924A;--rule:#C9BFAC;--rule-soft:#DDD3BF;--hl:#F7E8B8;
+  --serif:'Instrument Serif',Georgia,serif;--body:'Newsreader',Georgia,'Times New Roman',serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{position:relative;z-index:1;max-width:1360px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--burgundy)}
+.hub-back{display:inline-flex;margin-top:14px;padding:6px 11px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;text-decoration:none}
+.hub-back:hover{border-color:var(--burgundy)}
+header{padding-block:22px 18px;text-align:center;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--burgundy);font-weight:500}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,5.5vw,60px);line-height:1;margin:10px 0 6px;text-wrap:balance}
+h1 em{color:var(--burgundy)}
+.subtitle{font-style:italic;color:var(--ink-soft);margin:0 auto;max-width:760px}
+.orn{color:var(--gold);letter-spacing:.6em;font-size:11px;margin-top:10px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,380px);gap:28px;padding-block:20px 60px}
+@media(max-width:1020px){.layout{grid-template-columns:minmax(0,1fr)}}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{font-family:var(--body);font-size:15.5px;font-weight:500;padding:11px 13px;background:none;border:0;border-bottom:2px solid transparent;color:var(--ink-faint);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.tab-btn .n{font-family:var(--mono);font-size:11px;margin-right:6px}
+.tab-btn:hover{color:var(--ink)}
+.tab-btn.active{color:var(--burgundy);border-bottom-color:var(--burgundy)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.tab{display:none;min-width:0}
+.tab.active{display:block}
+h2{font-family:var(--serif);font-weight:400;font-style:italic;font-size:32px;line-height:1.1;margin:26px 0 4px;text-wrap:balance}
+h2 .k{display:block;font-family:var(--mono);font-style:normal;font-size:11.5px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;margin-bottom:4px}
+.lead{font-style:italic;color:var(--ink-soft);margin:0 0 10px}
+h3{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin:24px 0 8px}
+h3 .s{color:var(--gold);margin-right:6px}
+p{margin:0 0 10px;color:var(--ink-soft)}
+strong{color:var(--ink)}
+ul,ol{margin:0 0 10px;padding-left:20px;color:var(--ink-soft)}
+li{margin-bottom:4px}
+code,.m{font-family:var(--mono);font-size:.84em;background:var(--bg-deep);padding:1px 5px;border-radius:3px;color:var(--ink)}
+.kw{font-weight:600;color:var(--burgundy);border-bottom:1px dotted var(--burgundy);cursor:help}
+.box{background:var(--card);border-left:3px solid var(--rule);padding:12px 16px;margin:10px 0;border-radius:0 4px 4px 0}
+.box>*:last-child{margin-bottom:0}
+.box .lab{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+.def{border-left-color:var(--teal)}.def .lab{color:var(--teal)}
+.thm{border-left-color:var(--burgundy)}.thm .lab{color:var(--burgundy)}
+.prop{border-left-color:var(--gold)}.prop .lab{color:var(--gold)}
+.rem{border-left-color:var(--ink-faint)}.rem .lab{color:var(--ink-faint)}
+.trap{border-left-color:var(--burgundy);background:#F6E6DF}
+.trap::before{content:'⚠ Piège';display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--burgundy);margin-bottom:4px}
+.tip{border-left-color:var(--gold);background:var(--hl)}
+.tip::before{content:'✦ Astuce';display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#7a5a1e;margin-bottom:4px}
+.formula{font-family:var(--mono);font-size:14px;color:var(--ink);background:var(--hl);display:inline-block;padding:4px 10px;border-radius:4px;margin:2px 0;max-width:100%;overflow-x:auto;white-space:nowrap;vertical-align:middle}
+.lp{font-family:var(--mono);font-size:13.5px;background:var(--card);border:1px solid var(--rule-soft);border-radius:5px;padding:10px 14px;margin:8px 0 12px;overflow-x:auto;white-space:pre;line-height:1.65;color:var(--ink)}
+.lp .c{color:var(--ink-faint)}
+.tw{overflow-x:auto;margin:8px 0 12px}
+table{border-collapse:collapse;font-size:14px;width:100%}
+th,td{border-bottom:1px solid var(--rule-soft);padding:6px 8px;text-align:left;vertical-align:top}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);font-weight:500}
+td{font-variant-numeric:tabular-nums}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}
+.grid2>*{min-width:0}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.chain span{font-family:var(--mono);font-size:12px;background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:4px 8px}
+.chain i{color:var(--gold);font-style:normal}
+.divider{text-align:center;color:var(--gold);letter-spacing:.8em;margin:26px 0 6px;font-size:11px}
+/* steps (counter) */
+.steps{list-style:none;padding:0;margin:8px 0 10px;counter-reset:st}
+.steps li{counter-increment:st;position:relative;padding-left:38px;margin-bottom:7px}
+.steps li::before{content:counter(st,decimal-leading-zero);position:absolute;left:0;top:1px;font-family:var(--mono);font-size:11.5px;color:var(--burgundy);background:var(--bg-deep);border-radius:3px;padding:1px 5px}
+/* method cards */
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;margin:14px 0}
+.card .q{font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.2;color:var(--ink);margin:0 0 8px}
+.card .q::before{content:'Q.';font-family:var(--mono);font-style:normal;font-size:11px;color:var(--gold);margin-right:8px;vertical-align:middle}
+/* aside glossary */
+aside{min-width:0}
+.sheet{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:12px 14px}
+@media(max-width:1020px){.sheet{position:static;max-height:none}}
+.sheet h2{font-size:26px;margin:0 0 2px}
+.sheet input{width:100%;font-family:var(--mono);font-size:13px;padding:7px 9px;border:1px solid var(--rule);border-radius:4px;background:var(--bg);color:var(--ink);margin:6px 0 4px}
+.gcat{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:12px 0 2px}
+.gl{border-top:1px solid var(--rule-soft);padding:6px 0}
+.gl b{font-family:var(--body);color:var(--burgundy)}
+.gl .en{font-family:var(--mono);font-size:10.5px;color:var(--teal);margin-left:4px}
+.gl p{font-size:14.5px;margin:2px 0 0;line-height:1.45}
+.gcount{font-family:var(--mono);font-size:11px;color:var(--ink-faint)}
+/* widgets */
+.tool{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;margin:12px 0}
+.tool .row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:8px}
+.tool label{font-family:var(--mono);font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;display:flex;flex-direction:column;gap:3px}
+.tool select,.tool input[type=range]{font-family:var(--mono);font-size:13px}
+.tool select{padding:5px 6px;border:1px solid var(--rule);border-radius:4px;background:var(--bg);color:var(--ink)}
+.tool input[type=range]{width:150px;accent-color:var(--burgundy)}
+.btn{font-family:var(--mono);font-size:12px;padding:6px 11px;border:1px solid var(--rule);border-radius:4px;background:var(--bg);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--burgundy)}
+.btn.pri{background:var(--burgundy);color:#fff;border-color:var(--burgundy)}
+.btn:disabled{opacity:.4;cursor:default}
+.vizgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}
+@media(max-width:720px){.vizgrid{grid-template-columns:minmax(0,1fr)}}
+.panel{font-size:14.5px;background:var(--bg);border:1px solid var(--rule-soft);border-radius:5px;padding:10px 12px;min-width:0}
+.panel .st{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:6px}
+.st.ok{background:#DCE8E4;color:var(--teal)}.st.ko{background:#F6E6DF;color:var(--burgundy)}.st.mu{background:var(--hl);color:#7a5a1e}
+svg text{font-family:var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:6px}
+.legend span::before{content:'';display:inline-block;width:12px;height:3px;margin-right:5px;vertical-align:middle;background:var(--c)}
+/* simplex tableau */
+table.sx{font-family:var(--mono);font-size:13px;width:auto;min-width:100%}
+table.sx th,table.sx td{text-align:center;padding:5px 8px;border:1px solid var(--rule-soft)}
+table.sx td.bv{font-weight:600;color:var(--teal);background:var(--bg-deep)}
+table.sx tr.z td{border-top:2px solid var(--ink-soft);background:#F3ECDD}
+table.sx .pc{background:#E5EFEC}
+table.sx .pr{background:#F3E2DB}
+table.sx .pv{background:var(--burgundy)!important;color:#fff;font-weight:700;outline:2px solid var(--gold)}
+table.sx .ratio{color:var(--ink-faint)}
+table.sx .ratio.min{color:var(--burgundy);font-weight:700}
+.sxmsg{font-size:15px;margin:8px 0 0;color:var(--ink)}
+.sxstage{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase}
+/* flow + quiz */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px;margin:10px 0}
+.node{background:var(--card);border:1px solid var(--rule);border-top:3px solid var(--teal);border-radius:5px;padding:10px 12px}
+.node h4{font-family:var(--serif);font-style:italic;font-weight:400;font-size:20px;margin:0 0 6px}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;background:var(--bg-deep);border-radius:10px;padding:2px 8px;margin:2px 2px 0 0;color:var(--ink-soft)}
+.tf{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tf .ans{display:none;font-size:14.5px;margin-top:6px;width:100%}
+.tf.done .ans{display:block}
+.kv{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:0;border-top:1px solid var(--rule-soft)}
+.kv>div{padding:8px 6px;border-bottom:1px solid var(--rule-soft)}
+.kv>div:nth-child(odd){font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--burgundy)}
+@media(max-width:560px){.kv{grid-template-columns:minmax(0,1fr)}.kv>div:nth-child(odd){border-bottom:0;padding-bottom:0}}
+footer{text-align:center;font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding-block:20px 30px;border-top:1px solid var(--rule)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="hub-back" href="../../../index.html">← Hub</a>
+<header>
+  <div class="eyebrow">INSAT · GL3 · S1 · Recherche Opérationnelle · I. Ajili</div>
+  <h1>Programmation <em>linéaire</em></h1>
+  <p class="subtitle">Ch. 1 Introduction + Ch. 2 Programmation Linéaire (programme du DS) : terminologie, formulation, résolution graphique, simplexe et variables d'écart. Tous les termes techniques sont dans le <a href="#glossaire">glossaire</a>.</p>
+  <div class="orn">◆ ◆ ◆</div>
+</header>
+
+<div class="layout">
+<main>
+<nav class="tabs" role="tablist">
+  <button class="tab-btn active" data-t="t1"><span class="n">I</span>Introduction RO</button>
+  <button class="tab-btn" data-t="t2"><span class="n">II</span>Terminologie PL</button>
+  <button class="tab-btn" data-t="t3"><span class="n">III</span>Formulation</button>
+  <button class="tab-btn" data-t="t4"><span class="n">IV</span>Graphique</button>
+  <button class="tab-btn" data-t="t5"><span class="n">V</span>Simplexe</button>
+  <button class="tab-btn" data-t="tm"><span class="n">M</span>Méthodes</button>
+  <button class="tab-btn" data-t="ts"><span class="n">S</span>Synthèse</button>
+</nav>
+
+<!-- ================= I ================= -->
+<section class="tab active" id="t1">
+<h2><span class="k">Chapitre 1</span>Qu'est-ce que la recherche opérationnelle ?</h2>
+<p class="lead">Allouer au mieux des ressources limitées, avec des maths et un ordinateur.</p>
+
+<h3><span class="s">§1.1</span>Motivation : allocation de ressources</h3>
+<div class="box def"><span class="lab">Définition · Management (Daft, 2014)</span>Atteindre les objectifs de l'organisation de façon <strong>efficace et efficiente</strong> par la planification, l'organisation, la direction et le contrôle des <strong>ressources</strong>.</div>
+<p><strong>Ressources</strong> = tous les moyens mis à disposition de l'organisation : humaines, financières, matérielles / immatérielles, technologiques. Fixer l'objectif demande de la stratégie ; <strong>allouer les ressources</strong> pour l'atteindre, c'est le travail de la RO.</p>
+<p>La RO est aussi appelée : <strong>science de gestion</strong> (management science), <strong>science décisionnelle</strong>, <strong>méthode / algorithme d'optimisation</strong>, <strong>programmation mathématique</strong>.</p>
+<div class="grid2">
+<div class="box rem"><span class="lab">Exemple · Répartition de tâches</span>2 personnes, 5 tâches (20, 30, 60, 15, 25 min). Une tâche → exactement une personne, une personne → une tâche à la fois. Finir <strong>le plus vite possible</strong>. Ressources = les 2 personnes, objectif = minimiser le temps de fin.</div>
+<div class="box rem"><span class="lab">Exemple · Gestion de projet</span>n ouvriers, m jobs, règles de <strong>priorité</strong>, jobs partageables, durées qui dépendent de l'ouvrier → combien de jours pour finir le projet ?</div>
+</div>
+<p>Applications industrielles : <strong>FedEx</strong> (6,5 M d'articles/jour, 220 pays : centres de distribution, tri, itinéraires), <strong>Continental Airlines</strong> (villes à relier, 2000 vols/jour, affectation des équipages en urgence). Il faut à chaque fois un <strong>système d'information bien conçu</strong> + de la RO.</p>
+
+<h3><span class="s">§1.2</span>Définitions de la RO</h3>
+<div class="box def"><span class="lab">Définition</span>« La RO est la science qui applique des outils <strong>mathématiques et informatiques</strong> pour <strong>aider à la prise de décision</strong>. » (Operations Research Society of America)<br>Autres : décider scientifiquement comment concevoir et faire fonctionner des systèmes homme-machine nécessitant l'allocation de <strong>ressources rares</strong> · base <strong>quantitative</strong> pour les décisions (Morse &amp; Kimball) · « l'art de donner de mauvaises réponses à des problèmes où sinon on en donnerait de pires » (T.L. Saaty).</div>
+
+<h3><span class="s">§1.3</span>Business analytics : 4 niveaux</h3>
+<div class="tw"><table>
+<tr><th>Niveau</th><th>Question</th><th>Outils</th></tr>
+<tr><td><strong>Descriptive</strong></td><td>Que s'est-il passé ?</td><td>reporting, visualisation, data warehousing</td></tr>
+<tr><td><strong>Diagnostique</strong></td><td>Pourquoi ?</td><td>data mining</td></tr>
+<tr><td><strong>Prédictive</strong></td><td>Que va-t-il se passer ?</td><td>text/web mining, machine learning</td></tr>
+<tr><td><strong>Prescriptive</strong></td><td>Que dois-je faire ?</td><td><strong>optimisation</strong>, simulation, network science ← la RO</td></tr>
+</table></div>
+<p>Rétrospectif / orienté information → prospectif / orienté <strong>décision</strong>. <strong>Analyse de données</strong> = recueillir l'information et comprendre le problème ; <strong>RO</strong> = allouer les ressources et résoudre le problème.</p>
+<div class="grid2">
+<div class="box prop"><span class="lab">Optimisation (OPT)</span>Trouver la valeur min (ou max) d'une <strong>fonction objectif</strong> soumise à des <strong>contraintes</strong>. + techniques exactes et insights. − modèles simples, hypothèses strictes.</div>
+<div class="box prop"><span class="lab">Simulation (SIM)</span>« What if », scénarios. + complexité et aléas réels. − on évalue seulement des scénarios donnés.</div>
+</div>
+<p><strong>Inventaire multi-produits</strong> : 1 produit → estimer la demande aléatoire puis choisir le niveau de stock (éviter sous-stockage / surstockage) ; plusieurs produits → <strong>substitution dans la demande</strong> (« plus de coca ? un pepsi ») : analyse de données et RO deviennent difficiles.</p>
+
+<h3><span class="s">§1.4</span>Processus d'une étude RO</h3>
+<div class="chain"><span>Définir le problème</span><i>→</i><span>Collecter les données</span><i>→ suffisantes ? →</i><span>Formuler un modèle</span><i>→</i><span>Résoudre</span><i>→ bon modèle ? →</i><span>Interpréter, suggérer</span></div>
+<p>Si les données ne suffisent pas → on recollecte ; si le modèle n'est pas bon → on reformule. <strong>Avantages</strong> du modèle : décrit le problème précisément, permet de le résoudre par ordinateur. <strong>Limites</strong> : certains problèmes sont difficiles à formuler, des informations essentielles peuvent manquer.</p>
+
+<h3><span class="s">§1.5</span>Programmation mathématique : le sac à dos</h3>
+<p>Sac de <strong>5 kg</strong>, 7 articles indivisibles (pris ou laissés). Le choix glouton par rapport valeur/poids donne 1,2,3,4,5 (valeur 22) ; l'<strong>optimum</strong> est 1,2,3,4,6 (valeur <strong>23</strong>) → l'intuition ne suffit pas, il faut un modèle.</p>
+<div class="lp">x<sub>i</sub> = 1 si l'article i est choisi, 0 sinon       <span class="c">← variables de décision (binaires)</span>
+max  6x₁ + 5x₂ + 4x₃ + 4x₄ + 3x₅ + 4x₆ + x₇            <span class="c">← fonction objectif</span>
+s.c. 0.5x₁ + 1.5x₂ + 0.4x₃ + x₄ + 1.1x₅ + 1.6x₆ + 0.8x₇ ≤ 5   <span class="c">← contrainte</span>
+     x<sub>i</sub> ∈ {0,1}  ∀ i = 1..7</div>
+<div class="box def"><span class="lab">Formulation compacte</span><span class="formula">max Σ v<sub>i</sub>x<sub>i</sub>  s.c.  Σ w<sub>i</sub>x<sub>i</sub> ≤ B,  x<sub>i</sub> ∈ {0,1}</span><br>w<sub>i</sub> = poids, v<sub>i</sub> = valeur, n = nb d'articles, B = poids max. <strong>Paramètres</strong> (données) ≠ <strong>variables</strong> (décisions).</div>
+<p>Même modèle, autre sens : <strong>sélection des commandes</strong> (w<sub>i</sub> = temps de traitement, v<sub>i</sub> = bénéfice, B = capacité de l'usine) · <strong>optimisation de portefeuille</strong> : investissement « pas tout ou rien » → <span class="m">0 ≤ x<sub>i</sub> ≤ 1</span> (variable <strong>continue</strong>).</p>
+
+<h3><span class="s">§1.6</span>Classer un problème d'optimisation</h3>
+<div class="tw"><table>
+<tr><th>Critère</th><th>Possibilités</th></tr>
+<tr><td>Objectif</td><td>mono-objectif / multi-objectif (mono/multi-critères)</td></tr>
+<tr><td>Équations</td><td>linéaire / non linéaire</td></tr>
+<tr><td>Données</td><td>déterministes / stochastiques</td></tr>
+<tr><td>Variables</td><td>discrètes / continues / mixtes</td></tr>
+<tr><td>Résolution</td><td>exacte / approchée (heuristique)</td></tr>
+<tr><td>Temps</td><td>statique / dynamique</td></tr>
+<tr><td>Contraintes</td><td>avec / sans</td></tr>
+</table></div>
+<p><strong>Méthodes exactes</strong> : simplexe de Dantzig, méthodes primales/duales, Branch and Bound, Branch and Cut, programmation dynamique ; non linéaire : gradient, gradient conjugué, Newton… <strong>Métaheuristiques</strong> (approchées) : recherche tabou, recuit simulé, hill-climbing, algorithmes génétiques, colonies de fourmis, essaims particulaires.</p>
+<p><strong>Complexité</strong> : O(1) &lt; O(log n) &lt; O(n) &lt; O(n²) (polynomiale) ≪ O(2<sup>n</sup>) (exponentielle) ≪ O(n!) — pour n = 50, 2<sup>n</sup> ≈ 36 ans de calcul : d'où l'intérêt des heuristiques sur les gros problèmes combinatoires.</p>
+
+<h3><span class="s">§1.7</span>Histoire</h3>
+<p><strong>George Dantzig</strong> (1914–2005) planifiait les itinéraires de l'US Air Force pendant la 2<sup>e</sup> Guerre mondiale ; chaque plan s'appelait un « <strong>programme</strong> » (d'où « programmation » linéaire). Il invente la <strong>méthode du simplexe</strong>, toujours au cœur des solveurs. <strong>Kantorovich</strong> et <strong>Koopmans</strong> : Nobel d'économie 1975 (allocation optimale des ressources). Succès PL : United Airlines (−50 % de retards, 5 M$/an, 1992), Swift &amp; Company (+12 M$/an, 2006).</p>
+</section>
+
+<!-- ================= II ================= -->
+<section class="tab" id="t2">
+<h2><span class="k">Chapitre 2 · Section 1</span>Terminologie d'un programme linéaire</h2>
+<p class="lead">Les mots du DS : chaque terme ici tombe en QCM ou en vrai/faux.</p>
+
+<h3><span class="s">§2.1</span>Programme linéaire (PL / LP)</h3>
+<div class="box def"><span class="lab">Définition</span>La <strong>programmation linéaire</strong> est le processus de <strong>formulation</strong> et de <strong>résolution</strong> de programmes linéaires. Un <strong>PL</strong> est un programme mathématique où la fonction objectif et les contraintes sont <strong>linéaires</strong> et les variables <strong>continues</strong> (réelles).</div>
+<div class="lp">min (ou max)  f(x₁, …, xₙ)              <span class="c">fonction objectif (FO / fonction économique)</span>
+s.c.          g<sub>i</sub>(x₁, …, xₙ) ≤ b<sub>i</sub>   ∀ i = 1..m   <span class="c">contraintes fonctionnelles</span>
+              x<sub>j</sub> ∈ ℝ                 ∀ j = 1..n   <span class="c">variables de décision</span></div>
+<p><strong>s.t.</strong> (subject to) = <strong>s.c.</strong> (sous contraintes). Les 3 éléments d'un PL : <strong>variables de décision</strong>, <strong>fonction objectif</strong>, <strong>contraintes</strong>.</p>
+
+<h3><span class="s">§2.2</span>Types de contraintes</h3>
+<div class="grid2">
+<div class="box def"><span class="lab">Contrainte de signe</span>Ne porte que sur <strong>une variable</strong> comparée à 0 :<br>• <strong>positive</strong> x<sub>i</sub> ≥ 0 (non-négativité)<br>• <strong>négative</strong> x<sub>i</sub> ≤ 0<br>• <strong>sans restriction de signe</strong> (x<sub>i</sub> ∈ ℝ, « libre »)</div>
+<div class="box def"><span class="lab">Contrainte fonctionnelle</span><strong>Toutes les autres</strong> : x₂ ≤ 3, x₁ + 2x₂ ≥ 5, 4x₂ = 5… Même <span class="m">x₂ ≤ 3</span> est fonctionnelle (le second membre n'est pas 0).</div>
+</div>
+<div class="box prop"><span class="lab">Transformation max ↔ min</span><span class="formula">max f(x) ⇔ − min (−f(x))</span> : même solution optimale x*, valeur opposée.<br>Une contrainte ≥ se change en ≤ en multipliant par −1 : <span class="m">−2x₁ ≥ 1 ⇔ 2x₁ ≤ −1</span>.</div>
+
+<h3><span class="s">§2.3</span>Solutions</h3>
+<div class="grid2">
+<div class="box def"><span class="lab">Solution réalisable (admissible)</span>Satisfait <strong>toutes</strong> les contraintes.</div>
+<div class="box def"><span class="lab">Solution irréalisable</span>Viole <strong>au moins une</strong> contrainte.</div>
+<div class="box def"><span class="lab">Région / domaine réalisable</span>L'<strong>ensemble</strong> de toutes les solutions réalisables (un polyèdre convexe pour un PL).</div>
+<div class="box def"><span class="lab">Solution optimale</span>Solution <strong>réalisable</strong> qui atteint la plus grande valeur de la FO (max) ou la plus petite (min) : aucune solution réalisable n'est meilleure. Elle peut être <strong>unique</strong>, <strong>multiple</strong> ou <strong>inexistante</strong>.</div>
+</div>
+<p>Méthode (exemple du cours avec x¹ = (2,3), x² = (6,0), x³ = (6,6)) : on remplace chaque point dans <strong>chaque</strong> contrainte, signe compris ; un seul « non » suffit pour qu'il soit irréalisable.</p>
+<div class="trap">Une solution optimale est toujours <strong>réalisable</strong>. Un point qui donne une meilleure valeur mais viole une contrainte n'est <em>pas</em> « plus optimal », il est irréalisable.</div>
+
+<h3><span class="s">§2.4</span>Contraintes actives, inactives, strictes, faibles</h3>
+<div class="grid2">
+<div class="box thm"><span class="lab">Contrainte active (liante, saturée)</span>Pour une solution donnée, membre de gauche <strong>=</strong> membre de droite. Une contrainte d'<strong>égalité</strong> est <strong>toujours active</strong> pour toute solution admissible.</div>
+<div class="box thm"><span class="lab">Contrainte inactive</span>L'inégalité est vérifiée <strong>strictement</strong> pour cette solution (gauche &lt; droite pour ≤) : il reste du « mou ».</div>
+</div>
+<p>Exemples du cours : <span class="m">x₁+x₂ ≤ 10</span> en (2,8) : 10 = 10 → <strong>active</strong>. <span class="m">2x₁+x₂ ≤ 16</span> en (2,8) : 12 &lt; 16 → <strong>inactive</strong>. <span class="m">x₁+3x₂ ≤ 9</span> en (6,1) : 9 = 9 → <strong>active</strong>.</p>
+<div class="box prop"><span class="lab">Inégalité stricte vs faible</span><strong>Stricte</strong> (&lt;, &gt;) : les deux côtés ne peuvent pas être égaux. <strong>Faible / souple</strong> (≤, ≥) : égalité permise. <strong>Dans un PL pratique, toutes les inégalités sont faibles</strong> : avec une inégalité stricte, l'optimum peut ne pas exister (ex. <span class="m">min x s.c. x &gt; 0</span> : pas de minimum). Budget : « ne pas dépasser 500 D » mais on peut dépenser exactement 500 D → ≤.</div>
+<div class="trap">Ne confonds pas <strong>contrainte stricte</strong> (type d'inégalité, propriété du modèle) et <strong>contrainte inactive</strong> (propriété d'un point précis).</div>
+
+<h3><span class="s">§2.5</span>Écritures d'un PL</h3>
+<div class="lp"><span class="c">Forme développée (sommes)</span>
+min  Σⱼ cⱼ xⱼ
+s.c. Σⱼ A<sub>ij</sub> xⱼ ≤ b<sub>i</sub>   ∀ i = 1..m
+
+<span class="c">Forme vectorielle</span>              <span class="c">Forme matricielle</span>
+min  cᵀx                          min  cᵀx
+s.c. a<sub>i</sub>ᵀx ≤ b<sub>i</sub>  ∀ i              s.c. Ax ≤ b
+a<sub>i</sub> ∈ ℝⁿ, b<sub>i</sub> ∈ ℝ, c ∈ ℝⁿ, x ∈ ℝⁿ     A ∈ ℝ<sup>m×n</sup>, b ∈ ℝ<sup>m</sup></div>
+<div class="tw"><table>
+<tr><th>Symbole</th><th>Nom</th></tr>
+<tr><td class="m">cⱼ</td><td>coefficients de la fonction objectif (profit / coût unitaire)</td></tr>
+<tr><td class="m">b<sub>i</sub></td><td>valeurs des <strong>membres de droite</strong> (seconds membres : disponibilités des ressources)</td></tr>
+<tr><td class="m">A<sub>ij</sub></td><td>coefficients du système de contraintes (consommation de la ressource i par une unité de j)</td></tr>
+<tr><td class="m">n, m</td><td>nombre de variables, nombre de contraintes</td></tr>
+</table></div>
+
+<h3><span class="s">§2.6</span>Forme standard et variables d'écart</h3>
+<div class="box def"><span class="lab">Forme standard (étape 1 du simplexe)</span>Toutes les contraintes fonctionnelles sont des <strong>égalités</strong>, toutes les variables sont <strong>≥ 0</strong>. On y arrive en ajoutant une <strong>variable d'écart</strong> par contrainte.</div>
+<div class="box thm"><span class="lab">Variable d'écart (slack)</span>Pour <span class="m">Σ A<sub>ij</sub>xⱼ ≤ b<sub>i</sub></span>, on pose <span class="formula">e<sub>i</sub> = b<sub>i</sub> − Σ A<sub>ij</sub>xⱼ ≥ 0</span> et on écrit <span class="m">Σ A<sub>ij</sub>xⱼ + e<sub>i</sub> = b<sub>i</sub></span>.<br>• Sens : quantité de ressource <strong>non utilisée</strong> (le « mou »).<br>• Coefficient <strong>0</strong> dans la fonction objectif.<br>• <strong>e<sub>i</sub> = 0 ⇔ contrainte i active</strong> ; e<sub>i</sub> &gt; 0 ⇔ inactive.</div>
+<div class="lp"><span class="c">Exemple du cours (simplexe)</span>
+max 30x₁ + 50x₂                     max 30x₁ + 50x₂ + 0x₃ + 0x₄ + 0x₅
+s.c. 3x₁ + 2x₂ ≤ 1800      ⟹       s.c. 3x₁ + 2x₂ + x₃           = 1800
+     x₁       ≤ 400                     x₁            + x₄      = 400
+           x₂ ≤ 600                          x₂            + x₅ = 600
+     x₁, x₂ ≥ 0                          x₁, …, x₅ ≥ 0          <span class="c">x₃, x₄, x₅ = variables d'écart</span></div>
+<div class="box rem"><span class="lab">Complément · contrainte ≥</span>Pour <span class="m">Σ A<sub>ij</sub>xⱼ ≥ b<sub>i</sub></span> on <strong>retranche</strong> une variable d'<strong>excédent</strong> (surplus) : <span class="m">Σ A<sub>ij</sub>xⱼ − e<sub>i</sub> = b<sub>i</sub></span>, e<sub>i</sub> ≥ 0. Elle ne donne pas de base de départ évidente : il faut une <strong>variable artificielle</strong> (méthode des deux phases / grand M), hors des diapos du cours.</div>
+<div class="tip">Lire les écarts à l'optimum, c'est lire les contraintes actives : dans l'exemple, à x* = (200, 600) on a x₃ = 0, x₅ = 0 (ressources 1 et 3 épuisées, contraintes <strong>actives</strong>) et x₄ = 200 (il reste 200 unités sur la contrainte x₁ ≤ 400, <strong>inactive</strong>).</div>
+</section>
+
+<!-- ================= III ================= -->
+<section class="tab" id="t3">
+<h2><span class="k">Chapitre 2 · Section 2</span>Formulation (modélisation)</h2>
+<p class="lead">« C'est en forgeant qu'on devient forgeron » : une fois bien formulé, le problème est résolu.</p>
+
+<h3><span class="s">§3.1</span>Les 3 questions</h3>
+<div class="grid2">
+<div class="box def"><span class="lab">Variables de décision</span>Que peut-on décider ? (quantités à produire, à acheter, à affecter…)</div>
+<div class="box def"><span class="lab">Fonction objectif</span>Que veut-on ? (max profit = revenus − coûts, min coût, min temps)</div>
+<div class="box def"><span class="lab">Contraintes</span>Quelles sont les limites ? (ressources, demande, + contraintes de signe)</div>
+</div>
+
+<h3><span class="s">§3.2</span>Exemple du cours : soldats et trains</h3>
+<p>Soldat : vendu 27 D, 10 D de matières premières (MP), 14 D d'autres coûts, 2 h de finition, 1 h de menuiserie. Train : 21 D, 9 D de MP, 10 D d'autres coûts, 1 h de finition, 1 h de menuiserie. Par jour : 100 h de finition, 80 h de menuiserie, au plus 40 soldats vendus, demande de trains illimitée. Maximiser le <strong>profit</strong> quotidien.</p>
+<div class="lp">x₁ = nb de soldats produits par jour,  x₂ = nb de trains produits par jour
+
+max z = 3x₁ + 2x₂        <span class="c">profit = (27−10−14)x₁ + (21−9−10)x₂</span>
+s.c. 2x₁ + x₂ ≤ 100      <span class="c">heures de finition</span>
+      x₁ + x₂ ≤ 80       <span class="c">heures de menuiserie</span>
+      x₁      ≤ 40       <span class="c">demande max de soldats</span>
+      x₁, x₂ ≥ 0         <span class="c">restrictions de signe</span></div>
+<div class="tip">Les conseils de la prof : <strong>définir clairement</strong> les variables (avec l'unité et la période : « par jour »), <strong>écrire un commentaire</strong> après la FO et chaque contrainte, utiliser la <strong>même unité</strong> partout.</div>
+<div class="trap">La FO est un <strong>profit</strong> : revenus − <em>tous</em> les coûts variables. Écrire max 27x₁ + 21x₂ (le chiffre d'affaires) est faux.</div>
+
+<h3><span class="s">§3.3</span>Interprétation d'une solution fractionnaire</h3>
+<p>Si l'optimum était (20,25 ; 60,5) : produire 20,25 soldats par jour <strong>en moyenne</strong> (2025 soldats / 100 jours). En pratique on <strong>arrondit vers le réalisable</strong> : 20 soldats et 60 trains (pas 21 et 61, qui peuvent violer les contraintes). Pas forcément optimal, mais une bonne suggestion trouvée vite. Si l'intégrité est indispensable → PLNE (chapitre 3).</p>
+
+<h3><span class="s">§3.4</span>Modèles types (Série 1, DS)</h3>
+<div class="tw"><table>
+<tr><th>Problème</th><th>Variables</th><th>Idée des contraintes</th></tr>
+<tr><td><strong>Production</strong> (soldats/trains, quiz : tables/chaises)</td><td>quantités produites</td><td>Σ consommation ≤ disponibilité, demande max</td></tr>
+<tr><td><strong>Zone agricole</strong> (Série 1, PL1)</td><td>x<sub>i</sub> = hectares de la culture i</td><td>main-d'œuvre, eau, heures machine, Σx<sub>i</sub> ≤ superficie</td></tr>
+<tr><td><strong>Production multi-période</strong> (ChausseTous, PL2)</td><td>NCH<sub>i</sub>, NHS<sub>i</sub>, NOR<sub>i</sub>, NOL<sub>i</sub> + auxiliaires S<sub>i</sub>, NO<sub>i</sub></td><td>équations de <strong>stock</strong> S<sub>i</sub> = S<sub>i−1</sub> + prod − demande, d'<strong>effectif</strong> NO<sub>i</sub> = NO<sub>i−1</sub> + recrutés − licenciés</td></tr>
+<tr><td><strong>Planification du personnel</strong> (bureau de poste, PL3)</td><td>x<sub>i</sub> = employés qui <strong>commencent</strong> le jour i</td><td>besoin du jour j ≤ somme des x qui travaillent ce jour (5 jours consécutifs)</td></tr>
+<tr><td><strong>Mélange</strong> (DS GL 2025, médicament)</td><td>x<sub>i</sub> = kg de l'ingrédient i</td><td>Σx<sub>i</sub> = 1000, bornes en % sur chaque composant</td></tr>
+</table></div>
+<div class="box rem"><span class="lab">Variable auxiliaire</span>Variable introduite pour simplifier l'écriture (stock S<sub>i</sub>, effectif NO<sub>i</sub>) : elle est entièrement déterminée par les variables de décision via des contraintes d'égalité.</div>
+<div class="box rem"><span class="lab">Paramètre</span>Donnée connue du problème (coût, demande, capacité) notée par une lettre dans la formulation compacte : C<sub>i</sub>, D<sub>i</sub>, H… Ce n'est <strong>pas</strong> une variable.</div>
+</section>
+
+<!-- ================= IV ================= -->
+<section class="tab" id="t4">
+<h2><span class="k">Chapitre 2 · Section 3.1</span>Résolution graphique</h2>
+<p class="lead">Seulement quand le PL a <strong>deux</strong> variables de décision ; sinon → simplexe.</p>
+
+<h3><span class="s">§4.1</span>Les 5 étapes</h3>
+<ol class="steps">
+<li><strong>Dessiner le domaine réalisable</strong> : chaque contrainte = une droite (hyperplan) + le demi-plan du bon côté ; intersection avec x ≥ 0.</li>
+<li><strong>Tracer une ligne isoquante</strong> (isoprofit pour max, isocoût pour min) : tous ses points donnent la même valeur z = k. Elles sont toutes <strong>parallèles</strong>.</li>
+<li><strong>Indiquer la direction</strong> qui augmente z (max) ou la diminue (min) : le vecteur (c₁, c₂).</li>
+<li><strong>Pousser l'isoquante</strong> jusqu'à la « fin » du domaine : s'arrêter juste avant que tous ses points deviennent irréalisables.</li>
+<li><strong>Identifier les contraintes actives</strong> à la solution optimale et résoudre le système pour avoir les coordonnées exactes.</li>
+</ol>
+<p>Soldats/trains : sommets (0,0), (40,0), (40,20), <strong>(20,60) → z* = 180</strong>, (0,80). Actives en (20,60) : finition et menuiserie.</p>
+
+<div class="tool" id="gtool">
+  <div class="row">
+    <label>PL<select id="gpreset">
+      <option value="toys">Soldats / trains (cours)</option>
+      <option value="sx">Exemple du simplexe</option>
+      <option value="multi">Solutions multiples</option>
+      <option value="unb">Non borné</option>
+      <option value="inf">Irréalisable</option>
+    </select></label>
+    <label>Sens<select id="gsense"><option value="max">max</option><option value="min">min</option></select></label>
+    <label>c₁ = <span id="gc1v"></span><input type="range" id="gc1" min="-10" max="60" step="0.5"></label>
+    <label>c₂ = <span id="gc2v"></span><input type="range" id="gc2" min="-10" max="60" step="0.5"></label>
+    <label>pousser z = k<input type="range" id="gk" min="0" max="100" step="1" value="40"></label>
+  </div>
+  <div class="vizgrid">
+    <svg id="gsvg" viewBox="0 0 400 400" role="img" aria-label="Résolution graphique" style="width:100%;height:auto;background:#FBF8F0;border:1px solid var(--rule-soft);border-radius:5px"></svg>
+    <div class="panel" id="gpanel"></div>
+  </div>
+  <div class="legend"><span style="--c:#2C5664">contraintes</span><span style="--c:#B8924A">isoquante z = k</span><span style="--c:#7B2D26">direction (c₁,c₂) / optimum</span><span style="--c:#E8DDC3">domaine réalisable</span></div>
+</div>
+
+<h3><span class="s">§4.2</span>Trois types de PL</h3>
+<div class="grid2">
+<div class="box thm"><span class="lab">Finiment optimal</span>Il existe une solution optimale : <strong>unique</strong> (un sommet) ou <strong>multiple</strong> (une arête entière, quand l'isoquante est parallèle à une contrainte active).</div>
+<div class="box thm"><span class="lab">Non borné</span>On peut pousser l'isoquante à l'infini en restant réalisable : z → +∞ (max) ou −∞ (min). Pas de solution optimale.</div>
+<div class="box thm"><span class="lab">Irréalisable</span>Domaine réalisable <strong>vide</strong> : aucune solution réalisable (contraintes contradictoires).</div>
+</div>
+<div class="trap">Domaine non borné <strong>≠</strong> PL non borné. Un domaine infini peut avoir un optimum fini si la direction de l'objectif « bute » sur le domaine (essaie <em>Non borné</em> avec le sens <em>min</em>). Mais un PL non borné a forcément un domaine non borné.</div>
+<div class="box prop"><span class="lab">Propriété (théorème fondamental)</span>Si un PL a une solution optimale, <strong>au moins un sommet</strong> (point extrême) du domaine est optimal → il suffit de comparer les sommets. Si deux points sont optimaux, tout le segment qui les relie l'est aussi (infinité de solutions).</div>
+</section>
+
+<!-- ================= V ================= -->
+<section class="tab" id="t5">
+<h2><span class="k">Chapitre 2 · Section 4</span>Algorithme du simplexe</h2>
+<p class="lead">Aller de sommet en sommet en améliorant z à chaque pas, en calcul sur un tableau.</p>
+
+<h3><span class="s">§5.1</span>Vocabulaire du tableau</h3>
+<div class="grid2">
+<div class="box def"><span class="lab">Variables de base (VB)</span>Une par ligne du tableau (m au total) ; leur valeur se lit dans la colonne « solution » (b). Au départ : les <strong>variables d'écart</strong>.</div>
+<div class="box def"><span class="lab">Variables hors base (VHB)</span>Les n autres, fixées à <strong>0</strong>. Au départ : les variables de décision → on part de l'origine (0,0).</div>
+<div class="box def"><span class="lab">Solution de base réalisable</span>VHB = 0, VB = b ≥ 0. Géométriquement c'est un <strong>sommet</strong> du domaine.</div>
+<div class="box def"><span class="lab">Ligne Z</span>Coefficients de la FO exprimée en VHB (coûts réduits). Sa case « solution » contient <strong>−z</strong> (convention du cours).</div>
+</div>
+
+<h3><span class="s">§5.2</span>L'algorithme (cas max, contraintes ≤, b ≥ 0)</h3>
+<ol class="steps">
+<li><strong>Forme standard</strong> : ajouter une variable d'écart par contrainte.</li>
+<li><strong>1<sup>er</sup> tableau</strong> : lignes = VB (écarts), colonnes = toutes les variables + solution, dernière ligne Z = c<sub>j</sub> (0 pour les écarts), case Z/solution = 0.</li>
+<li><strong>Variable entrante</strong> : la VHB ayant le <strong>plus grand coefficient positif</strong> dans la ligne Z → <strong>colonne pivot</strong> c.</li>
+<li><strong>Variable sortante</strong> : rapport b<sub>i</sub> / E<sub>ic</sub> pour chaque ligne, on retient le <strong>plus petit positif</strong> (E<sub>ic</sub> ≤ 0 → +∞) → <strong>ligne pivot</strong> l. C'est le <strong>test du ratio</strong>.</li>
+<li><strong>Encadrer le pivot</strong> E<sub>lc</sub> = intersection ligne pivot × colonne pivot.</li>
+<li><strong>Diviser la ligne pivot par le pivot</strong> : <span class="formula">E'<sub>lj</sub> = E<sub>lj</sub> / E<sub>lc</sub></span> ; la variable entrante remplace la sortante dans la base.</li>
+<li><strong>Calculer les autres lignes</strong> (y compris Z) : <span class="formula">E'<sub>ij</sub> = E<sub>ij</sub> − (E<sub>ic</sub> / E<sub>lc</sub>) × E<sub>lj</sub></span>. La colonne pivot devient (0,…,1,…,0).</li>
+<li><strong>Test d'optimalité</strong> : tous les coefficients de la ligne Z sont <strong>nuls ou négatifs</strong> ? Oui → <strong>fin</strong>, z* = −(case Z). Non → retour à l'étape 3.</li>
+</ol>
+
+<div class="tool" id="sxtool">
+  <div class="row">
+    <label>PL<select id="sxpreset">
+      <option value="sx">Cours : max 30x₁ + 50x₂</option>
+      <option value="toys">Soldats / trains : max 3x₁ + 2x₂</option>
+      <option value="multi">Arête optimale : max 2x₁ + x₂</option>
+      <option value="unb">Solution infinie : max x₁ + x₂</option>
+    </select></label>
+    <button class="btn" id="sxprev">← Étape</button>
+    <button class="btn pri" id="sxnext">Étape →</button>
+    <button class="btn" id="sxreset">↺</button>
+  </div>
+  <div class="lp" id="sxlp" style="margin-top:0"></div>
+  <div class="sxstage" id="sxstage"></div>
+  <div class="tw"><table class="sx" id="sxtab"></table></div>
+  <p class="sxmsg" id="sxmsg"></p>
+  <div class="legend"><span style="--c:#9CC0B5">colonne pivot (entrante)</span><span style="--c:#D9A898">ligne pivot (sortante)</span><span style="--c:#7B2D26">pivot</span></div>
+</div>
+
+<h3><span class="s">§5.3</span>Déroulé de l'exemple du cours</h3>
+<div class="tw"><table>
+<tr><th>Itér.</th><th>Entrante</th><th>Ratios</th><th>Sortante</th><th>Pivot</th><th>Sommet atteint</th><th>z</th></tr>
+<tr><td>0</td><td>—</td><td>—</td><td>—</td><td>—</td><td>(0, 0)</td><td>0</td></tr>
+<tr><td>1</td><td>x₂ (50)</td><td>900 · ∞ · <strong>600</strong></td><td>x₅</td><td>1</td><td>(0, 600)</td><td>30 000</td></tr>
+<tr><td>2</td><td>x₁ (30)</td><td><strong>200</strong> · 400 · ∞</td><td>x₃</td><td>3</td><td>(200, 600)</td><td><strong>36 000</strong></td></tr>
+</table></div>
+<p>Tableau final : ligne Z = (0, 0, −10, 0, −30 | −36 000) → tout ≤ 0, <strong>optimum</strong> x₁ = 200, x₂ = 600, x₄ = 200, Max Z = 36 000.</p>
+
+<h3><span class="s">§5.4</span>Remarques importantes (cas particuliers)</h3>
+<div class="grid2">
+<div class="box thm"><span class="lab">Solution infinie (PL non borné)</span>Une VHB a un coefficient <strong>positif</strong> dans la ligne Z et <strong>tous</strong> les coefficients de sa colonne sont <strong>nuls ou négatifs</strong> : aucun ratio positif, on peut l'augmenter sans limite.</div>
+<div class="box thm"><span class="lab">Arête optimale (solutions multiples)</span>À la fin, une <strong>VHB</strong> a un coefficient <strong>nul</strong> dans la ligne Z : la faire entrer donne un autre sommet de même z. Tout le segment entre les deux est optimal.</div>
+</div>
+<div class="trap">Le test du ratio ne prend que les E<sub>ic</sub> <strong>strictement positifs</strong> : 400/0 = +∞ et un dénominateur négatif ne compte pas. Prendre un ratio négatif rend la solution irréalisable (une VB devient négative).</div>
+<div class="trap">À la fin la case Z vaut <strong>−36 000</strong> : z* = <strong>+36 000</strong>. Ne pas recopier le signe moins.</div>
+<div class="box rem"><span class="lab">Pour un min</span>Soit on transforme : min z = −max(−z), soit on choisit le coefficient le plus <strong>négatif</strong> et on s'arrête quand tous sont ≥ 0. Vérifie la convention attendue à l'examen.</div>
+<div class="box rem"><span class="lab">Outils (TP)</span>TP0–TP1 : Microsoft Excel (Solveur) ; TP2 : GUROBI &amp; Python.</div>
+</section>
+
+<!-- ================= M ================= -->
+<section class="tab" id="tm">
+<h2><span class="k">Méthodes</span>Comment répondre à…</h2>
+<p class="lead">Une fiche par type de question vu dans la Série 1, le Quiz 2 et le DS 2025.</p>
+
+<div class="card"><p class="q">Comment formuler un PL à partir d'un énoncé ?</p>
+<ol class="steps">
+<li>Souligner ce qu'on <strong>décide</strong> → variables x<sub>j</sub> avec unité et période.</li>
+<li>Repérer les <strong>données</strong> → paramètres (prix, coûts, capacités) ; en formulation compacte, les nommer.</li>
+<li>Écrire la <strong>FO</strong> : max profit unitaire × quantité (revenu − tous les coûts variables) ou min coût.</li>
+<li>Une contrainte par <strong>ressource</strong> limitée : Σ consommation ≤ disponibilité ; puis demande / bornes.</li>
+<li>Ajouter les <strong>contraintes de signe</strong> (x ≥ 0) et, si besoin, l'intégrité (→ PLNE) ou le binaire.</li>
+<li>Commenter chaque ligne et vérifier les unités.</li>
+</ol>
+<div class="box tip">Série 1 PL1 (zone agricole) : commencer par calculer le <strong>bénéfice par hectare</strong> de chaque culture (rendement × prix − coûts eau, machine, main-d'œuvre) puis c'est un PL de production classique.</div></div>
+
+<div class="card"><p class="q">Comment écrire une contrainte « au plus / au moins p % » ?</p>
+<ol class="steps">
+<li>Écrire la quantité du composant : Σ t<sub>i</sub>x<sub>i</sub> (t<sub>i</sub> = teneur de l'ingrédient i).</li>
+<li>La comparer à p % du <strong>total</strong> : Σ t<sub>i</sub>x<sub>i</sub> ≥ p · Σ x<sub>i</sub>.</li>
+<li>Si le total est fixé (Σx<sub>i</sub> = 1000), remplacer : Σ t<sub>i</sub>x<sub>i</sub> ≥ 1000p → contrainte linéaire.</li>
+<li>« Entre a % et b % » = <strong>deux</strong> contraintes.</li>
+</ol>
+<div class="lp">DS GL 2025 — médicament (mélange), x<sub>i</sub> = kg de S1..S4, E1, E2
+min 15x₁ + 12x₂ + 18x₃ + 10x₄ + 2x₅ + 1.5x₆           <span class="c">coût total</span>
+s.c. x₁ + x₂ + x₃ + x₄ + x₅ + x₆ = 1000                 <span class="c">lot exact</span>
+     800 ≤ Σ pa<sub>i</sub>·x<sub>i</sub> ≤ 850                         <span class="c">principe actif 80–85 %</span>
+      50 ≤ Σ l<sub>i</sub>·x<sub>i</sub>  ≤ 100                         <span class="c">liant 5–10 %</span>
+           Σ d<sub>i</sub>·x<sub>i</sub>  ≥ 20                          <span class="c">désintégration ≥ 2 %</span>
+           Σ imp<sub>i</sub>·x<sub>i</sub> ≤ 6                          <span class="c">impuretés ≤ 0.6 %</span>
+     x₁ + x₂ + x₃ + x₄ ≥ 900                            <span class="c">substances actives ≥ 90 %</span>
+     x<sub>i</sub> ≥ 0                                   <span class="c">(teneurs du tableau, en fraction : 95 % → 0.95)</span></div>
+<div class="box tip">Questions de cours du même DS : c'est un <strong>problème de mélange</strong> (formulation / blending) ; c'est un <strong>PL</strong> (kg = variables continues) ; on utilise une méthode <strong>exacte</strong> (secteur réglementé, coût, sécurité) ; objectif = lot de 1000 kg au <strong>coût minimal</strong> en respectant les spécifications.</div></div>
+
+<div class="card"><p class="q">Comment résoudre graphiquement et conclure ?</p>
+<ol class="steps">
+<li>Pour chaque contrainte, tracer la droite via 2 points (x₁ = 0 puis x₂ = 0) et hachurer le bon côté (tester l'origine).</li>
+<li>Tracer une isoquante c₁x₁ + c₂x₂ = k avec un k pratique, flécher la direction (c₁, c₂).</li>
+<li>Pousser dans le bon sens ; le dernier point touché = optimum. Lire les 2 contraintes actives.</li>
+<li>Résoudre le système 2×2 des contraintes actives → coordonnées exactes, puis z*.</li>
+<li>Conclure : unique / multiples (isoquante parallèle à une arête) / non borné / irréalisable.</li>
+</ol>
+<div class="box tip">Quiz 2, Q5 (tables/chaises) : la réponse attendue est un nombre (7 chaises) → ne pas oublier de <strong>lire la bonne variable</strong> à la fin. Vérifie avec l'outil de l'onglet IV.</div></div>
+
+<div class="card"><p class="q">Comment savoir si une contrainte est active en un point ?</p>
+<ol class="steps">
+<li>Substituer le point dans le membre de gauche.</li>
+<li>Égal au membre de droite → <strong>active</strong> (écart = 0) ; strictement à l'intérieur → <strong>inactive</strong> (écart &gt; 0).</li>
+<li>Ne pas oublier les contraintes de <strong>signe</strong> : en (2, 0), x₂ ≥ 0 (ou x₂ ≤ 0) est active.</li>
+</ol>
+<div class="box tip">Quiz 2, Q1 : en A = (2, 0), 8·2 − 4·0 = 16 → 8x₁ − 4x₂ ≤ 16 active, <strong>et</strong> la contrainte x₂ ≤ 0 aussi.</div></div>
+
+<div class="card"><p class="q">Comment dérouler une itération du simplexe sans erreur ?</p>
+<ol class="steps">
+<li>Ligne Z : prendre le plus grand coefficient positif → colonne pivot.</li>
+<li>Calculer tous les ratios b<sub>i</sub>/E<sub>ic</sub> (seulement E<sub>ic</sub> &gt; 0), garder le plus petit → ligne pivot.</li>
+<li>Diviser la ligne pivot par le pivot.</li>
+<li>Pour chaque autre ligne : nouvelle = ancienne − (son coefficient dans la colonne pivot) × nouvelle ligne pivot.</li>
+<li>Vérifier : colonne entrante = vecteur unité, colonne « solution » ≥ 0, case Z diminue (−z plus négatif).</li>
+</ol>
+<div class="box tip">Entraîne-toi avec l'outil de l'onglet V : choisis « Soldats / trains » et refais chaque étape à la main avant de cliquer.</div></div>
+
+<div class="card"><p class="q">Comment modéliser une planification dans le temps (stock, effectif) ?</p>
+<ol class="steps">
+<li>Indicer chaque variable par la période i.</li>
+<li>Équation de <strong>conservation</strong> : S<sub>i</sub> = S<sub>i−1</sub> + production<sub>i</sub> − demande<sub>i</sub> (stock ≥ 0 ⇒ demande satisfaite).</li>
+<li>Équation d'<strong>effectif</strong> : NO<sub>i</sub> = NO<sub>i−1</sub> + recrutés<sub>i</sub> − licenciés<sub>i</sub>, avec NO₀ et S₀ connus.</li>
+<li>Capacité : production<sub>i</sub> ≤ (heures normales + heures sup) / heures par unité ; heures sup ≤ 20·NO<sub>i</sub>.</li>
+<li>FO = somme de tous les coûts sur toutes les périodes.</li>
+</ol>
+<div class="box tip">Série 1 PL2 (ChausseTous) et PL3 (bureau de poste : x<sub>i</sub> = employés qui <strong>commencent</strong> le jour i, chaque jour est couvert par 5 variables).</div></div>
+</section>
+
+<!-- ================= S ================= -->
+<section class="tab" id="ts">
+<h2><span class="k">Synthèse</span>Tout relier avant le DS</h2>
+
+<div class="flow">
+<div class="node"><h4>I · RO</h4><span class="pill">allocation de ressources</span><span class="pill">prescriptive</span><span class="pill">processus d'étude</span><span class="pill">sac à dos</span><span class="pill">classification</span><span class="pill">Dantzig</span></div>
+<div class="node"><h4>II · Terminologie</h4><span class="pill">VD · FO · contraintes</span><span class="pill">signe / fonctionnelle</span><span class="pill">réalisable</span><span class="pill">optimale</span><span class="pill">active</span><span class="pill">forme standard</span></div>
+<div class="node"><h4>III · Formulation</h4><span class="pill">variables</span><span class="pill">profit</span><span class="pill">ressources</span><span class="pill">mélange</span><span class="pill">multi-période</span></div>
+<div class="node"><h4>IV · Graphique</h4><span class="pill">domaine</span><span class="pill">isoquante</span><span class="pill">sommets</span><span class="pill">3 types de PL</span></div>
+<div class="node"><h4>V · Simplexe</h4><span class="pill">variables d'écart</span><span class="pill">VB / VHB</span><span class="pill">entrante · sortante</span><span class="pill">pivot</span><span class="pill">arête optimale</span></div>
+</div>
+
+<h3><span class="s">◆</span>Ponts entre les notions</h3>
+<div class="grid2">
+<div class="box prop"><span class="lab">Graphique ↔ simplexe</span>Chaque tableau = un <strong>sommet</strong> du domaine. Exemple du cours : (0,0) → (0,600) → (200,600). Le simplexe suit les arêtes du polygone.</div>
+<div class="box prop"><span class="lab">Écart ↔ contrainte active</span>Variable d'écart nulle ⇔ contrainte active. Au sommet optimal, les contraintes actives sont celles dont l'écart est hors base.</div>
+<div class="box prop"><span class="lab">Isoquante parallèle ↔ coefficient Z nul</span>Arête optimale en graphique = VHB à coefficient 0 dans la ligne Z finale.</div>
+<div class="box prop"><span class="lab">Non borné ↔ colonne ≤ 0</span>Pousser l'isoquante sans fin = aucune ligne ne limite la variable entrante (tous les ratios +∞).</div>
+</div>
+
+<h3><span class="s">◆</span>Carte conceptuelle</h3>
+<svg viewBox="0 0 640 300" style="width:100%;height:auto" role="img" aria-label="Carte conceptuelle">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#8A7D6B"/></marker></defs>
+  <g fill="#FBF8F0" stroke="#C9BFAC">
+    <rect x="10" y="20" width="150" height="54" rx="6"/><rect x="245" y="20" width="150" height="54" rx="6"/><rect x="480" y="20" width="150" height="54" rx="6"/>
+    <rect x="245" y="126" width="150" height="54" rx="6" stroke="#7B2D26" stroke-width="2"/>
+    <rect x="60" y="226" width="170" height="54" rx="6"/><rect x="410" y="226" width="170" height="54" rx="6"/>
+  </g>
+  <g font-size="12" text-anchor="middle" fill="#1F1A14">
+    <text x="85" y="44">Problème réel</text><text x="85" y="61" fill="#8A7D6B" font-size="10">ressources rares</text>
+    <text x="320" y="44">Formulation</text><text x="320" y="61" fill="#8A7D6B" font-size="10">VD · FO · contraintes</text>
+    <text x="555" y="44">Forme standard</text><text x="555" y="61" fill="#8A7D6B" font-size="10">+ variables d'écart</text>
+    <text x="320" y="150" fill="#7B2D26">Solution optimale</text><text x="320" y="167" fill="#8A7D6B" font-size="10">= un sommet du domaine</text>
+    <text x="145" y="250">Graphique (n = 2)</text><text x="145" y="267" fill="#8A7D6B" font-size="10">isoquante poussée</text>
+    <text x="495" y="250">Simplexe (n &gt; 2)</text><text x="495" y="267" fill="#8A7D6B" font-size="10">pivot de sommet en sommet</text>
+  </g>
+  <g stroke="#8A7D6B" fill="none" marker-end="url(#ar)">
+    <path d="M160 47H243"/><path d="M395 47H478"/><path d="M290 74L170 224"/><path d="M555 74L510 224"/>
+    <path d="M200 226L270 182"/><path d="M450 226L370 182"/><path d="M320 180V200Q320 210 300 210H90V286"/>
+  </g>
+  <text x="96" y="296" font-size="10" fill="#8A7D6B">interpréter, arrondir</text>
+</svg>
+
+<h3><span class="s">◆</span>Vrai ou faux ? (Quiz 2, Q2 — réponse TFFTF)</h3>
+<div id="tfq"></div>
+
+<h3><span class="s">◆</span>Check-list avant l'examen</h3>
+<div class="kv">
+<div>À savoir énoncer</div><div>Définition de la RO, les 3 éléments d'un PL, solution réalisable / optimale, région réalisable, contrainte active / inactive, stricte / faible, contrainte de signe / fonctionnelle, les 3 types de PL, variable d'écart, VB / VHB.</div>
+<div>À savoir faire</div><div>Formuler (variables commentées), passer max ↔ min, écrire la forme standard, résoudre graphiquement, dérouler le simplexe, lire z* et les écarts dans le tableau final, reconnaître solution infinie et arête optimale.</div>
+<div>Formules clés</div><div><span class="m">E'<sub>lj</sub> = E<sub>lj</sub>/E<sub>lc</sub></span> · <span class="m">E'<sub>ij</sub> = E<sub>ij</sub> − (E<sub>ic</sub>/E<sub>lc</sub>)E<sub>lj</sub></span> · ratio min b<sub>i</sub>/E<sub>ic</sub> (E<sub>ic</sub> &gt; 0) · <span class="m">max f = −min(−f)</span> · <span class="m">e<sub>i</sub> = b<sub>i</sub> − a<sub>i</sub>ᵀx</span></div>
+<div>Pièges classiques</div><div>FO = chiffre d'affaires au lieu du profit · oublier x ≥ 0 · ratio avec dénominateur ≤ 0 · signe de −z · domaine non borné ≠ PL non borné · « l'optimum est toujours un sommet » (faux : il peut être toute une arête) · arrondir 20,25 en 21.</div>
+</div>
+</section>
+</main>
+
+<aside id="glossaire">
+<div class="sheet">
+  <h2>Glossaire</h2>
+  <span class="gcount" id="gcount"></span>
+  <input type="search" id="gsearch" placeholder="Chercher un terme (ex. écart, pivot)…" aria-label="Chercher dans le glossaire">
+  <div id="glist"></div>
+</div>
+</aside>
+</div>
+<footer>TheHub · Recherche Opérationnelle (I. Ajili) · Ch. 1–2 · v1 · sources : cours, Série 1, Quiz 2, DS GL 2025</footer>
+</div>
+
+<script>
+(function(){
+  /* ---------- tabs ---------- */
+  const btns=document.querySelectorAll('.tab-btn');
+  function show(id){
+    btns.forEach(b=>b.classList.toggle('active',b.dataset.t===id));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.id===id));
+    try{localStorage.setItem('ro-tab',id)}catch(e){}
+  }
+  btns.forEach(b=>b.addEventListener('click',()=>show(b.dataset.t)));
+  try{const s=localStorage.getItem('ro-tab');if(s&&document.getElementById(s))show(s)}catch(e){}
+
+  /* ---------- glossary ---------- */
+  const G=[
+   ["Recherche opérationnelle","RO","Operations Research (OR)","Science qui applique des outils mathématiques et informatiques pour aider à la prise de décision, notamment l'allocation de ressources rares. Aussi : science de gestion, science décisionnelle, programmation mathématique."],
+   ["Recherche opérationnelle","Ressources","Resources","Moyens à disposition de l'organisation : humains, financiers, matériels/immatériels, technologiques."],
+   ["Recherche opérationnelle","Analytique prescriptive","Prescriptive analytics","Niveau « que dois-je faire ? » du business analytics (optimisation, simulation). Les autres : descriptive, diagnostique, prédictive."],
+   ["Recherche opérationnelle","Optimisation","Optimization","Trouver la valeur min ou max d'une fonction objectif soumise à des contraintes."],
+   ["Recherche opérationnelle","Simulation","Simulation","Évaluer des scénarios « what if » ; gère la complexité et l'aléa réels mais n'évalue que les scénarios donnés."],
+   ["Recherche opérationnelle","Programmation mathématique","Mathematical programming","Modèle variables + objectif + contraintes. « Programme » = plan (Dantzig, US Air Force)."],
+   ["Recherche opérationnelle","Problème du sac à dos","Knapsack problem","max Σvᵢxᵢ s.c. Σwᵢxᵢ ≤ B, xᵢ ∈ {0,1}. Variantes : sélection de commandes, portefeuille (0 ≤ xᵢ ≤ 1)."],
+   ["Recherche opérationnelle","Paramètre","Parameter","Donnée connue du problème (coût, capacité, demande). Ce n'est pas une variable."],
+   ["Recherche opérationnelle","Méthode exacte / heuristique","Exact / heuristic","Exacte : garantit l'optimum (simplexe, Branch and Bound). Heuristique / métaheuristique : bonne solution rapidement, sans garantie (tabou, recuit simulé, génétique)."],
+   ["Recherche opérationnelle","Déterministe / stochastique","Deterministic / stochastic","Données connues avec certitude / données aléatoires."],
+   ["Programme linéaire","Programme linéaire","Linear program (LP)","Programme mathématique à objectif et contraintes linéaires, variables continues."],
+   ["Programme linéaire","Programmation linéaire","Linear programming","Processus de formulation et de résolution de programmes linéaires."],
+   ["Programme linéaire","PLNE / PLM","ILP / MILP","PL en nombres entiers (toutes les variables entières) / mixte (certaines entières). Chapitre 3."],
+   ["Programme linéaire","Variable de décision","Decision variable","Ce que l'on choisit (quantité à produire…). Notée xⱼ, à définir avec unité et période."],
+   ["Programme linéaire","Variable auxiliaire","Auxiliary variable","Variable intermédiaire (stock Sᵢ, effectif NOᵢ) déterminée par les autres via des égalités."],
+   ["Programme linéaire","Fonction objectif","Objective function","Fonction (économique) à maximiser ou minimiser : z = Σ cⱼxⱼ."],
+   ["Programme linéaire","Coefficients cⱼ","Objective coefficients","Coefficients de la fonction objectif (profit ou coût unitaire)."],
+   ["Programme linéaire","Membre de droite bᵢ","Right-hand side (RHS)","Second membre d'une contrainte (disponibilité de la ressource)."],
+   ["Programme linéaire","Coefficients Aᵢⱼ","Constraint coefficients","Coefficients du système de contraintes ; forme matricielle Ax ≤ b."],
+   ["Programme linéaire","s.c. / s.t.","subject to","« Sous contraintes » : introduit les contraintes."],
+   ["Contraintes","Contrainte","Constraint","Limite imposée aux variables (ressource, demande, signe)."],
+   ["Contraintes","Contrainte de signe","Sign constraint","xᵢ ≥ 0 (positive), xᵢ ≤ 0 (négative) ou sans restriction de signe (variable libre)."],
+   ["Contraintes","Non-négativité","Non-negativity","Contrainte de signe xⱼ ≥ 0, presque toujours présente."],
+   ["Contraintes","Sans restriction de signe","Free / unrestricted","Variable pouvant être positive ou négative."],
+   ["Contraintes","Contrainte fonctionnelle","Functional constraint","Toute contrainte qui n'est pas une contrainte de signe."],
+   ["Contraintes","Contrainte active (liante, saturée)","Binding / active","En un point donné, membre de gauche = membre de droite. Une égalité est toujours active. Variable d'écart = 0."],
+   ["Contraintes","Contrainte inactive","Non-binding","En un point donné, l'inégalité est vérifiée strictement ; variable d'écart > 0."],
+   ["Contraintes","Inégalité stricte","Strict inequality","< ou > : égalité impossible. Évitée en PL (l'optimum peut ne pas exister)."],
+   ["Contraintes","Inégalité faible (souple)","Weak inequality","≤ ou ≥ : égalité permise. Toutes les inégalités d'un PL pratique."],
+   ["Contraintes","Hyperplan","Hyperplane","Ensemble des points où une contrainte est une égalité ; en 2D une droite."],
+   ["Solutions","Solution réalisable (admissible)","Feasible solution","Satisfait toutes les contraintes."],
+   ["Solutions","Solution irréalisable","Infeasible solution","Viole au moins une contrainte."],
+   ["Solutions","Région / domaine réalisable","Feasible region","Ensemble de toutes les solutions réalisables (polyèdre convexe)."],
+   ["Solutions","Solution optimale","Optimal solution","Solution réalisable de meilleure valeur objective. Unique, multiple ou inexistante."],
+   ["Solutions","Sommet / point extrême","Extreme point / vertex","Coin du domaine réalisable ; si un optimum existe, un sommet est optimal."],
+   ["Solutions","Arête optimale","Optimal edge","Segment entier de solutions optimales (isoquante parallèle à une contrainte active ; VHB à coefficient 0 dans Z)."],
+   ["Solutions","Finiment optimal","Finitely optimal","PL ayant une solution optimale (unique ou multiple)."],
+   ["Solutions","PL non borné / solution infinie","Unbounded LP","La FO peut croître (max) ou décroître (min) indéfiniment ; pas d'optimum."],
+   ["Solutions","PL irréalisable","Infeasible LP","Domaine réalisable vide."],
+   ["Graphique","Résolution graphique","Graphical method","Pour 2 variables : domaine, isoquante, direction, pousser, contraintes actives."],
+   ["Graphique","Isoquante (isoprofit / isocoût)","Isoquant / level line","Droite c₁x₁ + c₂x₂ = k : même valeur objective. Toutes parallèles."],
+   ["Graphique","Courbe de niveau","Level curve","Autre nom de l'isoquante."],
+   ["Simplexe","Algorithme du simplexe","Simplex method","Méthode de Dantzig : passe de sommet en sommet en améliorant z, sur un tableau."],
+   ["Simplexe","Forme standard","Standard form","Contraintes en égalités, variables ≥ 0 (grâce aux variables d'écart)."],
+   ["Simplexe","Variable d'écart","Slack variable","eᵢ = bᵢ − Σaᵢⱼxⱼ ≥ 0 ajoutée à une contrainte ≤ ; ressource non utilisée ; coefficient 0 dans la FO."],
+   ["Simplexe","Variable d'excédent","Surplus variable","Retranchée à une contrainte ≥ : Σaᵢⱼxⱼ − eᵢ = bᵢ (complément)."],
+   ["Simplexe","Variable artificielle","Artificial variable","Ajoutée pour avoir une base de départ avec des ≥ ou = (deux phases, grand M) — complément."],
+   ["Simplexe","Variable de base (VB)","Basic variable","Variable associée à une ligne du tableau ; valeur lue dans la colonne solution."],
+   ["Simplexe","Variable hors base (VHB)","Non-basic variable","Variable fixée à 0 dans la solution de base courante."],
+   ["Simplexe","Solution de base réalisable","Basic feasible solution","VHB = 0, VB ≥ 0 : correspond à un sommet."],
+   ["Simplexe","Tableau du simplexe","Simplex tableau","Lignes = VB + ligne Z ; colonnes = variables + solution."],
+   ["Simplexe","Ligne Z","Objective row","Coefficients (coûts réduits) des variables ; case solution = −z dans la convention du cours."],
+   ["Simplexe","Variable entrante","Entering variable","VHB au plus grand coefficient positif de la ligne Z → colonne pivot."],
+   ["Simplexe","Variable sortante","Leaving variable","VB de la ligne au plus petit ratio positif bᵢ/Eᵢc → ligne pivot."],
+   ["Simplexe","Test du ratio","Ratio test","bᵢ / Eᵢc pour Eᵢc > 0 ; on garde le minimum (les autres → +∞)."],
+   ["Simplexe","Colonne / ligne pivot","Pivot column / row","Colonne de la variable entrante / ligne de la variable sortante."],
+   ["Simplexe","Pivot","Pivot element","Eₗc, intersection ligne et colonne pivot ; on divise la ligne pivot par lui."],
+   ["Simplexe","Critère d'optimalité","Optimality test","(max) Tous les coefficients de la ligne Z ≤ 0 → solution optimale."],
+   ["Simplexe","Dégénérescence","Degeneracy","Une VB vaut 0 (égalité dans le test du ratio) — complément."],
+   ["Outils","Solveur Excel / GUROBI","Solvers","TP0–TP1 : solveur Excel ; TP2 : GUROBI avec Python."]
+  ];
+  const gl=document.getElementById('glist'),gs=document.getElementById('gsearch'),gc=document.getElementById('gcount');
+  const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  function gdraw(){
+    const q=norm(gs.value.trim());let h='',cat='',n=0;
+    G.forEach(([c,t,en,d])=>{
+      if(q&&!norm(t+' '+en+' '+d).includes(q))return;
+      if(c!==cat){h+=`<div class="gcat">${c}</div>`;cat=c;}
+      h+=`<div class="gl"><b>${t}</b><span class="en">${en}</span><p>${d}</p></div>`;n++;
+    });
+    gl.innerHTML=h||'<p>Aucun terme.</p>';gc.textContent=n+' / '+G.length+' termes';
+  }
+  gs.addEventListener('input',gdraw);gdraw();
+
+  /* ---------- T/F quiz ---------- */
+  const TF=[
+   ["Si un PL est non borné, sa région réalisable doit être non bornée.",true,"Pour pousser l'isoquante à l'infini il faut des points réalisables arbitrairement loin."],
+   ["Si un PL a un domaine réalisable non borné, il doit être non borné.",false,"Contre-exemple : min x₁ + x₂ sur un domaine infini vers le haut : l'optimum est fini, en bas."],
+   ["Si un PL a une solution optimale, il y a au moins deux contraintes actives en cette solution.",false,"Avec une arête optimale, un point au milieu de l'arête n'a qu'une seule contrainte active."],
+   ["Si un PL a deux solutions optimales, il en a une autre différente des deux premières.",true,"Tout point du segment entre elles est aussi optimal (convexité) : infinité de solutions."],
+   ["La solution optimale d'un PL est toujours un point extrême.",false,"Un sommet optimal existe, mais avec une arête optimale les points intérieurs de l'arête sont optimaux sans être des sommets."]
+  ];
+  const tq=document.getElementById('tfq');
+  TF.forEach(([s,a,e],i)=>{
+    const d=document.createElement('div');d.className='box rem';
+    d.innerHTML=`<span class="lab">${['i','ii','iii','iv','v'][i]}.</span>${s}<div class="tf"><button class="btn" data-v="1">Vrai</button><button class="btn" data-v="0">Faux</button><div class="ans"></div></div>`;
+    const tf=d.querySelector('.tf');
+    tf.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+      const ok=(b.dataset.v==='1')===a;tf.classList.add('done');
+      tf.querySelector('.ans').innerHTML=`<strong style="color:${ok?'#2C5664':'#7B2D26'}">${ok?'✓ Correct':'✗ Non'} — ${a?'VRAI':'FAUX'}.</strong> ${e}`;
+    }));
+    tq.appendChild(d);
+  });
+
+  /* ---------- fractions ---------- */
+  const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+  const F=(n,d=1)=>{if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}};
+  const fsub=(a,b)=>F(a.n*b.d-b.n*a.d,a.d*b.d), fmul=(a,b)=>F(a.n*b.n,a.d*b.d), fdiv=(a,b)=>F(a.n*b.d,a.d*b.n);
+  const fv=a=>a.n/a.d, fs=a=>a.d===1?String(a.n):(a.n<0?'−':'')+Math.abs(a.n)+'/'+a.d;
+  const fstr=a=>fs(a).replace(/^-/,'−');
+
+  /* ---------- graphical tool ---------- */
+  const GP={
+    toys:{c:[3,2],B:110,k:[0,1],cons:[[2,1,'<=',100,'finition'],[1,1,'<=',80,'menuiserie'],[1,0,'<=',40,'demande x₁']]},
+    sx:{c:[30,50],B:700,cons:[[3,2,'<=',1800,'(1)'],[1,0,'<=',400,'(2)'],[0,1,'<=',600,'(3)']]},
+    multi:{c:[2,1],B:110,cons:[[2,1,'<=',100,'finition'],[1,1,'<=',80,'menuiserie'],[1,0,'<=',40,'demande x₁']]},
+    unb:{c:[1,1],B:60,cons:[[-1,1,'<=',20,'(1)'],[1,-2,'<=',10,'(2)']]},
+    inf:{c:[1,1],B:60,cons:[[1,1,'<=',20,'(1)'],[1,1,'>=',40,'(2)']]}
+  };
+  const svg=document.getElementById('gsvg'),pan=document.getElementById('gpanel');
+  const sel=document.getElementById('gpreset'),sense=document.getElementById('gsense');
+  const c1=document.getElementById('gc1'),c2=document.getElementById('gc2'),gk=document.getElementById('gk');
+  const PAD=36,S=400-PAD-14;
+  let P;
+  function load(){P=GP[sel.value];c1.value=P.c[0];c2.value=P.c[1];sense.value='max';gk.value=45;draw();}
+  const num=x=>Math.abs(x-Math.round(x))<1e-6?String(Math.round(x)):x.toFixed(2).replace(/\.?0+$/,'');
+  function draw(){
+    const B=P.B,X=x=>PAD+x/B*S,Y=y=>400-PAD-y/B*S;
+    const cc=[+c1.value,+c2.value],mx=sense.value==='max';
+    document.getElementById('gc1v').textContent=c1.value;document.getElementById('gc2v').textContent=c2.value;
+    // all constraints incl. sign + virtual box
+    const all=P.cons.map(c=>({a:c[0],b:c[1],op:c[2],r:c[3],name:c[4],real:true}))
+      .concat([{a:-1,b:0,op:'<=',r:0,name:'x₁ ≥ 0',real:true,sign:true},{a:0,b:-1,op:'<=',r:0,name:'x₂ ≥ 0',real:true,sign:true},
+               {a:1,b:0,op:'<=',r:B,real:false},{a:0,b:1,op:'<=',r:B,real:false}]);
+    const ok=(x,y)=>all.every(c=>{const v=c.a*x+c.b*y;return c.op==='<='?v<=c.r+1e-7:v>=c.r-1e-7});
+    let V=[];
+    for(let i=0;i<all.length;i++)for(let j=i+1;j<all.length;j++){
+      const A=all[i],C=all[j],det=A.a*C.b-A.b*C.a;if(Math.abs(det)<1e-9)continue;
+      const x=(A.r*C.b-A.b*C.r)/det,y=(A.a*C.r-A.r*C.a)/det;
+      if(ok(x,y)&&!V.some(v=>Math.hypot(v.x-x,v.y-y)<1e-6))V.push({x,y});
+    }
+    const onBox=v=>Math.abs(v.x-B)<1e-6||Math.abs(v.y-B)<1e-6;
+    let h='';
+    // grid
+    for(let t=0;t<=B;t+=B/5){h+=`<line x1="${X(t)}" y1="${Y(0)}" x2="${X(t)}" y2="${Y(B)}" stroke="#ECE5D5"/><line x1="${X(0)}" y1="${Y(t)}" x2="${X(B)}" y2="${Y(t)}" stroke="#ECE5D5"/>`;
+      h+=`<text x="${X(t)}" y="${Y(0)+14}" font-size="9" text-anchor="middle" fill="#8A7D6B">${num(t)}</text><text x="${X(0)-5}" y="${Y(t)+3}" font-size="9" text-anchor="end" fill="#8A7D6B">${num(t)}</text>`;}
+    // region
+    if(V.length>=3){const cx=V.reduce((s,v)=>s+v.x,0)/V.length,cy=V.reduce((s,v)=>s+v.y,0)/V.length;
+      V.sort((p,q)=>Math.atan2(p.y-cy,p.x-cx)-Math.atan2(q.y-cy,q.x-cx));
+      h+=`<polygon points="${V.map(v=>X(v.x)+','+Y(v.y)).join(' ')}" fill="#E8DDC3" fill-opacity=".85" stroke="none"/>`;}
+    // constraint lines
+    const clip=(a,b,r)=>{const pts=[];
+      if(Math.abs(b)>1e-9){[0,B].forEach(x=>{const y=(r-a*x)/b;if(y>=-1e-9&&y<=B+1e-9)pts.push([x,y])})}
+      if(Math.abs(a)>1e-9){[0,B].forEach(y=>{const x=(r-b*y)/a;if(x>=-1e-9&&x<=B+1e-9)pts.push([x,y])})}
+      return pts.length>=2?[pts[0],pts.find(p=>Math.hypot(p[0]-pts[0][0],p[1]-pts[0][1])>1e-6)||pts[1]]:null};
+    P.cons.forEach(c=>{const s=clip(c[0],c[1],c[3]);if(!s)return;
+      h+=`<line x1="${X(s[0][0])}" y1="${Y(s[0][1])}" x2="${X(s[1][0])}" y2="${Y(s[1][1])}" stroke="#2C5664" stroke-width="1.6"/>`;
+      const m=s[0][1]>s[1][1]?s[0]:s[1];h+=`<text x="${Math.min(X(m[0])+4,330)}" y="${Math.max(Y(m[1])+12,14)}" font-size="10" fill="#2C5664">${c[4]}</text>`;});
+    h+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(B)}" y2="${Y(0)}" stroke="#1F1A14"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(0)}" y2="${Y(B)}" stroke="#1F1A14"/>`;
+    h+=`<text x="${X(B)-2}" y="${Y(0)-5}" font-size="11" text-anchor="end">x₁</text><text x="${X(0)+5}" y="${Y(B)+10}" font-size="11">x₂</text>`;
+    // optimum
+    let status,html='';const z=v=>cc[0]*v.x+cc[1]*v.y;
+    const zs=V.map(z),zmaxAll=Math.max(...zs.concat([0])),zminAll=Math.min(...zs.concat([0]));
+    if(!V.length){status='<span class="st ko">PL irréalisable</span>';html='Domaine réalisable <strong>vide</strong> : aucune solution réalisable. Les contraintes sont contradictoires.';}
+    else if(cc[0]===0&&cc[1]===0){status='<span class="st mu">FO nulle</span>';html='Tous les points réalisables sont optimaux.';}
+    else{
+      const best=mx?Math.max(...zs):Math.min(...zs);
+      const opt=V.filter(v=>Math.abs(z(v)-best)<1e-6);
+      if(opt.some(onBox)){status='<span class="st ko">PL non borné</span>';html=`On peut pousser l'isoquante indéfiniment : z → ${mx?'+∞':'−∞'}. Pas de solution optimale (solution infinie).`;}
+      else{
+        const multi=opt.length>1;
+        status=multi?'<span class="st mu">Solutions multiples</span>':'<span class="st ok">Optimum unique</span>';
+        const v=opt[0];
+        const act=P.cons.filter(c=>Math.abs(c[0]*v.x+c[1]*v.y-c[3])<1e-6).map(c=>c[4]);
+        if(Math.abs(v.x)<1e-9)act.push('x₁ ≥ 0');if(Math.abs(v.y)<1e-9)act.push('x₂ ≥ 0');
+        html=`${multi?'Arête optimale entre '+opt.map(o=>'('+num(o.x)+', '+num(o.y)+')').join(' et ')+' : tous les points du segment sont optimaux (isoquante parallèle à une contrainte).':'x* = <strong>('+num(v.x)+', '+num(v.y)+')</strong>'}<br>z* = <strong>${num(best)}</strong><br>Contraintes actives en (${num(v.x)}, ${num(v.y)}) : ${act.join(', ')||'—'}`;
+        opt.forEach(o=>{h+=`<circle cx="${X(o.x)}" cy="${Y(o.y)}" r="7" fill="none" stroke="#7B2D26" stroke-width="2.5"/>`});
+        if(multi)h+=`<line x1="${X(opt[0].x)}" y1="${Y(opt[0].y)}" x2="${X(opt[1].x)}" y2="${Y(opt[1].y)}" stroke="#7B2D26" stroke-width="4" opacity=".6"/>`;
+      }
+    }
+    // vertices
+    V.filter(v=>!onBox(v)).forEach(v=>{h+=`<circle cx="${X(v.x)}" cy="${Y(v.y)}" r="3.5" fill="#1F1A14"/>`});
+    // isoquant z = k
+    let lo=Math.min(zminAll,0),hi=Math.max(zmaxAll,0)*1.25||1;if(!(cc[0]||cc[1])){lo=0;hi=1}
+    const k=lo+(hi-lo)*(+gk.value/100);
+    if(cc[0]||cc[1]){const s=clip(cc[0],cc[1],k);if(s)h+=`<line x1="${X(s[0][0])}" y1="${Y(s[0][1])}" x2="${X(s[1][0])}" y2="${Y(s[1][1])}" stroke="#B8924A" stroke-width="2.2" stroke-dasharray="7 4"/>`;
+      const L=Math.hypot(cc[0],cc[1]),ox=B*0.08,oy=B*0.08,dx=cc[0]/L*B*0.16*(mx?1:-1),dy=cc[1]/L*B*0.16*(mx?1:-1),sx=mx?ox:ox-dx,sy=mx?oy:oy-dy;
+      h+=`<defs><marker id="ga" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#7B2D26"/></marker></defs>`;
+      h+=`<line x1="${X(Math.max(sx,0))}" y1="${Y(Math.max(sy,0))}" x2="${X(Math.max(sx,0)+dx)}" y2="${Y(Math.max(sy,0)+dy)}" stroke="#7B2D26" stroke-width="2" marker-end="url(#ga)"/>`;}
+    svg.innerHTML=h;
+    const feasK=V.length&&(cc[0]||cc[1])&&k>=Math.min(...zs)-1e-6&&k<=Math.max(...zs)+1e-6;
+    const real=V.filter(v=>!onBox(v));
+    pan.innerHTML=`${status}<p style="margin:0 0 8px">${sense.value} z = ${c1.value}x₁ ${+c2.value<0?'−':'+'} ${Math.abs(+c2.value)}x₂</p><p>${html}</p>
+      <p style="margin:8px 0 4px"><strong>Isoquante</strong> z = ${num(k)} : ${!V.length?'—':feasK?'coupe le domaine (points réalisables de même valeur).':'ne touche plus le domaine.'}</p>
+      ${real.length?`<div class="tw" style="margin:4px 0 0"><table><tr><th>Sommet</th><th>z</th></tr>${real.map(v=>`<tr><td>(${num(v.x)}, ${num(v.y)})</td><td>${num(z(v))}</td></tr>`).join('')}</table></div>`:''}`;
+  }
+  sel.addEventListener('change',load);[sense,c1,c2,gk].forEach(e=>e.addEventListener('input',draw));load();
+
+  /* ---------- simplex tool ---------- */
+  const SP={
+    sx:{c:[30,50],A:[[3,2],[1,0],[0,1]],b:[1800,400,600]},
+    toys:{c:[3,2],A:[[2,1],[1,1],[1,0]],b:[100,80,40]},
+    multi:{c:[2,1],A:[[2,1],[1,1],[1,0]],b:[100,80,40]},
+    unb:{c:[1,1],A:[[-1,1],[1,-2]],b:[20,10]}
+  };
+  const ssel=document.getElementById('sxpreset'),stab=document.getElementById('sxtab'),smsg=document.getElementById('sxmsg'),sst=document.getElementById('sxstage'),slp=document.getElementById('sxlp');
+  let H=[],hi=0;
+  const sub=i=>String(i).split('').map(d=>'₀₁₂₃₄₅₆₇₈₉'[d]).join('');
+  function build(){
+    const p=SP[ssel.value],n=p.c.length,m=p.b.length,N=n+m;
+    const names=[...Array(N)].map((_,j)=>'x'+sub(j+1));
+    const term=(a,j,first)=>a===0?'':(first?(a<0?'−':''):(a<0?' − ':' + '))+(Math.abs(a)===1?'':Math.abs(a))+'x'+sub(j+1);
+    const lin=r=>{let s='',f=true;r.forEach((a,j)=>{const t=term(a,j,f);if(t){s+=t;f=false}});return s};
+    slp.innerHTML=`max ${lin(p.c)}\n`+p.A.map((r,i)=>(i?'     ':'s.c. ')+lin(r)+` + x${sub(n+i+1)} = ${p.b[i]}`).join('\n')+`\n     x ≥ 0      <span class="c">x${sub(n+1)}…x${sub(N)} = variables d'écart</span>`;
+    let T=p.A.map((r,i)=>[...r.map(a=>F(a)),...[...Array(m)].map((_,k)=>F(k===i?1:0)),F(p.b[i])]);
+    let Z=[...p.c.map(c=>F(c)),...Array(m).fill(0).map(()=>F(0)),F(0)];
+    let basis=[...Array(m)].map((_,i)=>n+i);
+    const snap=(stage,msg,hl={})=>H.push({T:T.map(r=>r.slice()),Z:Z.slice(),basis:basis.slice(),names,stage,msg,hl});
+    H=[];
+    snap('Étapes 1–2 · Forme standard et 1er tableau',`Base de départ = variables d'écart (${basis.map(b=>names[b]).join(', ')}) ; VHB = 0 → on part de l'origine, z = 0.`);
+    for(let it=1;it<10;it++){
+      let c=-1,best=0;Z.slice(0,N).forEach((v,j)=>{if(fv(v)>best+1e-12){best=fv(v);c=j}});
+      if(c<0){
+        const vals=Array(N).fill(F(0));basis.forEach((b,i)=>vals[b]=T[i][N]);
+        const zero=[...Array(N).keys()].filter(j=>!basis.includes(j)&&fv(Z[j])===0);
+        snap('Étape 8 · Fin',`Tous les coefficients de la ligne Z sont ≤ 0 → <strong>optimum</strong>. ${names.slice(0,n).map((nm,j)=>nm+' = '+fstr(vals[j])).join(', ')} ; Max Z = −(${fstr(Z[N])}) = <strong>${fstr(F(-Z[N].n,Z[N].d))}</strong>.`+(zero.length?` <br>⚑ ${zero.map(j=>names[j]).join(', ')} est hors base avec un coefficient <strong>nul</strong> dans Z → <strong>arête optimale</strong> (solutions multiples) : la faire entrer donne un autre sommet de même z.`:''),{end:true});
+        break;
+      }
+      snap(`Itération ${it} · Étape 3 · Variable entrante`,`Plus grand coefficient positif de la ligne Z : ${fstr(Z[c])} → <strong>${names[c]}</strong> entre en base (colonne pivot).`,{c});
+      const ratios=T.map(r=>fv(r[c])>0?fdiv(r[N],r[c]):null);
+      let l=-1;ratios.forEach((q,i)=>{if(q&&(l<0||fv(q)<fv(ratios[l])))l=i});
+      if(l<0){snap(`Itération ${it} · Étape 4 · Variable sortante`,`Tous les coefficients de la colonne ${names[c]} sont nuls ou négatifs : aucun ratio positif → <strong>solution infinie</strong> (PL non borné). On peut augmenter ${names[c]} sans limite.`,{c,ratios,end:true});break;}
+      snap(`Itération ${it} · Étape 4 · Variable sortante`,`Ratios b / ${names[c]} : on garde le plus petit positif ${fstr(ratios[l])} → <strong>${names[basis[l]]}</strong> sort de la base (ligne pivot).`,{c,l,ratios});
+      const pv=T[l][c];
+      snap(`Itération ${it} · Étape 5 · Encadrer le pivot`,`Pivot = E(${names[basis[l]]}, ${names[c]}) = <strong>${fstr(pv)}</strong>.`,{c,l,ratios,pv:true});
+      T[l]=T[l].map(v=>fdiv(v,pv));basis[l]=c;
+      snap(`Itération ${it} · Étape 6 · Diviser la ligne pivot`,`E'(l,j) = E(l,j) / ${fstr(pv)} : la ligne pivot devient celle de <strong>${names[c]}</strong>.`,{c,l,only:l});
+      T=T.map((r,i)=>i===l?r:r.map((v,j)=>fsub(v,fmul(r[c],T[l][j]))));
+      Z=Z.map((v,j)=>fsub(v,fmul(Z[c],T[l][j])));
+      const vals=Array(N).fill(F(0));basis.forEach((b,i)=>vals[b]=T[i][N]);
+      snap(`Itération ${it} · Étape 7 · Autres lignes`,`E'(i,j) = E(i,j) − E(i,c) × E'(l,j). Nouveau sommet : (${names.slice(0,n).map((_,j)=>fstr(vals[j])).join(', ')}), z = ${fstr(F(-Z[N].n,Z[N].d))}.`,{c,l});
+    }
+    hi=0;render();
+  }
+  function render(){
+    const s=H[hi],N=s.names.length,hl=s.hl;
+    let h='<tr><th>Base</th>'+s.names.map((nm,j)=>`<th class="${j===hl.c?'pc':''}">${nm}</th>`).join('')+'<th>Solution</th>'+(hl.ratios?'<th>Ratio</th>':'')+'</tr>';
+    s.T.forEach((r,i)=>{
+      h+=`<tr><td class="bv ${i===hl.l?'pr':''}">${s.names[s.basis[i]]}</td>`+r.map((v,j)=>{let cl=[];if(j===hl.c)cl.push('pc');if(i===hl.l)cl.push('pr');if(hl.pv&&i===hl.l&&j===hl.c)cl.push('pv');return `<td class="${cl.join(' ')}">${fstr(v)}</td>`}).join('');
+      if(hl.ratios){const q=hl.ratios[i];h+=`<td class="ratio ${i===hl.l?'min':''}">${q?fstr(q):'+∞'}</td>`}
+      h+='</tr>';
+    });
+    h+='<tr class="z"><td class="bv">Z</td>'+s.Z.map((v,j)=>`<td class="${j===hl.c?'pc':''}">${fstr(v)}</td>`).join('')+(hl.ratios?'<td></td>':'')+'</tr>';
+    stab.innerHTML=h;sst.textContent=s.stage+'  ·  '+(hi+1)+' / '+H.length;smsg.innerHTML=s.msg;
+    document.getElementById('sxprev').disabled=hi===0;document.getElementById('sxnext').disabled=hi===H.length-1;
+  }
+  document.getElementById('sxnext').addEventListener('click',()=>{if(hi<H.length-1){hi++;render()}});
+  document.getElementById('sxprev').addEventListener('click',()=>{if(hi>0){hi--;render()}});
+  document.getElementById('sxreset').addEventListener('click',()=>{hi=0;render()});
+  ssel.addEventListener('change',build);build();
+})();
+</script>
+</body>
+</html>
