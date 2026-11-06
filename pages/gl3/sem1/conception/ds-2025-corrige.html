@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corrigé DS 2025 · Conception des logiciels</title>
+<link rel="icon" type="image/svg+xml" href="../../../../assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4EFE4;--deep:#ECE5D5;--card:#FBF8F0;--ink:#1F1A14;--soft:#4A3F32;--faint:#8A7D6B;--bur:#7B2D26;--teal:#2C5664;--gold:#B8924A;--rule:#C9BFAC;--rule2:#DDD3BF;--hl:#F7E8B8;--ok:#3E6B3A;--okbg:#E6EFE1;--kobg:#F5E1DD;
+--serif:'Instrument Serif',Georgia,serif;--body:'Newsreader',Georgia,serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;overflow-x:hidden}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 120px}
+.topnav{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hub-back{display:inline-flex;padding:6px 11px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;text-decoration:none}
+.hub-back:hover{border-color:var(--bur)}
+header{text-align:center;padding:14px 0 16px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--bur)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6vw,54px);margin:6px 0 4px;line-height:1.05}
+h1 em{color:var(--bur)}
+.sub{font-style:italic;color:var(--soft);margin:0 auto;max-width:680px}
+h2.part{font-family:var(--serif);font-weight:400;font-size:30px;margin:34px 0 4px;border-bottom:1px solid var(--rule);padding-bottom:4px}
+h2.part small{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-left:8px}
+.panel{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;margin:18px 0}
+.meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,180px),1fr));gap:6px;font-size:14.5px}
+.meta div{background:#fff;border-left:3px solid var(--gold);padding:3px 9px;border-radius:0 4px 4px 0}
+.meta b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.btn{font-family:var(--mono);font-size:12px;border:1px solid var(--rule);background:#fff;color:var(--ink);padding:8px 13px;border-radius:6px;cursor:pointer}
+.btn:hover{border-color:var(--bur);color:var(--bur)}
+.btn.pri{background:var(--bur);border-color:var(--bur);color:#fff}
+.hint{font-size:14.5px;color:var(--faint);font-style:italic;margin:8px 0 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;margin-top:10px}
+.cell{font-family:var(--mono);font-size:12.5px;text-align:center;background:#fff;border:1px solid var(--rule2);border-radius:6px;padding:5px 2px;text-decoration:none;color:var(--ink)}
+.cell b{color:var(--bur)}
+.cell.w{border-color:var(--gold);background:var(--hl)}
+.q{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;margin:14px 0;scroll-margin-top:12px}
+.q.ok{border-left:4px solid var(--ok)}
+.q.ko{border-left:4px solid var(--bur)}
+.qh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.qn{font-family:var(--mono);font-size:12px;background:var(--ink);color:#fff;border-radius:999px;padding:2px 9px}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid var(--rule2);color:var(--teal);background:#fff}
+.tag.multi{background:var(--hl);border-color:var(--gold);color:var(--ink)}
+.tag.warn{color:var(--bur);border-color:var(--bur)}
+.qt{margin:4px 0 10px}
+.qt ul{margin:4px 0 6px;padding-left:22px}
+.opts{display:grid;gap:7px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;font-family:var(--body);font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--rule);border-radius:8px;padding:9px 11px;cursor:pointer;line-height:1.4}
+.opt:hover:not(:disabled){border-color:var(--bur)}
+.opt .L{flex:none;font-family:var(--mono);font-size:12px;width:24px;height:24px;border:1px solid var(--rule);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--soft);margin-top:1px}
+.q.multi .opt .L{border-radius:5px}
+.opt.sel{border-color:var(--teal);background:#EEF3F3}
+.opt.sel .L{background:var(--teal);color:#fff;border-color:var(--teal)}
+.opt:disabled{cursor:default}
+.opt.good{border-color:var(--ok);background:var(--okbg)}
+.opt.good .L{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bur);background:var(--kobg)}
+.opt.bad .L{background:var(--bur);border-color:var(--bur);color:#fff}
+.opt.miss{border-style:dashed;border-color:var(--ok)}
+.qa{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.verdict{font-family:var(--mono);font-size:12.5px}
+.verdict.ok{color:var(--ok)}.verdict.ko{color:var(--bur)}
+.exp{display:none;margin-top:12px;padding:10px 13px;border-left:3px solid var(--gold);background:rgba(184,146,74,.08);border-radius:0 6px 6px 0;font-size:15.5px;color:var(--soft)}
+.exp.show{display:block}
+.exp b{color:var(--ink)}
+.exp .k{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.exp .w{display:block;margin-top:6px;color:var(--bur);font-size:14.5px}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(251,248,240,.96);border-top:1px solid var(--rule);backdrop-filter:blur(6px)}
+.dock .in{max-width:900px;margin:0 auto;padding:9px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.dock .st{font-family:var(--mono);font-size:12.5px;color:var(--soft)}
+.dock .st b{color:var(--bur)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="topnav">
+  <a class="hub-back" href="../../../../index.html">← Hub</a>
+  <a class="hub-back" href="../conception.html">← Résumé conception</a>
+</nav>
+<header>
+  <div class="eyebrow">INSAT · GL3 · S1 · Analyse et conception des logiciels</div>
+  <h1>DS 2025 · <em>corrigé</em></h1>
+  <p class="sub">Le vrai DS de l'an dernier (04/11/2025), 30 questions, avec la bonne réponse et le pourquoi de chaque choix.</p>
+</header>
+
+<section class="panel">
+  <div class="meta">
+    <div><b>Enseignant</b>S. Bouzidi</div>
+    <div><b>Date</b>04/11/2025 · 1h30</div>
+    <div><b>Documents</b>non autorisés</div>
+    <div><b>QCM 1</b>20 q. · 1 seule réponse</div>
+    <div><b>QCM 2</b>10 q. · 1 ou plusieurs réponses</div>
+  </div>
+  <p class="hint">Corrigé proposé par Claude à partir du cours (SOLID, création, structure), pas de correction officielle. Les questions marquées <span class="tag warn">discutable</span> ont plusieurs lectures possibles : la réponse retenue est la plus défendable, l'alternative est expliquée.</p>
+  <div class="row">
+    <button class="btn pri" id="mode-train">Mode entraînement</button>
+    <button class="btn" id="mode-show">Tout afficher (corrigé)</button>
+    <button class="btn" id="reset">Recommencer</button>
+  </div>
+  <p class="hint" id="mode-hint">Entraînement : choisis ta réponse puis « Vérifier ».</p>
+  <div class="grid" id="keygrid" hidden></div>
+</section>
+
+<h2 class="part">QCM 1<small>une seule réponse</small></h2>
+<div id="qcm1"></div>
+<h2 class="part">QCM 2<small>une ou plusieurs réponses</small></h2>
+<div id="qcm2"></div>
+</div>
+
+<div class="dock"><div class="in"><span class="st" id="st">Score : <b>0</b> / 0 vérifiées</span><a class="btn" href="#keygrid" id="go-key">Grille des réponses ↑</a></div></div>
+
+<script>
+const Q1=[
+{q:"Vous développez un éditeur de documents qui doit gérer des éléments complexes (textes, images, tableaux) organisés en arborescence. Chaque élément doit pouvoir être traité uniformément, qu'il s'agisse d'un élément simple ou d'un groupe. Quel pattern est le plus approprié ?",o:["Composite","Decorator","Bridge","Builder"],a:[0],e:"<b>Composite</b> : arborescence + « traiter uniformément un élément simple et un groupe » = la définition même du Composite (feuille et composite implémentent le même Component)."},
+{q:"Vous concevez un système de rendu graphique qui doit supporter multiples API (OpenGL, Vulkan, DirectX) et multiples types de formes (2D, 3D). Vous voulez éviter une explosion combinatoire de classes. Quel pattern choisir ?",o:["Builder","Adapter","Abstract Factory","Bridge"],a:[3],e:"<b>Bridge</b> : deux dimensions indépendantes (forme = abstraction, API = implémentation). Sans Bridge : formes × API classes ; avec Bridge : formes + API."},
+{q:"Vous devez créer un système de cache intelligent pour des images haute résolution. Le cache doit : charger les images à la demande ; gérer la mémoire en supprimant les images rarement utilisées ; fournir des statistiques d'utilisation. Quel pattern permet d'ajouter ces fonctionnalités sans modifier la classe Image ?",o:["Proxy","Decorator","Facade","Flyweight"],a:[0],e:"<b>Proxy</b> (virtuel + cache) : même interface que Image, il contrôle <i>l'accès</i> à l'objet réel (chargement paresseux, éviction, comptage). Decorator ajoute un comportement mais ne gère pas la création / le cycle de vie de l'objet réel."},
+{q:"Vous développez un framework de validation de données où les validateurs doivent être composables (ex : « email valide ET longueur > 8 »). Quel pattern permet de gérer des arbres de conditions de validation ?",o:["Composite","Flyweight","Builder","Decorator"],a:[0],e:"<b>Composite</b> : le mot-clé est « arbres de conditions ». Un nœud ET/OU contient des validateurs enfants, simples ou composés."},
+{q:"Vous créez un système de conversion de documents qui doit supporter des conversions multiples et combinables (PDF→HTML, HTML→Markdown, PDF→Markdown). Quel pattern permet une extensibilité maximale ?",o:["Abstract Factory avec Bridge","Builder avec Bridge","Abstract Factory avec Decorator","Builder avec Bridge"],a:[2],w:true,e:"<b>Abstract Factory + Decorator</b> : « combinables » = chaîner des conversions (PDF→HTML puis HTML→Markdown), ce qu'on obtient en empilant des convertisseurs (Decorator) ; la fabrique crée les convertisseurs sans exposer les classes concrètes.",ww:"Alternative défendable : A (Bridge pour séparer format source / format cible). Remarque : B et D sont identiques sur le sujet (coquille), donc ni l'une ni l'autre n'était la réponse attendue."},
+{q:"Vous devez construire des requêtes SQL complexes avec des clauses conditionnelles, des jointures, et des agrégations. La construction doit être fluide et vérifier la validité syntaxique. Quel pattern est le plus adapté ?",o:["Factory Method","Flyweight","Builder","Composite"],a:[2],e:"<b>Builder</b> : construction pas à pas, interface fluide (<code>select().from().where()…</code>) et validation dans <code>build()</code>."},
+{q:"Vous devez créer un système de documents où chaque document peut avoir des versions antérieures. La copie doit être profonde et efficace. Quel pattern est le plus approprié ?",o:["Prototype","Factory Method","Composite","Builder"],a:[0],e:"<b>Prototype</b> : créer une nouvelle version en clonant l'existante (<code>clone()</code> avec copie profonde) au lieu de tout reconstruire."},
+{q:"Vous concevez un système de notifications qui doit : supporter multiples canaux (email, SMS, push) ; permettre des envois groupés ; ajouter des métadonnées de traçabilité. Quel pattern combine le mieux ces exigences ?",o:["Composite avec Bridge","Bridge avec Abstract Factory","Builder avec Composite","Composite avec Decorator"],a:[3],w:true,e:"<b>Composite + Decorator</b> : chaque canal est une feuille <code>Notifier</code> ; les envois groupés = Composite ; les métadonnées ajoutées dynamiquement = Decorator. C'est la seule paire qui couvre les 3 exigences.",ww:"A (Composite + Bridge) couvre canaux + groupes mais pas les métadonnées."},
+{q:"Vous devez créer un système de configuration d'objets complexes où : la configuration peut venir de multiples sources (fichiers, BDD, API) ; les objets doivent être inchangés après création ; la construction doit valider les contraintes métier. Quel pattern est le plus adapté ?",o:["Builder avec Director","Composite pour composer les différentes sources","Abstract Factory pour gérer les contraintes métiers","Decorator pour créer les combinaisons dynamiquement"],a:[0],e:"<b>Builder avec Director</b> : objet immuable (construit d'un coup dans <code>build()</code>), validation à la construction, et un Director par source (fichier, BDD, API) qui pilote le même Builder."},
+{q:"Vous développez un système de rendu de UI qui doit supporter différents thèmes (sombre, clair, high-contrast) et différentes plateformes (desktop, mobile, web). Comment éviter la prolifération de classes ?",o:["Multiple Singleton + Bridge","Builder + Bridge","Bridge + Abstract Factory","Prototype + Decorator"],a:[2],e:"<b>Bridge + Abstract Factory</b> : Bridge sépare les deux axes (thème / plateforme) ; Abstract Factory crée une <i>famille</i> cohérente de composants (bouton, menu…) pour une plateforme donnée."},
+{q:"Dans lequel des patrons suivants une classe représente la fonctionnalité d'une autre classe ?",o:["Proxy","Adaptateur","Composite","Décorateur"],a:[0],e:"<b>Proxy</b> : un substitut (surrogate) qui représente un autre objet et contrôle l'accès à lui, avec la même interface."},
+{q:"Quelles sont les limites du design pattern Adapter ?",o:["Plus d'adaptateurs entraîne moins de classes et d'interfaces et diminue la complexité du code","Moins d'adaptateurs entraîne plus de classes et d'interfaces et diminue la complexité du code","Plus d'adaptateurs entraîne plus de classes et d'interfaces et augmente la complexité du code","Moins d'adaptateurs entraîne plus de classes et d'interfaces et augmente la complexité du code"],a:[2],e:"Chaque adaptateur est une classe en plus (souvent avec une interface cible) : <b>plus d'adaptateurs → plus de classes → plus de complexité</b>."},
+{q:"La classe <i>OrderProcessor</i> dépend directement d'une classe <i>PaymentGateway</i> concrète. Pour réduire le couplage, quelle solution proposez-vous ?",o:["Utiliser le Pattern Singleton pour PaymentGateway","Appliquer le DIP en introduisant une interface IPaymentGateway","Appliquer le SRP en scindant la classe","Utiliser le Pattern Façade"],a:[1],e:"<b>DIP</b> : le module de haut niveau doit dépendre d'une abstraction (<code>IPaymentGateway</code>), pas d'une classe concrète. Singleton ne réduit pas le couplage, il l'aggrave."},
+{q:"Une classe <i>ReportGenerator</i> génère des rapports en PDF et Excel. Si vous ajoutez un nouveau format (ex : CSV), vous devez modifier la classe existante. Quel principe SOLID est enfreint, et comment le corriger ?",o:["LSP – Utiliser le Pattern Factory Method","OCP – Utiliser le Pattern Bridge","SRP – Créer une classe séparée pour chaque format","DIP – Introduire une abstraction pour les formats"],a:[1],e:"Devoir <i>modifier</i> une classe pour l'<i>étendre</i> = violation de l'<b>OCP</b>. C'est la seule option qui cite l'OCP ; Bridge sépare le rapport (abstraction) du format de sortie (implémentation), et un nouveau format = une nouvelle classe."},
+{q:"Vous avez une interface IMachine avec des méthodes Print(), Scan(), Fax(). Une imprimante basique ne peut qu'imprimer, mais doit implémenter toutes les méthodes. Quel problème cela pose-t-il ?",o:["Violation du LSP","Violation du ISP","Violation du DIP","Aucun problème"],a:[1],e:"<b>ISP</b> : un client ne doit pas être forcé d'implémenter des méthodes qu'il n'utilise pas → découper en <code>IPrinter</code>, <code>IScanner</code>, <code>IFax</code>."},
+{q:"Vous avez une hiérarchie de classes Bird (Oiseau) avec une méthode Fly(). La classe Penguin hérite de Bird mais ne peut pas voler. Quel principe SOLID est violé ?",o:["SRP","OCP","LSP","DIP"],a:[2],e:"<b>LSP</b> : un Penguin ne peut pas remplacer un Bird partout (Fly() lèverait une exception). L'exemple classique du cours."},
+{q:"Vous développez un framework de connexion à multiples bases de données (MySQL, PostgreSQL, SQLite). Le code client doit être indépendant des classes concrètes de connexion. Quel pattern de création permet d'encapsuler la création des objets de connexion ?",o:["Pattern Abstract Factory","Pattern Builder","Pattern Factory Method","Pattern Singleton"],a:[2],w:true,e:"<b>Factory Method</b> : un seul type de produit (la connexion), dont la sous-classe décide la classe concrète (<code>MySQLFactory.createConnection()</code>…).",ww:"Si on considère qu'on crée une famille d'objets par SGBD (Connection, Command, Reader…), Abstract Factory (A) devient la réponse. La question ne parle que des « objets de connexion », d'où C."},
+{q:"Vous devez fournir une interface unifiée pour un ensemble d'interfaces d'un sous-système complexe (gestion des commandes, des livraisons, des facturations). Quel pattern de structure utilisez-vous pour simplifier l'utilisation du sous-système ?",o:["Pattern Façade","Pattern Adapter","Pattern Bridge","Pattern Proxy"],a:[0],e:"« Interface unifiée pour un sous-système » = définition GoF de la <b>Façade</b>."},
+{q:"Vous avez une interface <i>Service</i> qui définit une opération. Une classe <i>RealService</i> implémente cette interface. Vous voulez ajouter des fonctionnalités de contrôle d'accès (vérification des permissions) avant d'exécuter l'opération. Quel pattern de structure permet d'ajouter cette fonctionnalité sans modifier <i>RealService</i> ?",o:["Pattern Adapter","Pattern Proxy","Pattern Decorator","Pattern Façade"],a:[1],e:"<b>Proxy de protection</b> : même interface Service, vérifie les permissions puis délègue (ou refuse) l'appel à RealService."},
+{q:"Une classe d'Adaptateur et une classe de Proxy ont en commun le fait :",o:["qu'elles héritent toutes les deux d'une classe abstraite","qu'elles implémentent toutes les deux une interface","qu'elles utilisent toutes les deux une autre classe","qu'elles modifient toutes les deux une autre interface"],a:[2],w:true,e:"<b>Elles utilisent toutes les deux une autre classe</b> : l'Adapter délègue à l'Adaptee, le Proxy au RealSubject (composition). C'est leur point commun structurel.",ww:"B est vrai dans les deux cas aussi, mais ce n'est pas spécifique (presque tous les patterns implémentent une interface). D est faux : le Proxy garde la même interface."}
+];
+const Q2=[
+{q:"Dans un système de e-commerce, vous remarquez que :<ul><li>La classe OrderProcessor fait 1500 lignes</li><li>Elle gère les paiements, l'inventaire, les notifications, et la logistique</li><li>Chaque modification risque d'introduire des bugs dans d'autres fonctionnalités</li><li>Les tests sont difficiles à écrire</li></ul>Quels principes SOLID sont violés et comment y remédier ?",o:["Violation du SRP - Diviser en classes spécialisées","Violation du OCP - Utiliser les Design Patterns","Violation du ISP - Créer des interfaces plus fines","Utiliser le pattern Facade pour cacher la complexité"],a:[0,1],w:true,e:"<b>A</b> sûr : 4 responsabilités dans une classe = SRP. <b>B</b> : toute évolution oblige à modifier cette classe, donc OCP aussi violé. C : rien n'indique des clients forcés d'implémenter des méthodes inutiles. D : la Façade cache le problème sans le corriger.",ww:"Si le prof n'attendait qu'un principe, la réponse serait A seul."},
+{q:"Vous concevez un framework de validation avec ces exigences :<ul><li>Les règles doivent être composables (ET/OU/NOT)</li><li>Ajout de nouvelles règles sans modifier le code existant</li><li>Support de règles complexes (dépendances entre champs)</li><li>Performance sur des gros volumes de données</li></ul>Quelle(s) combinaison(s) de patterns est/sont appropriée(s) ?",o:["Decorator + Bridge","Builder + Prototype","Decorator + Factory Method","Bridge + Abstract Factory"],a:[2],w:true,e:"<b>C</b> : Decorator pour composer (NOT enveloppe une règle, ET/OU enveloppent des règles) ; Factory Method pour créer de nouvelles règles sans toucher au code existant (OCP). B ne répond à aucune exigence ; D vise des familles de produits, pas la composition.",ww:"A est acceptable si on justifie Bridge par la séparation règle / moteur d'exécution (performance)."},
+{q:"Un système de notification multi-canaux présente ces problèmes :<ul><li>La classe <i>NotificationService</i> a 800 lignes</li><li>Chaque ajout d'un nouveau canal nécessite de modifier cette classe</li><li>Impossible de composer les notifications (SMS + Email + Push)</li><li>Difficile de tester les combinaisons de canaux</li></ul>Quelle(s) refactorisation(s) proposez-vous ?",o:["Appliquer OCP avec le pattern Bridge","Utiliser Composite pour gérer les envois multiples","Appliquer ISP en séparant les interfaces par canal","Utiliser Decorator pour ajouter des métadonnées"],a:[0,1],e:"<b>A</b> : nouveau canal = nouvelle classe d'implémentation, sans modifier l'existant (OCP + Bridge). <b>B</b> : SMS + Email + Push = un Composite de canaux, testable feuille par feuille. C : le problème n'est pas une interface trop grosse. D : les métadonnées ne font pas partie des problèmes listés."},
+{q:"Vous concevez le noyau d'un système de e-commerce. Le client métier insiste sur la nécessité de pouvoir appliquer différentes méthodes de calcul de remise (ex : remise fidélité, promo de saison, code promo, cumulable ou non) de manière très flexible. Comment structureriez-vous les classes pour gérer les remises de manière extensible ?",o:["Une classe « Produit » avec une méthode calculerPrix() qui consulte une liste de « Remise » et applique la logique de cumul.","Une classe « Remise » abstraite avec une méthode abstraite appliquerRemise(double prix), et des sous-classes pour chaque type de remise.","Utiliser le patron de conception Composite pour pouvoir appliquer des remises simples ou des groupes de remises (ex : un bundle « été » qui est un composite de plusieurs remises).","Utiliser le patron de conception Decorator, où les décorateurs sont les différentes remises qui enveloppent un objet « Prix » de base."],a:[1,2,3],e:"<b>B</b> : abstraction + une sous-classe par remise = OCP. <b>C</b> : un bundle de remises traité comme une remise = Composite. <b>D</b> : remises cumulables empilées sur un prix = Decorator. <b>A</b> est le mauvais design : la logique de cumul est figée dans Produit (SRP + OCP violés)."},
+{q:"Dans un système de traitement d'images :<ul><li>Opérations composables (redimensionner → filtrer → compresser)</li><li>Support de nouveaux formats et opérations</li><li>Gestion des métadonnées et de l'historique</li><li>Performance avec cache et traitement parallèle</li></ul>Quelle(s) combinaison(s) de patterns est/sont recommandée(s) ?",o:["Decorator pour composer les opérations","Composite pour les traitements par lot","Proxy pour la gestion de l'historique","Aucun de ces design patterns"],a:[0,1,2],w:true,e:"<b>A</b> : chaque opération enveloppe la précédente (pipeline). <b>B</b> : un lot d'images / une séquence d'opérations traitée comme une seule = Composite. <b>C</b> : un Proxy intercepte chaque appel, il peut journaliser l'historique et servir de cache. D est donc faux.",ww:"B et C sont les moins directs ; A est la réponse la plus sûre."},
+{q:"Pour un système de configuration d'applications :<ul><li>Sources multiples (fichiers, env vars, base de données)</li><li>Validation des valeurs de configuration</li><li>Construction immuable de l'objet Configuration</li><li>Support de différents environnements (dev, test, prod)</li></ul>Quels patterns sont les plus appropriés ?",o:["Builder avec validation intégrée","Abstract Factory pour les différents environnements","Prototype pour les configurations par défaut","Singleton pour l'accès global à la configuration"],a:[0,1],e:"<b>A</b> : immuable + validation = Builder. <b>B</b> : une fabrique par environnement (dev/test/prod) qui produit la famille d'objets adaptée. C et D ne répondent à aucune exigence listée (et Singleton nuit à la testabilité)."},
+{q:"Vous développez un système de visualisation d'images médicales (IRM, scanners) où :<ul><li>Les images peuvent atteindre 4 GB chacune</li><li>Seules les régions visualisées doivent être chargées en mémoire</li><li>Les métadonnées (dimensions, patient, date) sont toujours disponibles</li><li>Les images similaires partagent des palettes de couleurs communes</li><li>Le système doit supporter 1000+ images simultanément</li></ul>Quels patterns sont ESSENTIELS pour cette architecture ?",o:["Proxy Virtuel pour le chargement paresseux des régions d'image","Flyweight pour partager les palettes de couleurs entre images similaires","Builder pour construire des objets image complexes","Bridge pour découpler le traitement d'image de l'affichage"],a:[0,1],e:"<b>A</b> : le Proxy virtuel garde les métadonnées et ne charge que les régions demandées. <b>B</b> : palettes partagées entre 1000+ images = état intrinsèque partagé (Flyweight). C et D sont possibles mais pas « essentiels »."},
+{q:"Système de trading avec ces contraintes :<ul><li>100 000+ instruments financiers suivis</li><li>Chaque instrument a des métadonnées statiques (nom, symbole, devise)</li><li>Les prix changent 1000+ fois par seconde par instrument</li><li>Accès concurrentiel par 500+ threads</li><li>Latence critique (&lt;1 ms pour les opérations)</li></ul>Quelle combinaison de patterns résout le mieux ces contraintes ?",o:["Flyweight pour partager les métadonnées des instruments","Proxy de Protection pour contrôler l'accès aux données sensibles","Builder avec validation pour créer des ordres de trading","Bridge pour séparer les stratégies de trading des exécutions"],a:[0],w:true,e:"<b>A</b> : énormément d'objets avec une partie statique partagée (métadonnées = intrinsèque) et une partie qui change (prix = extrinsèque) = Flyweight, qui économise mémoire et temps. B, C, D ne répondent à aucune contrainte de l'énoncé (pas de « données sensibles », pas d'« ordres », pas de « stratégies »), et un proxy ajoute de la latence.",ww:"Certains cocheraient aussi B pour l'« accès concurrentiel » ; ce n'est pas le rôle d'un proxy de protection (droits, pas synchronisation)."},
+{q:"Dans un programme qui permet de créer des plans d'une pièce (cuisine, salon…) avec ses meubles, nous avons, suivant les cas, plusieurs modes d'affichage d'un même plan : le plan lui-même avec l'emplacement des différents meubles : le plan de base ; le plan de base avec les mesures des meubles et de la pièce ; le plan de base avec un devis ; le plan de base avec un devis et les mesures… Quel Design Pattern identifiez-vous ?",o:["Flyweight","Builder","Proxy","Décorateur"],a:[3],e:"<b>Décorateur</b> : un objet de base (plan) auquel on ajoute des options combinables (mesures, devis, mesures + devis). C'est exactement l'exercice du café du cours (boisson + lait + caramel…)."},
+{q:"Gestion de documents sensibles avec :<ul><li>Documents de 1000+ pages avec structure complexe</li><li>Contrôle d'accès granulaire (lecture, modification, signature)</li><li>Audit trail de tous les accès</li><li>Construction de documents à partir de templates</li><li>Support multi-formats (PDF, DOCX, HTML)</li></ul>Quels patterns répondent aux exigences de sécurité et complexité ?",o:["Proxy de Protection pour le contrôle d'accès","Builder pour la construction de documents depuis templates","Bridge pour séparer contenu et format d'export","Abstract Factory pour la création des documents"],a:[0,1,2],e:"<b>A</b> : contrôle d'accès + audit de chaque appel = Proxy de protection. <b>B</b> : construction pas à pas depuis un template = Builder. <b>C</b> : contenu (abstraction) × formats PDF/DOCX/HTML (implémentation) = Bridge. D : pas de famille de produits à créer, Builder couvre déjà la création."}
+];
+const L="ABCD", state={};
+function mk(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e}
+function render(list,host,pre,multi){
+  list.forEach((d,i)=>{
+    const id=pre+(i+1);state[id]={sel:new Set(),done:false,d};
+    const q=mk('div','q'+(multi?' multi':''));q.id=id;
+    const h=mk('div','qh');h.append(mk('span','qn',(pre==='a'?'Q1·':'Q2·')+(i+1)),mk('span','tag'+(multi?' multi':''),multi?'plusieurs réponses':'une réponse'));
+    if(d.w)h.append(mk('span','tag warn','discutable'));
+    q.append(h,mk('div','qt',d.q));
+    const os=mk('div','opts');
+    d.o.forEach((t,j)=>{const b=mk('button','opt');b.type='button';b.append(mk('span','L',L[j]),mk('span','',t));
+      b.onclick=()=>{const s=state[id];if(s.done)return;if(!multi)s.sel.clear();s.sel.has(j)?s.sel.delete(j):s.sel.add(j);
+        os.querySelectorAll('.opt').forEach((x,k)=>x.classList.toggle('sel',s.sel.has(k)))};os.append(b)});
+    q.append(os);
+    const qa=mk('div','qa'),ck=mk('button','btn','Vérifier'),v=mk('span','verdict');ck.type='button';ck.onclick=()=>check(id,true);qa.append(ck,v);q.append(qa);
+    const ex=mk('div','exp','<span class="k">Réponse : '+d.a.map(k=>L[k]).join(', ')+'</span>'+d.e+(d.ww?'<span class="w">⚠ '+d.ww+'</span>':''));q.append(ex);
+    host.append(q);
+  });
+}
+function check(id,count){
+  const s=state[id],q=document.getElementById(id);if(s.done)return;s.done=true;
+  const good=new Set(s.d.a),ok=count&&s.sel.size===good.size&&[...s.sel].every(k=>good.has(k));
+  q.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;b.classList.remove('sel');
+    if(good.has(k))b.classList.add(s.sel.has(k)||!count?'good':'miss');else if(s.sel.has(k))b.classList.add('bad')});
+  if(count){q.classList.add(ok?'ok':'ko');s.ok=ok;const v=q.querySelector('.verdict');v.className='verdict '+(ok?'ok':'ko');v.textContent=ok?'✓ Correct':'✗ Réponse : '+s.d.a.map(k=>L[k]).join(', ')}
+  q.querySelector('.qa .btn').disabled=true;q.querySelector('.exp').classList.add('show');upd();
+}
+function upd(){const v=Object.values(state).filter(s=>s.done&&s.ok!==undefined);document.getElementById('st').innerHTML='Score : <b>'+v.filter(s=>s.ok).length+'</b> / '+v.length+' vérifiées · 30 questions'}
+function keygrid(){const g=document.getElementById('keygrid');g.innerHTML='';for(const id in state){const s=state[id];const a=mk('a','cell'+(s.d.w?' w':''),(id[0]==='a'?'1·':'2·')+id.slice(1)+' <b>'+s.d.a.map(k=>L[k]).join('')+'</b>');a.href='#'+id;g.append(a)}g.hidden=false}
+render(Q1,document.getElementById('qcm1'),'a',false);
+render(Q2,document.getElementById('qcm2'),'b',true);
+keygrid();document.getElementById('keygrid').hidden=true;
+document.getElementById('mode-show').onclick=()=>{for(const id in state)check(id,false);keygrid();document.getElementById('mode-hint').textContent='Corrigé complet affiché. Grille : surligné = question discutable.'};
+document.getElementById('mode-train').onclick=()=>{document.getElementById('mode-hint').textContent='Entraînement : choisis ta réponse puis « Vérifier ».'};
+document.getElementById('reset').onclick=()=>location.reload();
+upd();
+</script>
+</body>
+</html>
