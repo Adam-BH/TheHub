@@ -144,6 +144,19 @@ table.sx .ratio.min{color:var(--burgundy);font-weight:700}
 footer{text-align:center;font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding-block:20px 30px;border-top:1px solid var(--rule)}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
+<style>
+.add-docs{margin:26px 0 0}
+.add-docs h2{font-family:var(--serif);font-style:italic;font-weight:400;font-size:30px;margin:0 0 4px;color:var(--ink)}
+.add-docs h2 .k{display:block;font-family:var(--mono);font-style:normal;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.add-docs p.lead{font-style:italic;color:var(--ink-soft);margin:0 0 14px}
+.add-docs .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px}
+.add-doc{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:10px;background:var(--card);color:var(--ink);text-decoration:none;transition:transform .15s,border-color .15s}
+.add-doc:hover{transform:translateY(-2px);border-color:var(--burgundy)}
+.add-doc .t{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.add-doc strong{font-family:var(--serif);font-style:italic;font-weight:400;font-size:22px;line-height:1.15}
+.add-doc span.d{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.add-doc span.o{margin-top:auto;font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--burgundy)}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -154,6 +167,14 @@ footer{text-align:center;font-family:var(--mono);font-size:11px;color:var(--ink-
   <p class="subtitle">Ch. 1 Introduction + Ch. 2 Programmation Linéaire (programme du DS) : terminologie, formulation, résolution graphique, simplexe et variables d'écart. Tous les termes techniques sont dans le <a href="#glossaire">glossaire</a>.</p>
   <div class="orn">◆ ◆ ◆</div>
 </header>
+
+<section class="add-docs" id="additional-docs" aria-labelledby="add-docs-title">
+  <h2 id="add-docs-title"><span class="k">Additional docs</span>Docs additionnelles</h2>
+  <p class="lead">Corrigés et entraînements, rangés dans <code>pages/gl3/sem1/recherche-operationnelle/</code>.</p>
+  <div class="grid">
+    <a class="add-doc" href="recherche-operationnelle/ds-2025-corrige.html"><span class="t">Corrigé · QCU · DS 03/11/2025</span><strong>Corrigé du DS RO 2025</strong><span class="d">Les 35 QCU (pages 1–5) : réponse + explication, pièges signalés, mode entraînement avec score.</span><span class="o">Ouvrir →</span></a>
+  </div>
+</section>
 
 <div class="layout">
 <main>
